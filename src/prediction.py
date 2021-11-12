@@ -749,20 +749,32 @@ def build_prediction_model(
     prediction_model.summary()
 
     # visualize the encoding model and prediction model graphs
-    if plot:
-
-        for model_name, tf_model in models.__dict__.items():
+    for model_name, tf_model in models.__dict__.items():
+        
+        # do this for saving the pdf format
+        saving_path = raw_data.path_to_computational_graphs + model_name + '.pdf'
+        display(
+            tf.keras.utils.plot_model(
+                tf_model, 
+                saving_path, 
+                show_shapes=True
+            )
+        )
+        
+        # do this for plotting purposes in jupyter notebook
+        if plot:
             print('Computation graph for ' + model_name + ':')
-            model_name = '../images/rm_' + model_name + '.pdf'
+            saving_path = raw_data.path_to_computational_graphs + model_name + '.png'
             display(
                 tf.keras.utils.plot_model(
                     tf_model, 
-                    model_name, 
+                    saving_path, 
                     show_shapes=True
                 )
             )
-            
-            print('---' * 35)
+        
+        
+        print('---' * 35)
 
     # return model class instance
     return models

@@ -1546,8 +1546,8 @@ def vis_train_and_val(
             train_loss = PL_results.train_loss
             val_loss = PL_results.val_loss
 
-            legend_name = ('PL: {}s - {:.0%} budget'
-            '- {:.0%} sensors - {:.0%} times - {:.2} loss').format(
+            legend_name = ('PL: {}s- {:.0%} budget'
+            '- {:.0%} sensors- {:.0%} times- {:.2} loss').format(
                 PL_results.iter_time,
                 PL_results.budget_usage,
                 PL_results.sensor_usage,
@@ -1578,8 +1578,8 @@ def vis_train_and_val(
                 train_loss = AL_result.train_loss
                 val_loss = AL_result.val_loss
 
-                legend_name = ('AL {}- {}s- {:.0%} budget- {:.0%} '
-                'sensors- {:.0%} times - {:.2} loss').format(
+                legend_name = ('AL {}: {}s- {:.0%} budget- {:.0%} '
+                'sensors- {:.0%} times- {:.2} loss').format(
                     method,
                     AL_result.iter_time,
                     AL_result.budget_usage,
