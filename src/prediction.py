@@ -753,7 +753,7 @@ def build_prediction_model(
 
         for model_name, tf_model in models.__dict__.items():
             print('Computation graph for ' + model_name + ':')
-            model_name = 'images/' + model_name + '.png'
+            model_name = '../images/rm_' + model_name + '.pdf'
             display(
                 tf.keras.utils.plot_model(
                     tf_model, 

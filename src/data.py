@@ -119,9 +119,12 @@ class RawData:
             
             
         # create a results folder if not existent
-        path_to_results = (
-            '../results/' 
-            + HYPER.PROFILE_SET 
+        path_to_results = '../results/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
+            
+        path_to_results += (
+            HYPER.PROFILE_SET 
             + '/'
         )
         if not os.path.exists(path_to_results):

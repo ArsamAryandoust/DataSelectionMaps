@@ -13,7 +13,7 @@ RUN pip install pandas
 RUN pip install matplotlib
 RUN pip install pydot
 
-WORKDIR /ActiveLearning/src
+WORKDIR /DataSelectionMaps/src
 
 CMD python main.py
 

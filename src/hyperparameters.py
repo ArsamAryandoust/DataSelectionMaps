@@ -22,7 +22,7 @@ class HyperParameter:
     PRIVATE_ACCESS = False
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
+    TEST_SEQUENCE_IMPORTANCE = False
     
     # Decide whether or not to save the results and hyper parameters.
     SAVE_ACT_LRN_RESULTS = True
@@ -48,8 +48,8 @@ class HyperParameter:
     # "temporal", "spatio-temporal"
     PRED_LIST_ACT_LRN = [
         'temporal',
-        'spatial',
-        'spatio-temporal'
+        #'spatial',
+        #'spatio-temporal'
     ]
 
     # Decide which methods to evaluate. Choose from "cluster-rnd", 
