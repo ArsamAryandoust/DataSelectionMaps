@@ -1,0 +1,4 @@
+data/public/profiles_400/building-year[[:space:]]profiles/random_scaled/2014[[:space:]]building-year[[:space:]]profiles.csv filter=lfs diff=lfs merge=lfs -text
+data/public/profiles_400/building-year[[:space:]]profiles/feature_scaled/2014[[:space:]]building-year[[:space:]]profiles.csv filter=lfs diff=lfs merge=lfs -text
+data/public/profiles_100/building-year[[:space:]]profiles/feature_scaled/2014[[:space:]]building-year[[:space:]]profiles.csv filter=lfs diff=lfs merge=lfs -text
+data/public/profiles_100/building-year[[:space:]]profiles/random_scaled/2014[[:space:]]building-year[[:space:]]profiles.csv filter=lfs diff=lfs merge=lfs -text
