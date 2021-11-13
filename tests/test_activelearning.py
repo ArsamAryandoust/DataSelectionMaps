@@ -68,7 +68,6 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.PROFILES_PER_YEAR = 100
         HYPER.POINTS_PER_PROFILE = 50
         
         for grey_scale in [True, False]:
@@ -81,8 +80,6 @@ class TestActiveLearning(unittest.TestCase):
                 
                 # re-create raw_data for updating paths to data
                 raw_data = data.RawData(HYPER)
-
-                
                 
                 ### 1. Data preprocessing ###
                 
@@ -309,7 +306,6 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.PROFILES_PER_YEAR = 100
         HYPER.POINTS_PER_PROFILE = 50
  
             
@@ -582,7 +578,6 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.PROFILES_PER_YEAR = 100
         HYPER.POINTS_PER_PROFILE = 50
         HYPER.SAVE_ACT_LRN_MODELS = True
         HYPER.SPATIAL_FEATURES = "histogram"

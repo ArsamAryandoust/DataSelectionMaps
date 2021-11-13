@@ -25,10 +25,10 @@ class HyperParameter:
     TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether or not to save the results and hyper parameters.
-    SAVE_ACT_LRN_RESULTS = False
-    SAVE_HYPER_PARAMS = False
-    SAVE_ACT_LRN_MODELS = False
-    SAVE_ACT_LRN_TEST_SAMPLE = False
+    SAVE_ACT_LRN_RESULTS = True
+    SAVE_HYPER_PARAMS = True
+    SAVE_ACT_LRN_MODELS = True
+    SAVE_ACT_LRN_TEST_SAMPLE = True
     
     
     ### 1. Active Learning algorithm ###
@@ -36,7 +36,7 @@ class HyperParameter:
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
-    EXTEND_TRAIN_DATA_ACT_LRN = False
+    EXTEND_TRAIN_DATA_ACT_LRN = True
 
     # Decide whether to remove queried candidates from candidate data pool.
     RED_CAND_DATA_ACT_LRN = True
@@ -64,9 +64,9 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from "X_t", "X_s1", "X_st", 
     # "X_(t,s)", "Y_hat_(t,s)", "Y_(t,s)"
     QUERY_VARIABLES_ACT_LRN = [
-        #'X_t',
-        #'X_s1',
-        #'X_st', 
+        'X_t',
+        'X_s1',
+        'X_st', 
         'X_(t,s)', 
         'Y_hat_(t,s)', 
         'Y_(t,s)'
@@ -134,11 +134,11 @@ class HyperParameter:
 
     # Decide which dataset you want to process. You can choose between
     # profiles_100 and profiles_400
-    PROFILE_SET = 'profiles_100'
+    PROFILE_SET = 'profiles_400'
 
     # Decide how many data points per building-year profile you 
     # want to consider. Choose an integer between 1 and 35040.
-    POINTS_PER_PROFILE = 100
+    POINTS_PER_PROFILE = 20
     
     # Decide how many time steps to predict consumption 
     # into the future. Resolution is 15 min. 96 ~ 24h.
