@@ -19,16 +19,16 @@ class HyperParameter:
     ### General parameters ###
     
     # Keep a value of False if you don't have access to private data.
-    PRIVATE_ACCESS = False
+    PRIVATE_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
     TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether or not to save the results and hyper parameters.
-    SAVE_ACT_LRN_RESULTS = True
-    SAVE_HYPER_PARAMS = True
-    SAVE_ACT_LRN_MODELS = True
-    SAVE_ACT_LRN_TEST_SAMPLE = True
+    SAVE_ACT_LRN_RESULTS = False
+    SAVE_HYPER_PARAMS = False
+    SAVE_ACT_LRN_MODELS = False
+    SAVE_ACT_LRN_TEST_SAMPLE = False
     
     
     ### 1. Active Learning algorithm ###
@@ -47,8 +47,8 @@ class HyperParameter:
     # Decide which prediction types to evaluate. Choose from "spatial",
     # "temporal", "spatio-temporal"
     PRED_LIST_ACT_LRN = [
-        'temporal',
-        'spatial',
+        #'temporal',
+        #'spatial',
         'spatio-temporal'
     ]
 
@@ -56,8 +56,8 @@ class HyperParameter:
     # "cluster-far", "cluster-close", "cluster-avg"
     QUERY_VARIANTS_ACT_LRN = [
         'rnd d_c', 
-        #'min d_c', 
-        #'max d_c', 
+        'min d_c', 
+        'max d_c', 
         'avg d_c'
     ]
 
@@ -67,7 +67,7 @@ class HyperParameter:
         #'X_t',
         #'X_s1',
         #'X_st', 
-        #'X_(t,s)', 
+        'X_(t,s)', 
         'Y_hat_(t,s)', 
         'Y_(t,s)'
     ]
@@ -134,11 +134,11 @@ class HyperParameter:
 
     # Decide which dataset you want to process. You can choose between
     # profiles_100 and profiles_400
-    PROFILE_SET = 'profiles_400'
+    PROFILE_SET = 'profiles_100'
 
     # Decide how many data points per building-year profile you 
     # want to consider. Choose an integer between 1 and 35040.
-    POINTS_PER_PROFILE = 30
+    POINTS_PER_PROFILE = 100
     
     # Decide how many time steps to predict consumption 
     # into the future. Resolution is 15 min. 96 ~ 24h.

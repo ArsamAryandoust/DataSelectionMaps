@@ -25,6 +25,16 @@ class RawData:
         # provide the path to where data is stored
         path_to_data = '../data/'
         
+        # provide the path to where images are stored
+        self.path_to_images = '../images/'
+        if not os.path.exists(self.path_to_images):
+            os.mkdir(self.path_to_images)
+        
+        # provide the saving path to where computational graph images are stored
+        self.path_to_computational_graphs = self.path_to_images + 'computational graphs/'
+        if not os.path.exists(self.path_to_computational_graphs):
+            os.mkdir(self.path_to_computational_graphs)
+        
         # determines how many exemplar subplots to show for load profiles
         self.n_subplots = 10
 
@@ -119,9 +129,12 @@ class RawData:
             
             
         # create a results folder if not existent
-        path_to_results = (
-            '../results/' 
-            + HYPER.PROFILE_SET 
+        path_to_results = '../results/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
+            
+        path_to_results += (
+            HYPER.PROFILE_SET 
             + '/'
         )
         if not os.path.exists(path_to_results):

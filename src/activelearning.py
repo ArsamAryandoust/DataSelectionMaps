@@ -1483,7 +1483,7 @@ def test_AL_sequence_importance(
             # Indicate termination of execute
             print('---' * 20)
 
-        return AL_results
+    return AL_results
 
 
 
@@ -1546,9 +1546,8 @@ def vis_train_and_val(
             train_loss = PL_results.train_loss
             val_loss = PL_results.val_loss
 
-            legend_name = ('PL - {} iter- {}s - {:.0%} budget'
-            '- {:.0%} sensors - {:.0%} times - {:.2} loss').format(
-                PL_results.iter_usage,
+            legend_name = ('PL: {}s- {:.0%} budget'
+            '- {:.0%} sensors- {:.0%} times- {:.2} loss').format(
                 PL_results.iter_time,
                 PL_results.budget_usage,
                 PL_results.sensor_usage,
@@ -1579,8 +1578,8 @@ def vis_train_and_val(
                 train_loss = AL_result.train_loss
                 val_loss = AL_result.val_loss
 
-                legend_name = ('AL {}- {}s- {:.0%} budget- {:.0%} '
-                'sensors- {:.0%} times - {:.2} loss').format(
+                legend_name = ('AL {}: {}s- {:.0%} budget- {:.0%} '
+                'sensors- {:.0%} times- {:.2} loss').format(
                     method,
                     AL_result.iter_time,
                     AL_result.budget_usage,
@@ -2214,7 +2213,7 @@ def save_hyper_params(HYPER, raw_data):
             
             # general parameters
             df_list.append(
-                pd.DataFrame({'public_access': pd.Series(HYPER.PUBLIC_ACCESS)})
+                pd.DataFrame({'private_access': pd.Series(HYPER.PRIVATE_ACCESS)})
             )
             df_list.append(
                 pd.DataFrame({'test_sequence_importance': pd.Series(
@@ -2336,8 +2335,8 @@ def save_hyper_params(HYPER, raw_data):
                 )})
             )
             df_list.append(
-                pd.DataFrame({'profiles_per_year': pd.Series(
-                    HYPER.PROFILES_PER_YEAR
+                pd.DataFrame({'profile_set': pd.Series(
+                    HYPER.PROFILE_SET
                 )})
             )
             df_list.append(

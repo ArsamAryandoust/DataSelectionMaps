@@ -13,7 +13,7 @@ RUN pip install pandas
 RUN pip install matplotlib
 RUN pip install pydot
 
-WORKDIR /ActiveLearning/tests
+WORKDIR /DataSelectionMaps/tests
 
 CMD python test_prediction.py
 CMD python test_activelearning.py
