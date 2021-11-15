@@ -406,13 +406,13 @@ def feature_embedding_AL(
         )
         
         print(
-            'AL variable:              {}'.format(
+            'AL variable:                 {}'.format(
                 AL_variable
             )
         )
         
         print(
-            'AL variant:               {}'.format(
+            'AL variant:                  {}'.format(
                 method
             )
         )
@@ -2211,7 +2211,7 @@ def save_hyper_params(HYPER, raw_data):
             
             # general parameters
             df_list.append(
-                pd.DataFrame({'private_access': pd.Series(HYPER.PRIVATE_ACCESS)})
+                pd.DataFrame({'private_data_access': pd.Series(HYPER.PRIVATE_DATA_ACCESS)})
             )
             df_list.append(
                 pd.DataFrame({'test_sequence_importance': pd.Series(
@@ -2335,6 +2335,11 @@ def save_hyper_params(HYPER, raw_data):
             df_list.append(
                 pd.DataFrame({'profile_set': pd.Series(
                     HYPER.PROFILE_SET
+                )})
+            )
+            df_list.append(
+                pd.DataFrame({'profiles_per_year': pd.Series(
+                    HYPER.PROFILES_PER_YEAR
                 )})
             )
             df_list.append(

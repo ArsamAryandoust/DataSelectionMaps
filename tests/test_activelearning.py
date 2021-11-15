@@ -68,7 +68,10 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.POINTS_PER_PROFILE = 50
+        HYPER.POINTS_PER_PROFILE = 0.002
+        if HYPER.PROFILE_SET == 'profile_400':
+            HYPER.POINTS_PER_PROFILE /= 4
+            
         
         for grey_scale in [True, False]:
         
@@ -306,7 +309,9 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.POINTS_PER_PROFILE = 50
+        HYPER.POINTS_PER_PROFILE = 0.002
+        if HYPER.PROFILE_SET == 'profile_400':
+            HYPER.POINTS_PER_PROFILE /= 4
  
             
         ### 1. Data preprocessing ###
@@ -578,7 +583,9 @@ class TestActiveLearning(unittest.TestCase):
         raw_data = data.RawData(HYPER)
         
         HYPER.EPOCHS = 2
-        HYPER.POINTS_PER_PROFILE = 50
+        HYPER.POINTS_PER_PROFILE = 0.002
+        if HYPER.PROFILE_SET == 'profile_400':
+            HYPER.POINTS_PER_PROFILE /= 4
         HYPER.SAVE_ACT_LRN_MODELS = True
         HYPER.SPATIAL_FEATURES = "histogram"
         

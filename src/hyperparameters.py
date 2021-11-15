@@ -19,10 +19,10 @@ class HyperParameter:
     ### General parameters ###
     
     # Keep a value of False if you don't have access to private data.
-    PRIVATE_ACCESS = True
+    PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
+    TEST_SEQUENCE_IMPORTANCE = False
     
     # Decide whether or not to save the results and hyper parameters.
     SAVE_ACT_LRN_RESULTS = True
@@ -64,8 +64,8 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from "X_t", "X_s1", "X_st", 
     # "X_(t,s)", "Y_hat_(t,s)", "Y_(t,s)"
     QUERY_VARIABLES_ACT_LRN = [
-        'X_t',
-        'X_s1',
+        #'X_t',
+        #'X_s1',
         'X_st', 
         'X_(t,s)', 
         'Y_hat_(t,s)', 
@@ -134,11 +134,18 @@ class HyperParameter:
 
     # Decide which dataset you want to process. You can choose between
     # profiles_100 and profiles_400
-    PROFILE_SET = 'profiles_400'
+    PROFILE_SET = 'profiles_100'
 
+    # Decide how many building-year profiles you want to
+    # consider for each year. Choose a share between 0 and 1. A value of 1
+    # corresponds to about 100 profiles for the profiles_100 and 400 profiles
+    # for the profiles_400 dataset
+    PROFILES_PER_YEAR = 1
+    
     # Decide how many data points per building-year profile you 
-    # want to consider. Choose an integer between 1 and 35040.
-    POINTS_PER_PROFILE = 200
+    # want to consider. Choose a share between 0 and 1. A value of 0.01 
+    # corresponds to approximately 350 points per profile
+    POINTS_PER_PROFILE = 0.001
     
     # Decide how many time steps to predict consumption 
     # into the future. Resolution is 15 min. 96 ~ 24h.
@@ -284,7 +291,7 @@ class HyperParameter:
 
     
         # check if chosen hyper parameters are valid and correct if necessary
-        if not self.PRIVATE_ACCESS:
+        if not self.PRIVATE_DATA_ACCESS:
 
             if self.LABELS == 'original':
 
