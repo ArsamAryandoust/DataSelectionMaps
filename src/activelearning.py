@@ -1922,10 +1922,8 @@ def save_act_lrn_results(
             picked_spaces_index_hist = PL_results.picked_spaces_index_hist
             initial_sensors_list = PL_results.initial_sensors_list
             
-            col_name_initial_sensors = '{} {} {} - initial sensors'.format(
-                pred_type, 
-                None, 
-                'PL'
+            col_name_initial_sensors = '{} - initial sensors'.format(
+                pred_type
             )
             
             spacetime_df_list.append(
@@ -1936,13 +1934,13 @@ def save_act_lrn_results(
                 picked_times_list = picked_times_index_hist[iteration]
                 picked_spaces_list = picked_spaces_index_hist[iteration]
                 
-                col_name_times = '{} {} {} - iter {} times'.format(
+                col_name_times = '{} {} {} - iter {} time'.format(
                     pred_type, 
                     None, 
                     'PL',
                     iteration
                 )
-                col_name_spaces = '{} {} {} - iter {} spaces'.format(
+                col_name_spaces = '{} {} {} - iter {} space'.format(
                     pred_type, 
                     None, 
                     'PL',
@@ -2113,13 +2111,13 @@ def save_act_lrn_results(
                         picked_times_list = picked_times_index_hist[iteration]
                         picked_spaces_list = picked_spaces_index_hist[iteration]
                         
-                        col_name_times = '{} {} {} - iter {} times'.format(
+                        col_name_times = '{} {} {} - iter {} time'.format(
                             pred_type, 
                             AL_variable, 
                             method,
                             iteration
                         )
-                        col_name_spaces = '{} {} {} - iter {} spaces'.format(
+                        col_name_spaces = '{} {} {} - iter {} space'.format(
                             pred_type, 
                             AL_variable, 
                             method,
@@ -2138,7 +2136,7 @@ def save_act_lrn_results(
                         if method != 'PL' and method != 'rnd d_c':
                         
                             picked_scores_list = picked_inf_score_hist[iteration] 
-                            col_name_scores = '{} {} {} - iter {} inf scores'.format(
+                            col_name_scores = '{} {} {} - iter {} score'.format(
                                 pred_type, 
                                 AL_variable, 
                                 method,

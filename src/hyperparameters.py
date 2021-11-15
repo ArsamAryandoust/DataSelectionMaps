@@ -36,7 +36,7 @@ class HyperParameter:
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
-    EXTEND_TRAIN_DATA_ACT_LRN = True
+    EXTEND_TRAIN_DATA_ACT_LRN = False
 
     # Decide whether to remove queried candidates from candidate data pool.
     RED_CAND_DATA_ACT_LRN = True
@@ -138,7 +138,7 @@ class HyperParameter:
 
     # Decide how many data points per building-year profile you 
     # want to consider. Choose an integer between 1 and 35040.
-    POINTS_PER_PROFILE = 20
+    POINTS_PER_PROFILE = 200
     
     # Decide how many time steps to predict consumption 
     # into the future. Resolution is 15 min. 96 ~ 24h.
@@ -146,11 +146,11 @@ class HyperParameter:
 
     # Decides on the splitting ratio between
     # training and validation datasets.
-    TRAIN_SPLIT = 0.5
+    TRAIN_SPLIT = 0.3
 
     # Decides how many buildings and how much of
     # the time period to separate for testing.
-    TEST_SPLIT = 0.5
+    TEST_SPLIT = 0.7
 
     # Decide in which frequency to do train-validation split. 1 equals 
     # one datapoint per bin, 0.5 equals two datapoints per bin.
