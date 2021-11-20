@@ -18,13 +18,13 @@ class HyperParameter:
 
     ### General parameters ###
     
-    # Keep a value of False if you don't have access to private data.
+    # Keep a value of False if you have access to public data only.
     PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = False
+    TEST_SEQUENCE_IMPORTANCE = True
     
-    # Decide whether or not to save the results and hyper parameters.
+    # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_ACT_LRN_RESULTS = True
     SAVE_HYPER_PARAMS = True
     SAVE_ACT_LRN_MODELS = True
@@ -44,16 +44,16 @@ class HyperParameter:
     # Decide whether to delete queried candidates from validation data.
     UPD_VAL_DATA_ACT_LRN = True
 
-    # Decide which prediction types to evaluate. Choose from "spatial",
-    # "temporal", "spatio-temporal"
+    # Decide which prediction types to evaluate. Choose from 'spatial',
+    # 'temporal' and 'spatio-temporal'
     PRED_LIST_ACT_LRN = [
         #'temporal',
         #'spatial',
         'spatio-temporal'
     ]
 
-    # Decide which methods to evaluate. Choose from "cluster-rnd", 
-    # "cluster-far", "cluster-close", "cluster-avg"
+    # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
+    # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
         'rnd d_c', 
         'min d_c', 
@@ -61,8 +61,8 @@ class HyperParameter:
         'avg d_c'
     ]
 
-    # Choose AL variables you want to test. Choose from "X_t", "X_s1", "X_st", 
-    # "X_(t,s)", "Y_hat_(t,s)", "Y_(t,s)"
+    # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
+    # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
         #'X_t',
         #'X_s1',
@@ -72,18 +72,19 @@ class HyperParameter:
         'Y_(t,s)'
     ]
 
-    # Decide how many iterations to go at max for batch AL
+    # Decide how many iterations to go at max for batch active learning
     MAX_ITER_ACT_LRN = 10
 
-    # Choose the budget for new training datapoints we can
-    # query from the candidate data pool in percentage.
+
+    # Choose which share of candidate data pool we want to set as our entire
+    # data budget for new queries form it
     DATA_BUDGET_ACT_LRN = 0.5
 
     # Decide which share of the data we take on each iteration,
-    # before reusing encoders and newly arranging datapoints.
+    # before reusing encoders and newly arranging data points.
     CAND_BATCH_SIZE_ACT_LRN = 0.1
 
-    # Decide for how many epochs you want to train your model during AL
+    # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30
 
     # Decide how many epochs to have patience on an increasing
@@ -91,7 +92,7 @@ class HyperParameter:
     PATIENCE_ACT_LRN = 10
 
     # Decide for which metrics to calculate the problem. Choose
-    # from rbf_kernel, laplacian_kernel, cosine_similarity
+    # from rbf_kernel, laplacian_kernel and cosine_similarity
     METRIC_DISTANCES = [laplacian_kernel]
 
     # Decide for which clustering mehtods to cluster candidate data
@@ -108,32 +109,33 @@ class HyperParameter:
     ### 2. Hypothesis and prediciton problem ###
 
     # Decide how to formulate the problem. Choose from
-    # "regression", "classification"
+    # 'regression' and 'classification'
     PROBLEM_TYPE = 'regression'
     
     # Choose from: mean_squared_error, mean_absolute_error,
     #  mean_squared_logarithmic_error, huber, log_cosh
     REGRESSION_LOSS = [tf.keras.losses.mean_squared_error]
     
-    # Choose from: sparse_categorical_crossentropy, if
-    # PROBLEM_TYPE='classification'.
+    # Choose from: tf.keras.losses.sparse_categorical_crossentropy. Only applies
+    # if PROBLEM_TYPE='classification'.
     CLASSIFICATION_LOSS = [tf.keras.losses.sparse_categorical_crossentropy] 
 
-    # Decide how many classes to consider, if PROBLEM_TYPE='classification'.
+    # Decide how many classes to consider. Only applies if 
+    # PROBLEM_TYPE='classification'.
     REGRESSION_CLASSES = 200
 
-    # Decide which labels to consider. Choose from "random_scaled",
-    # "feature_scaled", "minmax", "original"
+    # Decide which labels to consider. Choose from 'random_scaled',
+    # 'feature_scaled', 'minmax', 'original'
     LABELS = 'original'
 
     # Decide for which years you want to consider electric load profiles.
-    # Choose from "2014".
+    # Choose from '2014'.
     PROFILE_YEARS = [
         '2014'
     ]
 
     # Decide which dataset you want to process. You can choose between
-    # profiles_100 and profiles_400
+    # 'profiles_100' and 'profiles_400'
     PROFILE_SET = 'profiles_100'
 
     # Decide how many building-year profiles you want to
@@ -147,12 +149,11 @@ class HyperParameter:
     # corresponds to approximately 350 points per profile
     POINTS_PER_PROFILE = 0.001
     
-    # Decide how many time steps to predict consumption 
-    # into the future. Resolution is 15 min. 96 ~ 24h.
+    # Decide how many time steps to predict consumption into the future.
+    # Resolution is 15 min. A values of 96 corresponds to 24h.
     PREDICTION_WINDOW = 96
 
-    # Decides on the splitting ratio between
-    # training and validation datasets.
+    # Decides on the splitting ratio between training and validation datasets.
     TRAIN_SPLIT = 0.3
 
     # Decides how many buildings and how much of
@@ -258,7 +259,7 @@ class HyperParameter:
     # integer to the power of two or 'None'
     DOWN_SCALE_BUILDING_IMAGES = None
 
-    # decive which meteo data types to consider. Choose from "air_density", 
+    # Decide which meteo data types to consider. Choose from "air_density", 
     # "cloud_cover",  "precipitation", "radiation_surface", "radiation_toa", 
     # "snow_mass", "snowfall", "temperature", "wind_speed"
     METEO_TYPES = [
