@@ -75,7 +75,7 @@ class RawData:
             + '/meteo data/'
         )
         # set the path to aerial imagery data
-        if HYPER.PRIVATE_ACCESS:
+        if HYPER.PRIVATE_DATA_ACCESS:
             self.path_to_aerial_imagery_folder = (
                 path_to_data
                 + 'private/'
@@ -328,6 +328,14 @@ def import_consumption_profiles(HYPER, raw_data, silent=False, plot=True):
         building_ids = building_ids[randomize]
         cluster_ids = cluster_ids[randomize]
         year_ids = year_ids[randomize]
+        
+        
+        # shorten the considered ID lists according to your chosen number of  
+        # considerable profiles per year
+        n_profiles = math.ceil(HYPER.PROFILES_PER_YEAR * len(building_ids))
+        building_ids = building_ids[: n_profiles]
+        cluster_ids = cluster_ids[: n_profiles]
+        year_ids = year_ids[: n_profiles]
 
         # shorten dataframe accordingly
         df = df[building_ids]
@@ -425,7 +433,7 @@ def import_building_images(HYPER, raw_data, silent=False, plot=True):
     building_imagery_data_list = []
     building_imagery_id_list = []
 
-    if HYPER.PRIVATE_ACCESS:
+    if HYPER.PRIVATE_DATA_ACCESS:
         
         # iterate over set of building ID
         for building_id in raw_data.building_id_set:
@@ -696,7 +704,11 @@ def create_feature_label_pairs(HYPER, raw_data, silent=False):
         len(raw_data.building_year_profiles_list[0]) 
         - HYPER.PREDICTION_WINDOW
     )
-    step = math.ceil((end - start) / HYPER.POINTS_PER_PROFILE)
+    n_points = math.ceil(
+        HYPER.POINTS_PER_PROFILE 
+        * len(raw_data.building_year_profiles_list[0])
+    )
+    step = math.ceil((end - start) / n_points)
     points_per_profile = math.ceil((end - start) / step)
 
     # Calculate how many data points we chose to consider in total
@@ -836,7 +848,7 @@ def create_feature_label_pairs(HYPER, raw_data, silent=False):
     # check how we chose to consider spatial features
     if HYPER.SPATIAL_FEATURES != 'image':
 
-        if HYPER.PRIVATE_ACCESS:
+        if HYPER.PRIVATE_DATA_ACCESS:
 
             ### Transform images to average/histogram arrays ###
 

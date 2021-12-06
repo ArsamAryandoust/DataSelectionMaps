@@ -751,18 +751,19 @@ def build_prediction_model(
     # visualize the encoding model and prediction model graphs
     for model_name, tf_model in models.__dict__.items():
         
-        # do this for saving the pdf format
-        saving_path = raw_data.path_to_computational_graphs + model_name + '.pdf'
-        display(
-            tf.keras.utils.plot_model(
-                tf_model, 
-                saving_path, 
-                show_shapes=True
-            )
-        )
-        
-        # do this for plotting purposes in jupyter notebook
         if plot:
+        
+            # do this for saving the pdf format
+            saving_path = raw_data.path_to_computational_graphs + model_name + '.pdf'
+            display(
+                tf.keras.utils.plot_model(
+                    tf_model, 
+                    saving_path, 
+                    show_shapes=True
+                )
+            )
+            
+            # do this for plotting purposes in jupyter notebook
             print('Computation graph for ' + model_name + ':')
             saving_path = raw_data.path_to_computational_graphs + model_name + '.png'
             display(
