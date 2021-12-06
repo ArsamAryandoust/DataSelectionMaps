@@ -28,7 +28,9 @@ We evaluate the performance of our ADL and PDL algorithms for spatial, temporal 
 
 For each prediction type that we evaluate, we further distinguish between the type of features that we can encode for querying candidate data points. We distinguish between features that are variant in time $\mathbf{x}_t$ (time stamp), space $\mathbf{x}_s$ (building image), and both time and space $\mathbf{x}_{st}$ (meteorological data), as well as the entire feature vector $\mathbf{x}_{t,s}$ which is concatenated from these three vectors.  As the predicted output of our network $\mathbf{\hat{y}}_{t,s}$ represents a vector, i.e. the electric consumption of a building for the next 24 hours in 15-min steps (96 values), we can use this vector as an embedding of our entire feature vector $\mathbf{x}_{t,s}$. In a further test, we hypothetically use our true labels $\mathbf{y}_{t,s}$ for querying candidate data points so as to see how our proposed metric and ADL variants perform with optimal priors on the distances of labels that we try to infer from our embedded feature spaces. We refer to these as our ADL variables. 
 
+Our findings can have important implications for the energy transition to a carbon free power systems and therefore for mitigating climate change. The figure below shows how the ADL method we propose can be used by distribution and transmission system operators for electricity to make overall more accurate predictions of electric load using budgets for installing smart meters and streaming their data more effectively.
 
+<img src="images/markdown/figure5.png">
 
 ---
 
