@@ -12,17 +12,17 @@ An effective way to mitigate climate change is to electrify our energy sectors, 
 
 While remotely sensed data from e.g. satellite imagery is increasingly easy to access for making spatio-temporal predictions, ground truth electric load data remains difficult and expensive to collect. One reason for this is that electric utilities are limited in the number of smart meters they can place to collect consumption data by social, financial and technical barriers. Another reason is that utilities are further limited in the amount of data they can query from each smart meter in real-time, something known as the velocity constraint of data, by data communication bandwidths and privacy concerns of consumers. The figure below shows the current state of smart meter adoption around the globe. For regions with an already high adoption of meters like in Scandinavian countries or Spain, we must know when to query data from which smart meter so as to make the best possible predictions of electric load, without exceeding our data velocity constraints. For regions with a yet low adoption of smart meters like in most of Africa, South and Latin America or Asia, we additionally want to know where to place new smart meters first so as to make the best possible predictions of electric load for yet unsensed parts of our grids, while effectively using our budget for installing new smart meters. 
 
-<img src="../images/markdown/figure1.png">
+<img src="images/markdown/figure1.png">
 
 Given the aerial image of a building, the meteorological conditions in the region of that building and a time stamp, we want to predict the electric load profile of the building for the next 24 hours in 15 min steps. We start with a prediction model that has learnt this relationship for a few buildings and times. Our features are all remotely sensed and assumed to be available for every building and point in time at no cost. For every new load profile that we collect, we assume to experience some cost and are constrained in the total number of profiles that we can collect by some budget $n_{budget}$. Our goal is to collect further ground truth data, i.e. the electric load profiles at different times and buildings, so as to make the best possible predictions for buildings and times, for which we do not have load profiles available, without exceeding $n_{budget}$. We use load profiles from two different datasets: one containing 100 buildings, and one cointaining 400 buildings in Switzerland. In each experiment, we randomly select load profiles from 800 time stamps in 2014 to create the candidate data pool for our experiments. The figure below visualizes the modular DL prediction model architecture that we propose for solving this task; we call it embedding network. 
 
-<img src="../images/markdown/figure2.png">
+<img src="images/markdown/figure2.png">
 
 In each iteration of the active deep learning (ADL) algorithm that we apply, we query a batch of candidate data points. We remove queried data from the candidate data pool at a rate $\delta$. Keeping queried points, i.e. allowing the algorithm to re-use them, lets us further reduce data usage. First, we encode the features of candidate data points into an embedded vector space using a modular neural network prediction model that is trained on initially available data points. We then cluster candidate data points based on their vector distances to each other in this encoded space, with the number of clusters being equal to our query batch size. Next, we calculate the distance of the vector of each encoded data point to its cluster center, and query one data point per cluster based on these distances. We test our ADL method for randomized, maximized, minimized and averaged distances of embedded data points to their cluster centers in every queried data batch. We refer to these as our ADL variants. 
 
 The figure bellow visualizes the differences between data queries with each of our ADL variants. In a first variant of our ADL method, we randomly select data points from each embedded cluster of candidates (a.). In a second variant, we query candidate data points whose embedded feature vectors are further away from their cluster centers (b.). We expect to be more uncertain about these points, as they are more likely to be true members of another cluster: we likely explore the data that is close to our decision boundaries, if not outliers, and expect a larger surprise/learning experience from querying labels for these data points. In a third variant, we query labels of data points that are close to their cluster centers, which we expect to be more representative of their clusters and respectively our entire data population (c.). In a fourth variant, we query data points that have the largest distance to the average of distances to cluster centers among all points of the same cluster, which results in a combination of queries alternating between uncertain and representative data points (d.). Each of these ADL variants tries to select a subset of data points from the candidate data pool in a different way that is more informative compared to when selecting these uniformly at random using passive deep learning (PDL). The distance of candidate data points to their cluster centers in an embedded vector space is a new metric of information that we propose; we call it embedding uncertainty. 
 
-<img src="../images/markdown/figure3.png">
+<img src="images/markdown/figure3.png">
 
 We evaluate the performance of our ADL and PDL algorithms for spatial, temporal and spatio-temporal predictions compared to a random forest (RF) benchmark. In this context, temporal predictions mean that we predict the load profile for buildings in which a sensor is placed, but for a time period into the past or future, for which we do not have measured data available; this allows us to test performance against a distribution shift of our data in time. Spatial predictions mean that we predict a load profile for buildings in which a sensor is not placed, but for a time period in which we do have load profiles available for other buildings; this allows us to test performance against a distribution shift of our data in space. Spatio-temporal predictions respectively refer to the most difficult problem of predicting load profiles for times and buildings, for which we do not have any load profiles available at all; this allows us to test performance against a distribution shift of our data in both time and space. We refer to these as the different prediction types that we evaluate. 
 
@@ -240,7 +240,7 @@ raw_data = data.import_consumption_profiles(HYPER, raw_data)
 
 
     
-![png](output_5_1.png)
+![png](images/markdown/output_5_1.png)
     
 
 
@@ -274,7 +274,7 @@ raw_data = data.import_meteo_data(HYPER, raw_data)
 
 
     
-![png](output_9_1.png)
+![png](images/markdown/output_9_1.png)
     
 
 
@@ -593,37 +593,37 @@ _ = gc.collect()
 
 
     
-![png](output_23_2.png)
+![png](images/markdown/output_23_2.png)
     
 
 
 
     
-![png](output_23_3.png)
+![png](images/markdown/output_23_3.png)
     
 
 
 
     
-![png](output_23_4.png)
+![png](images/markdown/output_23_4.png)
     
 
 
 
     
-![png](output_23_5.png)
+![png](images/markdown/output_23_5.png)
     
 
 
 
     
-![png](output_23_6.png)
+![png](images/markdown/output_23_6.png)
     
 
 
 
     
-![png](output_23_7.png)
+![png](images/markdown/output_23_7.png)
     
 
 
@@ -696,7 +696,7 @@ models = prediction.build_prediction_model(
 
 
     
-![png](output_25_3.png)
+![png](images/markdown/output_25_3.png)
     
 
 
@@ -712,7 +712,7 @@ models = prediction.build_prediction_model(
 
 
     
-![png](output_25_7.png)
+![png](images/markdown/output_25_7.png)
     
 
 
@@ -728,7 +728,7 @@ models = prediction.build_prediction_model(
 
 
     
-![png](output_25_11.png)
+![png](images/markdown/output_25_11.png)
     
 
 
@@ -744,7 +744,7 @@ models = prediction.build_prediction_model(
 
 
     
-![png](output_25_15.png)
+![png](images/markdown/output_25_15.png)
     
 
 
@@ -760,7 +760,7 @@ models = prediction.build_prediction_model(
 
 
     
-![png](output_25_19.png)
+![png](images/markdown/output_25_19.png)
     
 
 
@@ -870,7 +870,7 @@ prediction.save_encoder_and_predictor_weights(
 
 
     
-![png](output_27_1.png)
+![png](images/markdown/output_27_1.png)
     
 
 
@@ -971,31 +971,31 @@ _ = prediction.test_model(
 
 
     
-![png](output_29_6.png)
+![png](images/markdown/output_29_6.png)
     
 
 
 
     
-![png](output_29_7.png)
+![png](images/markdown/output_29_7.png)
     
 
 
 
     
-![png](output_29_8.png)
+![png](images/markdown/output_29_8.png)
     
 
 
 
     
-![png](output_29_9.png)
+![png](images/markdown/output_29_9.png)
     
 
 
 
     
-![png](output_29_10.png)
+![png](images/markdown/output_29_10.png)
     
 
 
@@ -2891,13 +2891,13 @@ activelearning.save_act_lrn_test_sample(
 
 
     
-![png](output_39_1.png)
+![png](images/markdown/output_39_1.png)
     
 
 
 
     
-![png](output_39_2.png)
+![png](images/markdown/output_39_2.png)
     
 
 
