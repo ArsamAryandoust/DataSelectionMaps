@@ -14,6 +14,7 @@ While remotely sensed data from e.g. satellite imagery is increasingly easy to a
 
 <img src="images/markdown/figure1.png">
 
+
 Given the aerial image of a building, the meteorological conditions in the region of that building and a time stamp, we want to predict the electric load profile of the building for the next 24 hours in 15 min steps. We start with a prediction model that has learnt this relationship for a few buildings and times. Our features are all remotely sensed and assumed to be available for every building and point in time at no cost. For every new load profile that we collect, we assume to experience some cost and are constrained in the total number of profiles that we can collect by some budget $n_{budget}$. Our goal is to collect further ground truth data, i.e. the electric load profiles at different times and buildings, so as to make the best possible predictions for buildings and times, for which we do not have load profiles available, without exceeding $n_{budget}$. We use load profiles from two different datasets: one containing 100 buildings, and one cointaining 400 buildings in Switzerland. In each experiment, we randomly select load profiles from 800 time stamps in 2014 to create the candidate data pool for our experiments. The figure below visualizes the modular DL prediction model architecture that we propose for solving this task; we call it embedding network. 
 
 <img src="images/markdown/figure2.png">
