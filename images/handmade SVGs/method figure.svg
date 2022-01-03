@@ -222,8 +222,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.0636576"
-     inkscape:cx="375.12072"
-     inkscape:cy="756.8225"
+     inkscape:cx="374.65064"
+     inkscape:cy="230.33728"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      inkscape:document-rotation="0"
@@ -231,8 +231,8 @@
      showguides="false"
      inkscape:window-width="1753"
      inkscape:window-height="1043"
-     inkscape:window-x="3028"
-     inkscape:window-y="0"
+     inkscape:window-x="2203"
+     inkscape:window-y="24"
      inkscape:window-maximized="0"
      inkscape:pagecheckerboard="0" />
   <metadata
@@ -1585,7 +1585,7 @@
        y="-11.776667" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:0.2;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="72.135155"
        y="10.045859"
        id="text2375"><tspan
@@ -1596,7 +1596,7 @@
          style="font-size:6.35px;fill:#ff0000;stroke-width:0.264583">ANN/CNN/RNN/CRNN</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:0.2;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:1;fill:#008000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="160.82399"
        y="8.7018328"
        id="text2375-9"><tspan
@@ -1607,7 +1607,7 @@
          style="font-size:6.35px;fill:#008000;stroke-width:0.264583">ANN/CNN</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:0.2;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:1;fill:#0000ff;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="30.358925"
        y="10.311116"
        id="text2375-2"><tspan
@@ -1618,7 +1618,7 @@
          style="font-size:6.35px;fill:#0000ff;stroke-width:0.264583">ANN</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:0.2;fill:#800080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;opacity:1;fill:#800080;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="136.51115"
        y="84.503197"
        id="text2375-2-7"><tspan
@@ -1626,10 +1626,10 @@
          id="tspan2373-5-4"
          x="136.51115"
          y="84.503197"
-         style="font-size:6.35px;fill:#800080;stroke-width:0.264583">ANN</tspan></text>
+         style="font-size:6.35px;opacity:1;fill:#800080;stroke-width:0.264583">ANN</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:8.46667px;line-height:0;font-family:sans-serif;text-align:center;text-anchor:middle;opacity:0.2;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       style="font-style:normal;font-weight:normal;font-size:8.46667px;line-height:0;font-family:sans-serif;text-align:center;text-anchor:middle;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="179.73314"
        y="133.61673"
        id="text2375-2-6"><tspan
@@ -1671,17 +1671,17 @@
     <rect
        style="opacity:0.1;fill:#ff0000;stroke-width:0.892762"
        id="rect1340-91"
-       width="65.774178"
+       width="65.774002"
        height="53.820156"
        x="72.645683"
-       y="1.1833322" />
+       y="1.183331" />
     <rect
        style="opacity:0.1;fill:#008000;stroke-width:0.884719"
        id="rect1340-2"
        width="64.594444"
        height="53.820156"
        x="142.181"
-       y="1.1833322" />
+       y="1.183332" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
