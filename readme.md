@@ -35,12 +35,6 @@ Our findings can have important implications for the energy transition to a carb
 
 ---
 
-## Citations
-
-For citations and more background on this work, refer to: **Aryandoust, A., Pfenninger, S. Active machine learning for spatio-temporal predictions using feature embedding. Preprint at https://arxiv.org/abs/2012.04407 (2020).**
-
----
-
 ## File overview
 
 * src: folder containing the source code for jupyter notebooks and python scripts
