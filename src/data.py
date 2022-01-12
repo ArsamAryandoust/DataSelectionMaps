@@ -1474,7 +1474,7 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
             HYPER.TRAIN_SPLIT,
             ' and TEST_SPLIT =',
             HYPER.TEST_SPLIT,
-            'the data is split in the following ration:',
+            'the data is split in the following ratio:',
         )
         print('---' * 38)
 

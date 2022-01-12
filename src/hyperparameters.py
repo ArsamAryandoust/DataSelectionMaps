@@ -156,8 +156,8 @@ class HyperParameter:
     # Decides on the splitting ratio between training and validation datasets.
     TRAIN_SPLIT = 0.3
 
-    # Decides how many buildings and how much of
-    # the time period to separate for testing.
+    # Decides how many buildings and how much of the time period to separate for 
+    # testing.
     TEST_SPLIT = 0.7
 
     # Decide in which frequency to do train-validation split. 1 equals 
@@ -290,7 +290,6 @@ class HyperParameter:
 
         """ Sets the weight initializer for tensorflow layers. """
 
-    
         # check if chosen hyper parameters are valid and correct if necessary
         if not self.PRIVATE_DATA_ACCESS:
 
