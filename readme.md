@@ -58,10 +58,14 @@ Our findings can have important implications for the energy transition to a carb
 
 ## Docker 
 
-Download this repository to your home directory. With your current working directory being this repository, run:
+Download this repository to your home directory, change your current working directory to this repository, and build main docker container by running:
 
-`docker build -t main Docker`
-
+```
+cd
+git clone https://github.com/ArsamAryandoust/DataSelectionMaps
+cd DataSelectionMaps
+docker build -t main Docker
+```
 For CPU computation, run:
 
 `docker run -v ~/DataSelectionMaps:/DataSelectionMaps main`
