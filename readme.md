@@ -17,7 +17,7 @@ An effective way to oppose global warming and mitigate climate change is to elec
 * src: folder containing the source code for jupyter notebooks and python scripts
 * tests: folder containing unit tests for source code
 * data: folder containing required data for running experiments
-* results experiments: folder containing published experimental results on original datasets
+* results public: folder containing published experimental results on original datasets
 * images: folder containing images for this readme and the manuscript
 * Docker: repository containing a Dockerfile for running hypothesis test inside a docker container
 * DockerNotebook: repository containing a Dockerfile for running notebooks inside a docker container
