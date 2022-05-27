@@ -1,6 +1,7 @@
 data/private
 
 results/
+results_bk/
 
 src/data_notebook.ipynb
 src/figures_notebook.ipynb
