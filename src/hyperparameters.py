@@ -253,7 +253,7 @@ class HyperParameter:
     HISTO_BINS = 100
 
     # decide whether you want to consider underlying RGB images in grey-scale
-    GREY_SCALE = False
+    GREY_SCALE = True
 
     # decide whether and how to downscale spatial imagery data. Choose any 
     # integer to the power of two or 'None'

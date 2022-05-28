@@ -506,25 +506,18 @@ def import_building_images(HYPER, raw_data, silent=False, plot=True):
             fig.suptitle('Exemplar building images (spatial features)')
 
             # plot images
-            if HYPER.GREY_SCALE:
-
-                ax[0, 0].imshow(building_imagery_data_list[0][:, :, 0])
-                ax[0, 1].imshow(building_imagery_data_list[1][:, :, 0])
-                ax[1, 0].imshow(building_imagery_data_list[2][:, :, 0])
-                ax[1, 1].imshow(building_imagery_data_list[3][:, :, 0])
-
-            else:
-
-                ax[0, 0].imshow(building_imagery_data_list[0])
-                ax[0, 1].imshow(building_imagery_data_list[1])
-                ax[1, 0].imshow(building_imagery_data_list[2])
-                ax[1, 1].imshow(building_imagery_data_list[3])
-
-            # add sub-titles
-            ax[0, 0].set_title(building_imagery_id_list[0], fontsize=20)
-            ax[0, 1].set_title(building_imagery_id_list[1], fontsize=20)
-            ax[1, 0].set_title(building_imagery_id_list[2], fontsize=20)
-            _ = ax[1, 1].set_title(building_imagery_id_list[3], fontsize=20)
+            for i_img in range(4):
+            
+                i_row = math.floor(i_img/2)
+                i_col = int(i_img % 2)
+                
+                if HYPER.GREY_SCALE:
+                    ax[i_row, i_col].imshow(building_imagery_data_list[i_img][:, :, 0])
+                else:
+                    ax[i_row, i_col].imshow(building_imagery_data_list[i_img])
+          
+                # add sub-titles
+                _ = ax[i_row, i_col].set_title(building_imagery_id_list[i_img], fontsize=20)
 
     else:
     

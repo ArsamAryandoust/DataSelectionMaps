@@ -367,7 +367,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
             # test AL with currently iterated AL variable and variant
-            AL_result =  activelearning.feature_embedding_AL(
+            AL_result = activelearning.feature_embedding_AL(
                 HYPER, 
                 pred_type, 
                 models, 
