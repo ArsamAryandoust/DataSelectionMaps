@@ -8,9 +8,6 @@ src/figures_notebook.ipynb
 src/.ipynb_checkpoints/
 src/__pycache__
 
-src/activelearning.pyc
-src/data.pyc
-src/hyperparameters.pyc
-src/prediction.pyc
+src/*.pyc
 
 .ninja_token

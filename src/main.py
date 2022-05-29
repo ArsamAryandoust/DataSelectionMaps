@@ -24,6 +24,7 @@ import hyperparameters
 import data
 import prediction
 import activelearning
+import saveresults
 
 
 # Set a randomization seed for better reproducability of results
@@ -412,7 +413,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
     PL_result_list.append(PL_result)
     
 # save active learning results
-activelearning.save_act_lrn_results(
+saveresults.save_act_lrn_results(
     HYPER, 
     raw_data, 
     RF_results, 
@@ -421,13 +422,13 @@ activelearning.save_act_lrn_results(
 )
 
 # save hyper parameters
-activelearning.save_hyper_params(
+saveresults.save_hyper_params(
     HYPER, 
     raw_data
 )
 
 # save the prediction models
-activelearning.save_act_lrn_models(
+saveresults.save_act_lrn_models(
     HYPER, 
     raw_data, 
     AL_result_list, 
@@ -435,7 +436,7 @@ activelearning.save_act_lrn_models(
 )
 
 # save the test data sample
-activelearning.save_act_lrn_test_sample(
+saveresults.save_act_lrn_test_sample(
     HYPER, 
     raw_data, 
     AL_result_list, 
