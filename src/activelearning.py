@@ -1139,7 +1139,6 @@ def test_AL_sequence_importance(
                 )
             )
         
-
         ### Load model weights ###
 
         # Note: if you load entire initial models, instead of their weights only,

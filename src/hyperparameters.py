@@ -21,7 +21,7 @@ class HyperParameter:
     PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = False
+    TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_ACT_LRN_RESULTS = True
