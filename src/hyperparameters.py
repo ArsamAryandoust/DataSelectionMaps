@@ -15,14 +15,13 @@ class HyperParameter:
     4. feature engineering
     """
 
-
     ### General parameters ###
     
     # Keep a value of False if you have access to public data only.
     PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
+    TEST_SEQUENCE_IMPORTANCE = False
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_ACT_LRN_RESULTS = True
@@ -73,16 +72,17 @@ class HyperParameter:
     ]
 
     # Decide how many iterations to go at max for batch active learning
-    MAX_ITER_ACT_LRN = 10
-
+    N_ITER_ACT_LRN = 10
 
     # Choose which share of candidate data pool we want to set as our entire
     # data budget for new queries form it
     DATA_BUDGET_ACT_LRN = 0.5
 
-    # Decide which share of the data we take on each iteration,
-    # before reusing encoders and newly arranging data points.
-    CAND_BATCH_SIZE_ACT_LRN = 0.1
+    # Choose how many clusters to build per point that we want to query. Choose
+    # a value between 0.1 and 1. A value of one means we build one cluster for
+    # each data point we query, and a value of 0.1 means we build one cluster for
+    # every ten data points we query. I.e. we query ten points per cluster.
+    POINTS_PER_CLUSTER_ACT_LRN = 0.1
 
     # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30
@@ -99,8 +99,8 @@ class HyperParameter:
     # points. Choose from KMeans
     METHOD_CLUSTERS = [KMeans]
 
-    # Choose None or a subsample size of uniformly chosen candidates.
-    CAND_SUBSAMPLE_ACT_LRN = None
+    # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
+    CAND_SUBSAMPLE_ACT_LRN = 0.3
     
     # Decide how many samples to save for each AL test
     SAVED_SAMPLES_ACT_LRN = 1000

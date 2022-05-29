@@ -99,13 +99,13 @@ def encode_features(
     n_datapoints = len(available_index_set_update)
     index_array = list(available_index_set_update)
 
-    # if we chose a subset of these data points, create a random sub-sample
+    # if we chose a subset of candidate data points, create a random sub-sample
     if (
         HYPER.CAND_SUBSAMPLE_ACT_LRN is not None and 
-        HYPER.CAND_SUBSAMPLE_ACT_LRN < n_datapoints
+        HYPER.CAND_SUBSAMPLE_ACT_LRN * dataset.n_datapoints < n_datapoints
     ):
 
-        n_datapoints = HYPER.CAND_SUBSAMPLE_ACT_LRN
+        n_datapoints = math.floor(HYPER.CAND_SUBSAMPLE_ACT_LRN * dataset.n_datapoints)
         index_array = random.sample(
             available_index_set_update, 
             n_datapoints
@@ -234,7 +234,7 @@ def encode_features(
 def compute_clusters(
     HYPER, 
     encoding, 
-    cand_batch_size, 
+    data_budget_per_iter, 
     silent=True
 ):
 
@@ -245,14 +245,19 @@ def compute_clusters(
     if not silent:
         # tell us what we are doing
         print(
-            'Creating clusters in encodings with n_clusters=', cand_batch_size
+            'Creating clusters in encodings with n_clusters=', data_budget_per_iter
         )
 
     # set the clustering method that we chose
     method = HYPER.METHOD_CLUSTERS[0]
+    
+    # calculate number of clusters
+    n_clusters = math.floor(
+        data_budget_per_iter * HYPER.POINTS_PER_CLUSTER_ACT_LRN
+    )
 
     # set number of clusters equal to passed or corrected value
-    clustering_method = method(n_clusters=cand_batch_size)
+    clustering_method = method(n_clusters=n_clusters)
 
     # cluster encodings
     clustering_method.fit(encoding)
@@ -350,29 +355,29 @@ def feature_embedding_AL(
     available data points 'train_data', it selects a batch of data points to 
     query labels for from the pool candidate data points 'candidate_dataset'. 
     Three different methods can be chosen through 'method' and set to 
-    'cluster-far', 'cluster-close' and 'cluster-rnd', each standing for another 
+    'max d_c', 'min d_c' and 'rnd d_c', each standing for another 
     variant of the algorithm:
-        1. 'cluster-far': maximizes embedding entropy
-        2. 'cluster-close': minimized embedding entropy
-        3. 'cluster-rnd': chooses points of random embedding entropy from each 
-        cluster uniformly
+        1. 'max d_c': maximizes embedding uncertainty
+        2. 'min d_c': minimizes embedding uncertainty
+        3. 'rnd d_c': randomizes embedding uncertainty from each cluster uniformly
     """
-
 
     ### Compute some initial values ###
 
-    # Compute total data budget
-    data_budget = math.floor(
+    # compute total data budget
+    data_budget_total = math.floor(
         HYPER.DATA_BUDGET_ACT_LRN * candidate_dataset.n_datapoints
     )
+    
+    # compute data budget available in each query iteration
+    data_budget_per_iter = math.floor(
+        data_budget_total / HYPER.N_ITER_ACT_LRN
+    )
 
-    # compute number of sensors and times in training data
+    # compute number of sensors and times in initial training data
     n_times_0 = len(np.unique(train_data.X_t, axis=0))
     n_sensors_0 = len(np.unique(train_data.X_s, axis=0))
     
-    # create a list of initial sensors to save in results
-    initial_sensors_list = list(set(train_data.X_s[:, 0]))
-
     # compute number of new times in candidate data    
     n_times_new = (
         len(
@@ -396,6 +401,9 @@ def feature_embedding_AL(
             )
         - n_sensors_0
     )
+    
+    # create a list of initial sensors for visualizing data selection maps later
+    initial_sensors_list = list(set(train_data.X_s[:, 0]))
 
     if not silent:
         # tell us what we are doing
@@ -431,32 +439,32 @@ def feature_embedding_AL(
         
         print(
             'data budget:                 {}/{} ({:.0%})'.format(
-                data_budget, 
+                data_budget_total, 
                 candidate_dataset.n_datapoints, 
                 HYPER.DATA_BUDGET_ACT_LRN
             )
         )
         
         print(
-            'used sensors:                {}'.format(
+            'known sensors:               {}'.format(
                 n_sensors_0
             )
         )
         
         print(
-            'new sensors to place:        {}'.format(
-                n_sensors_new
-            )
-        )
-        
-        print(
-            'used streaming times:        {}'.format(
+            'known streaming timestamps:  {}'.format(
                 n_times_0
             )
         )
         
         print(
-            'new streaming times to use:  {}'.format(
+            'candidate sensors:           {}'.format(
+                n_sensors_new
+            )
+        )
+        
+        print(
+            'candidate timestamps:        {}'.format(
                 n_times_new
             )
         )
@@ -485,8 +493,6 @@ def feature_embedding_AL(
 
     # initialize some counters
     data_counter = 0
-    cand_batch_size = 0
-    iteration_counter = 0
     sensor_counter = 0
     streamtime_counter = 0
     picked_cand_index_set = set()
@@ -503,12 +509,8 @@ def feature_embedding_AL(
     # Set starting time of algorithm
     t_start_0 = timeit.default_timer()
 
-    # start Active Learning and stop once data_counter reaches data_budget or
-    # iteration_counter reaches max iterations
-    while (
-        data_counter < data_budget and 
-        iteration_counter < HYPER.MAX_ITER_ACT_LRN
-    ):
+    # start Active Learning iterations
+    for iteration in range(HYPER.N_ITER_ACT_LRN):
 
         if not silent:
             # mark beginning of iteration
@@ -517,40 +519,45 @@ def feature_embedding_AL(
         # Set the start time
         t_start = timeit.default_timer()
         
-    
-        ### Set batch size ###
-
-        # compute the batch siz of this iteration
-        cand_batch_size = HYPER.CAND_BATCH_SIZE_ACT_LRN * data_budget
-
-        # if exceeding candidate data subsample, adjust batch size
+        # calculate candidate subsample size to compare vs batch query size
         if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
-            cand_batch_size = min(
-                cand_batch_size, 
-                HYPER.CAND_SUBSAMPLE_ACT_LRN
+            subsample_size = math.floor(
+                candidate_dataset.n_datapoints 
+                * HYPER.CAND_SUBSAMPLE_ACT_LRN 
             )
-
-        # if exceeding data budget, adjust batch size
-        cand_batch_size = min(
-            cand_batch_size, 
-            data_budget - data_counter
-        )
-
-        # transform cand_batch_siz to integer
-        cand_batch_size = int(cand_batch_size)
-        
         
         ### Choose candidates to query ###
-
+  
         if method == 'PL':
-            ### Choose queries according to PL (random) ###
+            ### Choose queries according to PL (random) *tested* ###
 
             # Create a random batch_index_array
             batch_index_list = random.sample(
                 available_index_set_update, 
-                cand_batch_size
+                data_budget_per_iter
             )
 
+        elif HYPER.CAND_SUBSAMPLE_ACT_LRN is not None and subsample_size <= data_budget_per_iter:
+           ### AL Exception: choose queries at random *tested* ###
+
+            # tell us what is going on
+            if not silent:
+                print('Attention! Candidate subsample is smaller than query batch')
+                print('subsample size:', subsample_size)
+                print('query batch size:', data_budget_per_iter)
+            
+            # set batch size equal to subsample size for printing later if not silent
+            data_budget_per_iter = int(subsample_size)
+            
+            # create a list of length data_budget_per_iter with zero information scores 
+            inf_score_list = [0] * data_budget_per_iter
+            
+            # Create a random batch_index_array
+            batch_index_list = random.sample(
+                available_index_set_update, 
+                data_budget_per_iter
+            )
+        
         else:
             ### Encode data points *tested* ###
 
@@ -568,7 +575,7 @@ def feature_embedding_AL(
             cand_labels, cand_centers, n_clusters = compute_clusters(
                 HYPER, 
                 candidate_encoded, 
-                cand_batch_size
+                data_budget_per_iter
             )
             
             ### Compute similarity values for each candidate ###
@@ -597,16 +604,16 @@ def feature_embedding_AL(
             batch_index_list = []
             inf_score_list = []
 
-            # iterates over the batch_index_array up to cand_batch_size
+            # iterates over the batch_index_array up to data_budget_per_iter
             cluster_batch_counter = 0
             
             # iterates over clusters until n_clusters, then resets to 0
-            # if cluster_batch_counter does not reached cand_batch_size
+            # if cluster_batch_counter does not reached data_budget_per_iter
             cluster_index = 0
             
             # iterate over all clusters until cluster_batch_counter reaches 
-            # cand_batch_size
-            while cluster_batch_counter < cand_batch_size:
+            # data_budget_per_iter
+            while cluster_batch_counter < data_budget_per_iter:
 
                 # get an array of indices matching to currently iterated cluster 
                 # ID
@@ -840,6 +847,10 @@ def feature_embedding_AL(
             else:
                 X_s1_new_val = 0
 
+            # update for controlling subsampling size vs. query batch size
+            # and for creating the right subsample size during feature encoding
+            candidate_dataset.n_datapoints = len(candidate_dataset.X_t_ord_1D)
+
         else:
             # create new validation data by copying from initial candidate data
             X_t_ord_1D_new_val = candidate_dataset.X_t_ord_1D
@@ -889,7 +900,7 @@ def feature_embedding_AL(
         )
         
         # keep track of loss histories
-        if data_counter == 0:
+        if iteration == 0:
             train_hist = train_hist_batch
             val_hist = val_hist_batch
         else:
@@ -902,19 +913,21 @@ def feature_embedding_AL(
         # get ending time
         t_end = timeit.default_timer()
 
-        # increment some counters
-        iteration_counter += 1
+        # increment data cointer
         data_counter += n_new_data
+        
+        # increment sensor counter
         sensor_counter = len(
             np.unique(train_data_update_X_s, axis=0)
         ) - n_sensors_0
         
+        # increment sensor counter
         streamtime_counter = len(
             np.unique(train_data_update_X_t, axis=0)
         ) - n_times_0
 
         # budget share that is eventually used
-        cand_data_usage = data_counter / data_budget
+        cand_data_usage = data_counter / data_budget_total
 
         # time in seconds that is used in this iteration
         iter_time = math.ceil(t_end - t_start)
@@ -965,7 +978,7 @@ def feature_embedding_AL(
             # tell us the numbers
             print(
                 'Iteration:                            {}'.format(
-                    iteration_counter
+                    iteration
                 )
             )
             
@@ -977,7 +990,7 @@ def feature_embedding_AL(
             
             print(
                 'Trained on candidate batch size:      {}'.format(
-                    cand_batch_size
+                    data_budget_per_iter
                 )
             )
             
@@ -995,7 +1008,7 @@ def feature_embedding_AL(
             
             print(
                 'Used data budget:                     {}/{} ({:.0%})'.format(
-                    data_counter, data_budget, cand_data_usage
+                    data_counter, data_budget_total, cand_data_usage
                 )
             )
 
@@ -1114,7 +1127,7 @@ def feature_embedding_AL(
         train_hist,
         val_hist,
         test_loss,
-        iteration_counter,
+        HYPER.N_ITER_ACT_LRN,
         iter_time,
         cand_data_usage,
         percent_sensors,
@@ -1196,45 +1209,26 @@ def test_AL_sequence_importance(
         ### Start AL algorithm with random sequence selection ###
 
         # initialize some values
-        data_budget = math.floor(
+        data_budget_total = math.floor(
             HYPER.DATA_BUDGET_ACT_LRN * candidate_dataset.n_datapoints
+        )
+        # compute data budget available in each query iteration
+        data_budget_per_iter = math.floor(
+            data_budget_total / HYPER.N_ITER_ACT_LRN
         )
         picked_cand_index_set = set()
         available_index_set_update = AL_results.picked_cand_index_set
         data_counter = 0
-
+        
         # start AL iterations
         for iteration in range(AL_results.iter_usage):
-
-            ### Set batch size ###
-
-            # compute the batch siz of this iteration
-            cand_batch_size = HYPER.CAND_BATCH_SIZE_ACT_LRN * data_budget
-
-            # if exceeding candidate data subsample, adjust batch siz
-            if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
-
-                cand_batch_size = min(
-                    cand_batch_size, 
-                    HYPER.CAND_SUBSAMPLE_ACT_LRN
-                )
-
-            # if exceeding data budget, adjust batch size
-            cand_batch_size = min(
-                cand_batch_size, 
-                data_budget - data_counter
-            )
-
-            # transform cand_batch_siz to integer
-            cand_batch_size = int(cand_batch_size)
-
 
             ### Choose training batch ###
 
             # Create a random splitting array
             batch_index_list = random.sample(
                 available_index_set_update, 
-                cand_batch_size
+                data_budget_per_iter
             )
             
             # update candidate indices and data counter
@@ -1318,7 +1312,6 @@ def test_AL_sequence_importance(
                 available_index_set_update = (
                     available_index_set_update - picked_cand_index_set
                 )
-
 
             ### Create (updated) validation data ###
             
@@ -2271,8 +2264,8 @@ def save_hyper_params(HYPER, raw_data):
                 )})
             )
             df_list.append(
-                pd.DataFrame({'max_iter_act_lrn': pd.Series(
-                    HYPER.MAX_ITER_ACT_LRN
+                pd.DataFrame({'n_iter_act_lrn': pd.Series(
+                    HYPER.N_ITER_ACT_LRN
                 )})
             )
             df_list.append(
@@ -2281,8 +2274,8 @@ def save_hyper_params(HYPER, raw_data):
                 )})
             )
             df_list.append(
-                pd.DataFrame({'cand_batch_size_act_lrn': pd.Series(
-                    HYPER.CAND_BATCH_SIZE_ACT_LRN
+                pd.DataFrame({'points_per_cluster_act_lrn': pd.Series(
+                    HYPER.POINTS_PER_CLUSTER_ACT_LRN
                 )})
             )
             df_list.append(
