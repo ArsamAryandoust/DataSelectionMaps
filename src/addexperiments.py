@@ -398,9 +398,9 @@ def test_AL_heuristic_importance(
             
         if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
             print(
-                '\nNote: heuristic importance tests not run as CAND_SUBSAMPLE_ACT_LRN',
-                'is not set to None. Please set this to None to have a benchmark,',
-                'then repeat the experiments.'
+                '\nNote: heuristic importance tests not run as CAND_SUBSAMPLE_ACT_LRN '
+                'is not set to None. Please set this to None to have a benchmark, '
+                'then repeat the experiments. '
             )
             
             # increment progress bar
@@ -450,8 +450,8 @@ def test_AL_heuristic_importance(
 
         if HYPER.POINTS_PER_CLUSTER_ACT_LRN != 1:
             print(
-                '\nNote: heuristic importance tests not run as POINTS_PER_CLUSTER_ACT_LRN',
-                'is not set to 1. Please set this to 1 to have a benchmark,',
+                '\nNote: heuristic importance tests not run as POINTS_PER_CLUSTER_ACT_LRN '
+                'is not set to 1. Please set this to 1 to have a benchmark, '
                 'then repeat the experiments.'
             )
             

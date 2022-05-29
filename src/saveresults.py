@@ -143,13 +143,13 @@ def save_act_lrn_results(
 
             n_iterations = HYPER.N_ITER_ACT_LRN
             t_iterations = PL_results['iter_time']
-            budget_usage = PL_results['budget_usage_hist']
-            sensor_usage = PL_results['sensor_usage_hist']
-            streamtime_usage = PL_results['streamtime_usage_hist']
+            budget_usage = PL_results['budget_usage_hist'][-1]
+            sensor_usage = PL_results['sensor_usage_hist'][-1]
+            streamtime_usage = PL_results['streamtime_usage_hist'][-1]
             test_loss = PL_results['test_loss']
 
-            train_loss = PL_results['train_hist']
-            val_loss = PL_results['val_hist']
+            train_hist = PL_results['train_hist']
+            val_hist = PL_results['val_hist']
 
             col_name_train = '{} {} {} train'.format(pred_type, None, 'PL')
             col_name_val = '{} {} {} val'.format(pred_type, None, 'PL')
@@ -165,8 +165,8 @@ def save_act_lrn_results(
                     test_loss,
                 ]
             )
-            entry_train = np.concatenate((meta_entry, train_loss))
-            entry_val = np.concatenate((meta_entry, val_loss))
+            entry_train = np.concatenate((meta_entry, train_hist))
+            entry_val = np.concatenate((meta_entry, val_hist))
 
             df_list.append(
                 pd.DataFrame({col_name_train: pd.Series(entry_train)})
@@ -192,8 +192,8 @@ def save_act_lrn_results(
             data = np.rint(100 * np.array(PL_results['budget_usage_hist'])).astype(int)
             sensors = np.rint(100 * np.array(PL_results['sensor_usage_hist'])).astype(int)
             streamtimes = np.rint(100 * np.array(PL_results['streamtime_usage_hist'])).astype(int)
-            val_loss = PL_results['val_loss_hist']
-            accuracy = np.rint(100 * (1 - np.minimum(1, val_loss / RF_loss))).astype(int)
+            val_loss_hist = PL_results['val_loss_hist']
+            accuracy = np.rint(100 * (1 - np.minimum(1, val_loss_hist / RF_loss))).astype(int)
             
             col_name_data = '{} {} {} data'.format(
                 pred_type, 
@@ -282,9 +282,9 @@ def save_act_lrn_results(
 
                     n_iterations = HYPER.N_ITER_ACT_LRN
                     t_iterations = AL_result['iter_time']
-                    budget_usage = AL_result['budget_usage_hist']
-                    sensor_usage = AL_result['sensor_usage_hist']
-                    streamtime_usage = AL_result['streamtime_usage_hist']
+                    budget_usage = AL_result['budget_usage_hist'][-1]
+                    sensor_usage = AL_result['sensor_usage_hist'][-1]
+                    streamtime_usage = AL_result['streamtime_usage_hist'][-1]
                     test_loss = AL_result['test_loss']
                     delta_loss_RF = AL_result['test_loss'] - RF_loss
                     delta_loss_PL = (
@@ -292,8 +292,8 @@ def save_act_lrn_results(
                         - PL_results['test_loss']
                     )
 
-                    train_loss = AL_result['train_hist']
-                    val_loss = AL_result['val_hist']
+                    train_hist = AL_result['train_hist']
+                    val_hist = AL_result['val_hist']
                     
                     col_name_train = '{} {} {} train'.format(
                         pred_type, 
@@ -319,8 +319,8 @@ def save_act_lrn_results(
                             delta_loss_PL,
                         ]
                     )
-                    entry_train = np.concatenate((meta_entry, train_loss))
-                    entry_val = np.concatenate((meta_entry, val_loss))
+                    entry_train = np.concatenate((meta_entry, train_hist))
+                    entry_val = np.concatenate((meta_entry, val_hist))
 
                     df_list.append(
                         pd.DataFrame({col_name_train: pd.Series(entry_train)})
@@ -379,8 +379,8 @@ def save_act_lrn_results(
                     data = np.rint(100 * np.array(AL_result['budget_usage_hist'])).astype(int)
                     sensors = np.rint(100 * np.array(AL_result['sensor_usage_hist'])).astype(int)
                     streamtimes = np.rint(100 * np.array(AL_result['streamtime_usage_hist'])).astype(int)
-                    val_loss = AL_result['val_loss_hist']
-                    accuracy = np.rint(100 * (1 - np.minimum(1, val_loss / RF_loss))).astype(int)
+                    val_loss_hist = AL_result['val_loss_hist']
+                    accuracy = np.rint(100 * (1 - np.minimum(1, val_loss_hist / RF_loss))).astype(int)
                     
                     col_name_data = '{} {} {} data'.format(
                         pred_type, 
