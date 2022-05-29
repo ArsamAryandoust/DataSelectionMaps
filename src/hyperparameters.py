@@ -24,7 +24,7 @@ class HyperParameter:
     TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether to test heuristics for the evaluated method.
-    TEST_HEURISTIC_IMPORTANCE = True
+    TEST_HEURISTIC_IMPORTANCE = False
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_ACT_LRN_RESULTS = True
@@ -61,7 +61,7 @@ class HyperParameter:
         #'X_s1',
         'X_st', 
         #'X_(t,s)', 
-        'Y_hat_(t,s)', 
+        #'Y_hat_(t,s)', 
         'Y_(t,s)'
     ]
 
@@ -85,10 +85,10 @@ class HyperParameter:
     # a value between 0.1 and 1. A value of one means we build one cluster for
     # each data point we query, and a value of 0.1 means we build one cluster for
     # every ten data points we query. I.e. we query ten points per cluster.
-    POINTS_PER_CLUSTER_ACT_LRN = 1
+    POINTS_PER_CLUSTER_ACT_LRN = 0.1
     
     # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
-    CAND_SUBSAMPLE_ACT_LRN = None
+    CAND_SUBSAMPLE_ACT_LRN = 0.5
 
     # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30

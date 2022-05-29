@@ -77,7 +77,7 @@ def test_AL_sequence_importance(
             data_budget_total / HYPER.N_ITER_ACT_LRN
         )
         picked_cand_index_set = set()
-        available_index_set_update = AL_results.picked_cand_index_set
+        available_index_set_update = AL_results['picked_cand_index_set']
         data_counter = 0
         
         # start AL iterations
@@ -328,9 +328,9 @@ def test_AL_sequence_importance(
             loss_function 
         )
 
-        AL_results.seqimportance_train_loss = train_hist
-        AL_results.seqimportance_val_loss = val_hist
-        AL_results.seqimportance_test_loss = test_loss
+        AL_results['seqimportance_train_loss'] = train_hist
+        AL_results['seqimportance_val_loss'] = val_hist
+        AL_results['seqimportance_test_loss'] = test_loss
 
         if not silent: 
             # Indicate termination of execute
@@ -431,19 +431,19 @@ def test_AL_heuristic_importance(
                 
                 # Add the heuristic results to your results object
                 if index == 0:
-                    AL_results.subsample01_train_loss = heuristic_results.train_loss
-                    AL_results.subsample01_val_loss = heuristic_results.val_loss
-                    AL_results.subsample01_test_loss = heuristic_results.test_loss
+                    AL_results['subsample01_train_loss'] = heuristic_results['train_loss']
+                    AL_results['subsample01_val_loss'] = heuristic_results['val_loss']
+                    AL_results['subsample01_test_loss'] = heuristic_results['test_loss']
                     
                 elif index == 1:
-                    AL_results.subsample05_train_loss = heuristic_results.train_loss
-                    AL_results.subsample05_val_loss = heuristic_results.val_loss
-                    AL_results.subsample05_test_loss = heuristic_results.test_loss
+                    AL_results['subsample05_train_loss'] = heuristic_results['train_loss']
+                    AL_results['subsample05_val_loss'] = heuristic_results['val_loss']
+                    AL_results['subsample05_test_loss'] = heuristic_results['test_loss']
                     
                 else:
-                    AL_results.subsample08_train_loss = heuristic_results.train_loss
-                    AL_results.subsample08_val_loss = heuristic_results.val_loss
-                    AL_results.subsample08_test_loss = heuristic_results.test_loss
+                    AL_results['subsample08_train_loss'] = heuristic_results['train_loss']
+                    AL_results['subsample08_val_loss'] = heuristic_results['val_loss']
+                    AL_results['subsample08_test_loss'] = heuristic_results['test_loss']
                     
                 # increment progress bar
                 progbar_heuimportance.add(1)
@@ -483,25 +483,25 @@ def test_AL_heuristic_importance(
                 
                 # Add the heuristic results to your results object
                 if index == 0:
-                    AL_results.pointspercluster01_train_loss = heuristic_results.train_loss
-                    AL_results.pointspercluster01_val_loss = heuristic_results.val_loss
-                    AL_results.pointspercluster01_test_loss = heuristic_results.test_loss
+                    AL_results['pointspercluster01_train_loss'] = heuristic_results['train_loss']
+                    AL_results['pointspercluster01_val_loss'] = heuristic_results['val_loss']
+                    AL_results['pointspercluster01_test_loss'] = heuristic_results['test_loss']
                     
                 elif index == 1:
-                    AL_results.pointspercluster05_train_loss = heuristic_results.train_loss
-                    AL_results.pointspercluster05_val_loss = heuristic_results.val_loss
-                    AL_results.pointspercluster05_test_loss = heuristic_results.test_loss
+                    AL_results['pointspercluster05_train_loss'] = heuristic_results['train_loss']
+                    AL_results['pointspercluster05_val_loss'] = heuristic_results['val_loss']
+                    AL_results['pointspercluster05_test_loss'] = heuristic_results['test_loss']
                     
                 else:
-                    AL_results.pointspercluster08_train_loss = heuristic_results.train_loss
-                    AL_results.pointspercluster08_val_loss = heuristic_results.val_loss
-                    AL_results.pointspercluster08_test_loss = heuristic_results.test_loss
+                    AL_results['pointspercluster08_train_loss'] = heuristic_results['train_loss']
+                    AL_results['pointspercluster08_val_loss'] = heuristic_results['val_loss']
+                    AL_results['pointspercluster08_test_loss'] = heuristic_results['test_loss']
                     
                 # increment progress bar
                 progbar_heuimportance.add(1)
                     
-    # reset original hyper parameter values
-    HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
-    HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
+        # reset original hyper parameter values
+        HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
+        HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
         
     return AL_results

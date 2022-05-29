@@ -1068,26 +1068,28 @@ def feature_embedding_AL(
     ### Create a results object ###
 
     # create an ActLrnResults object and pass the results for compactness
-    results = saveresults.ActLrnResults(
-        train_hist,
-        val_hist,
-        test_loss,
-        iter_time,
-        cand_data_usage,
-        percent_sensors,
-        percent_streamtimes,
-        models.prediction_model,
-        test_data,
-        picked_cand_index_set,
-        picked_times_index_hist,
-        picked_spaces_index_hist,
-        picked_inf_score_hist,
-        budget_usage_hist,
-        iter_time_hist,
-        sensor_usage_hist,
-        streamtime_usage_hist,
-        val_loss_hist,
-        initial_sensors_list
+    results = dict(
+        {
+            'train_hist': train_hist,
+            'val_hist': val_hist,
+            'test_loss': test_loss,
+            'iter_time': iter_time,
+            'cand_data_usage': cand_data_usage,
+            'percent_sensors': percent_sensors,
+            'percent_streamtimes': percent_streamtimes,
+            'prediction_model': models.prediction_model,
+            'test_data': test_data,
+            'picked_cand_index_set': picked_cand_index_set,
+            'picked_times_index_hist': picked_times_index_hist,
+            'picked_spaces_index_hist': picked_spaces_index_hist,
+            'picked_inf_score_hist': picked_inf_score_hist,
+            'budget_usage_hist': budget_usage_hist,
+            'iter_time_hist': iter_time_hist,
+            'sensor_usage_hist': sensor_usage_hist,
+            'streamtime_usage_hist': streamtime_usage_hist,
+            'val_loss_hist': val_loss_hist,
+            'initial_sensors_list': initial_sensors_list
+        }
     )
 
     return results
