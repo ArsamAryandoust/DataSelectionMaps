@@ -5,6 +5,7 @@ import gc
 import os
 import random
 import math
+
 import numpy as np
 
 # decide which GPU(s) should be seen by CUDA before importing tf.
@@ -25,6 +26,7 @@ import data
 import prediction
 import activelearning
 import saveresults
+import addexperiments
 
 
 # Set a randomization seed for better reproducability of results
@@ -307,7 +309,6 @@ prediction.save_encoder_and_predictor_weights(
 )
 
 
-
 ### 3. Active learning ###
 
 # initialize hyper parameters for AL
@@ -385,7 +386,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
             )
             
             # test sequence importance for iterated AL variable and variant
-            AL_result = activelearning.test_AL_sequence_importance(
+            AL_result = addexperiments.test_AL_sequence_importance(
                 HYPER, 
                 pred_type, 
                 models, 

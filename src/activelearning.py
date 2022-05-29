@@ -1,16 +1,16 @@
 import math
 import timeit
-
-import numpy as np
-import scipy
-import tensorflow as tf
 import random
 
+import numpy as np
+import tensorflow as tf
+import scipy
+
+from sklearn.preprocessing import OrdinalEncoder
 from data import Dataset
 from prediction import train_model, test_model
 from prediction import load_encoder_and_predictor_weights
 from prediction import initialize_optimizer
-from sklearn.preprocessing import OrdinalEncoder
 import saveresults
 
 
