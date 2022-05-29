@@ -8,6 +8,7 @@ from data import Dataset
 from prediction import train_model, test_model
 from prediction import load_encoder_and_predictor_weights
 
+import activelearning
 
 def test_AL_sequence_importance(
     HYPER,
@@ -31,7 +32,7 @@ def test_AL_sequence_importance(
     if HYPER.TEST_SEQUENCE_IMPORTANCE:
         if not silent:
             # create a progress bar for training
-            progbar_seqimportance = tf.keras.utils.Progbar(AL_results.iter_usage)
+            progbar_seqimportance = tf.keras.utils.Progbar(HYPER.N_ITER_ACT_LRN)
 
             # tell us what we are doing
             print('Testing sequence importance for')
@@ -80,7 +81,7 @@ def test_AL_sequence_importance(
         data_counter = 0
         
         # start AL iterations
-        for iteration in range(AL_results.iter_usage):
+        for iteration in range(HYPER.N_ITER_ACT_LRN):
 
             ### Choose training batch ###
 
@@ -338,4 +339,161 @@ def test_AL_sequence_importance(
     return AL_results
 
 
+def test_AL_heuristic_importance(
+    HYPER,
+    pred_type,
+    models,
+    raw_data,
+    train_data,
+    candidate_dataset,
+    loss_object,
+    optimizer,
+    mean_loss,
+    loss_function,
+    AL_results,
+    method,
+    AL_variable=None,
+    silent=True
+):
+    
+    """ Tests heuristic methods for passed AL results """
 
+    if HYPER.TEST_HEURISTIC_IMPORTANCE:
+    
+        # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
+        # and POINTS_PER_CLUSTER_ACT_LRN
+        cand_subsample_test_list = [0.1, 0.5, 0.8]
+        points_percluster_test_list = [0.1, 0.5, 0.8]
+        
+        if not silent:
+            # create a progress bar for training
+            progbar_heuimportance = tf.keras.utils.Progbar(
+                len(cand_subsample_test_list) + len(points_percluster_test_list)
+            )
+
+            # tell us what we are doing
+            print('Testing heuristic importance for')
+            
+            print(
+                'prediction type:                      {}'.format(
+                    pred_type
+                )
+            )
+            
+            print(
+                'query variable:                       {}'.format(
+                    AL_variable
+                )
+            )
+            
+            print(
+                'query variant:                        {}'.format(
+                    method
+                )
+            )
+            
+        if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
+            print(
+                '\nNote: heuristic importance tests not run as CAND_SUBSAMPLE_ACT_LRN',
+                'is not set to None. Please set this to None to have a benchmark,',
+                'then repeat the experiments.'
+            )
+            
+            # increment progress bar
+            progbar_heuimportance.add(len(cand_subsample_test_list))
+        else:
+            
+            # iterate over heuristic values
+            for index, heuristic_value in enumerate(cand_subsample_test_list):
+            
+                # set the hyper parameter to currently iterated value
+                HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
+                
+                # create heuristic results
+                heuristic_results = activelearning.feature_embedding_AL(
+                    HYPER, 
+                    pred_type, 
+                    models, 
+                    raw_data, 
+                    train_data, 
+                    candidate_dataset,
+                    loss_object, 
+                    optimizer, 
+                    mean_loss,
+                    loss_function,
+                    method, 
+                    AL_variable=AL_variable, 
+                )
+                
+                # Add the heuristic results to your results object
+                if index == 0:
+                    AL_results.subsample01_train_loss = heuristic_results.train_loss
+                    AL_results.subsample01_val_loss = heuristic_results.val_loss
+                    AL_results.subsample01_test_loss = heuristic_results.test_loss
+                    
+                elif index == 1:
+                    AL_results.subsample05_train_loss = heuristic_results.train_loss
+                    AL_results.subsample05_val_loss = heuristic_results.val_loss
+                    AL_results.subsample05_test_loss = heuristic_results.test_loss
+                    
+                else:
+                    AL_results.subsample08_train_loss = heuristic_results.train_loss
+                    AL_results.subsample08_val_loss = heuristic_results.val_loss
+                    AL_results.subsample08_test_loss = heuristic_results.test_loss
+                    
+                # increment progress bar
+                progbar_heuimportance.add(1)
+
+        if HYPER.POINTS_PER_CLUSTER_ACT_LRN != 1:
+            print(
+                '\nNote: heuristic importance tests not run as POINTS_PER_CLUSTER_ACT_LRN',
+                'is not set to 1. Please set this to 1 to have a benchmark,',
+                'then repeat the experiments.'
+            )
+            
+            # increment progress bar
+            progbar_heuimportance.add(len(points_percluster_test_list))
+        else:
+            
+            # iterate over heuristic values
+            for index, heuristic_value in enumerate(points_percluster_test_list):
+            
+                # set the hyper parameter to currently iterated value
+                HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
+                
+                # create heuristic results
+                heuristic_results = activelearning.feature_embedding_AL(
+                    HYPER, 
+                    pred_type, 
+                    models, 
+                    raw_data, 
+                    train_data, 
+                    candidate_dataset,
+                    loss_object, 
+                    optimizer, 
+                    mean_loss,
+                    loss_function,
+                    method, 
+                    AL_variable=AL_variable, 
+                )
+                
+                # Add the heuristic results to your results object
+                if index == 0:
+                    AL_results.pointspercluster01_train_loss = heuristic_results.train_loss
+                    AL_results.pointspercluster01_val_loss = heuristic_results.val_loss
+                    AL_results.pointspercluster01_test_loss = heuristic_results.test_loss
+                    
+                elif index == 1:
+                    AL_results.pointspercluster05_train_loss = heuristic_results.train_loss
+                    AL_results.pointspercluster05_val_loss = heuristic_results.val_loss
+                    AL_results.pointspercluster05_test_loss = heuristic_results.test_loss
+                    
+                else:
+                    AL_results.pointspercluster08_train_loss = heuristic_results.train_loss
+                    AL_results.pointspercluster08_val_loss = heuristic_results.val_loss
+                    AL_results.pointspercluster08_test_loss = heuristic_results.test_loss
+                    
+                # increment progress bar
+                progbar_heuimportance.add(1)
+                    
+    return AL_results

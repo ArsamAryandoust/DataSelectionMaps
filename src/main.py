@@ -358,7 +358,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
     
     # create empty list for saving results of corresponding AL variable
     var_result_list = []
-
+    
     # iterate over all sort variables that are chosen to be considered
     for query_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
     
@@ -380,7 +380,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                 optimizer, 
                 mean_loss,
                 loss_function,
-                method=method, 
+                method, 
                 AL_variable=query_variable, 
                 silent=False
             )
@@ -398,7 +398,25 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                 mean_loss,
                 loss_function, 
                 AL_result,
-                method=method, 
+                method, 
+                AL_variable=query_variable, 
+                silent=False
+            )
+            
+            # test heuristic methods for iterated AL variable and variant
+            AL_result = addexperiments.test_AL_heuristic_importance(
+                HYPER, 
+                pred_type, 
+                models, 
+                raw_data, 
+                training_data, 
+                dataset, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                AL_result,
+                method, 
                 AL_variable=query_variable, 
                 silent=False
             )

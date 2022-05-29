@@ -23,6 +23,9 @@ class HyperParameter:
     # Decide whether to test the sequence importance of queried candidates.
     TEST_SEQUENCE_IMPORTANCE = True
     
+    # Decide whether to test heuristics for the evaluated method.
+    TEST_HEURISTIC_IMPORTANCE = True
+    
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_ACT_LRN_RESULTS = True
     SAVE_HYPER_PARAMS = True
@@ -50,16 +53,7 @@ class HyperParameter:
         #'spatial',
         'spatio-temporal'
     ]
-
-    # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
-    # 'min d_c', 'max d_c' and 'avg_dc'.
-    QUERY_VARIANTS_ACT_LRN = [
-        'rnd d_c', 
-        #'min d_c', 
-        'max d_c', 
-        #'avg d_c'
-    ]
-
+    
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
@@ -69,6 +63,15 @@ class HyperParameter:
         #'X_(t,s)', 
         'Y_hat_(t,s)', 
         'Y_(t,s)'
+    ]
+
+    # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
+    # 'min d_c', 'max d_c' and 'avg_dc'.
+    QUERY_VARIANTS_ACT_LRN = [
+        'rnd d_c', 
+        #'min d_c', 
+        'max d_c', 
+        #'avg d_c'
     ]
 
     # Decide how many iterations to go at max for batch active learning
@@ -82,7 +85,10 @@ class HyperParameter:
     # a value between 0.1 and 1. A value of one means we build one cluster for
     # each data point we query, and a value of 0.1 means we build one cluster for
     # every ten data points we query. I.e. we query ten points per cluster.
-    POINTS_PER_CLUSTER_ACT_LRN = 0.1
+    POINTS_PER_CLUSTER_ACT_LRN = 0.9
+    
+    # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
+    CAND_SUBSAMPLE_ACT_LRN = 0.9
 
     # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30
@@ -99,9 +105,6 @@ class HyperParameter:
     # points. Choose from KMeans
     METHOD_CLUSTERS = [KMeans]
 
-    # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
-    CAND_SUBSAMPLE_ACT_LRN = 0.3
-    
     # Decide how many samples to save for each AL test
     SAVED_SAMPLES_ACT_LRN = 1000
 

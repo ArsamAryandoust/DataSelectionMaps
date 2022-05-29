@@ -16,7 +16,6 @@ class ActLrnResults:
         train_loss,
         val_loss,
         test_loss,
-        iter_usage,
         iter_time,
         budget_usage,
         sensor_usage,
@@ -38,7 +37,6 @@ class ActLrnResults:
         self.train_loss = train_loss
         self.val_loss = val_loss
         self.test_loss = test_loss
-        self.iter_usage = iter_usage
         self.iter_time = iter_time
         self.budget_usage = budget_usage
         self.sensor_usage = sensor_usage
@@ -395,7 +393,7 @@ def save_act_lrn_results(
             # get PL results
             PL_results = PL_result_list[pred_index]
 
-            n_iterations = PL_results.iter_usage
+            n_iterations = HYPER.N_ITER_ACT_LRN
             t_iterations = PL_results.iter_time
             budget_usage = PL_results.budget_usage
             sensor_usage = PL_results.sensor_usage
@@ -536,7 +534,7 @@ def save_act_lrn_results(
 
                     AL_result = method_result_list[index_method]
 
-                    n_iterations = AL_result.iter_usage
+                    n_iterations = HYPER.N_ITER_ACT_LRN
                     t_iterations = AL_result.iter_time
                     budget_usage = AL_result.budget_usage
                     sensor_usage = AL_result.sensor_usage
