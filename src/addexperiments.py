@@ -360,6 +360,10 @@ def test_AL_heuristic_importance(
 
     if HYPER.TEST_HEURISTIC_IMPORTANCE:
     
+        # save original hyper parameter values
+        original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
+        original_pointspercluster = HYPER.POINTS_PER_CLUSTER_ACT_LRN
+        
         # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
         # and POINTS_PER_CLUSTER_ACT_LRN
         cand_subsample_test_list = [0.1, 0.5, 0.8]
@@ -496,4 +500,8 @@ def test_AL_heuristic_importance(
                 # increment progress bar
                 progbar_heuimportance.add(1)
                     
+    # reset original hyper parameter values
+    HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
+    HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
+        
     return AL_results

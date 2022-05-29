@@ -85,10 +85,10 @@ class HyperParameter:
     # a value between 0.1 and 1. A value of one means we build one cluster for
     # each data point we query, and a value of 0.1 means we build one cluster for
     # every ten data points we query. I.e. we query ten points per cluster.
-    POINTS_PER_CLUSTER_ACT_LRN = 0.9
+    POINTS_PER_CLUSTER_ACT_LRN = 1
     
     # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
-    CAND_SUBSAMPLE_ACT_LRN = 0.9
+    CAND_SUBSAMPLE_ACT_LRN = None
 
     # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30
