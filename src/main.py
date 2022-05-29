@@ -323,10 +323,8 @@ dataset_list = [
 ### 3.4 Batching algorithm ###
 
 # create empty lists to add results
-AL_result_list = []
-PL_result_list = []
-#AL_result_list = dict()
-#PL_result_list = dict()
+AL_result_list = dict()
+PL_result_list = dict()
 
 # iterate over all prediction types
 for pred_type in HYPER.PRED_LIST_ACT_LRN:
@@ -358,15 +356,13 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
     )
     
     # create empty list for saving results of corresponding AL variable
-    var_result_list = []
-    #var_result_list = dict()
+    var_result_list = dict()
     
     # iterate over all sort variables that are chosen to be considered
     for query_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
     
         # empty list for savings results of correspnding AL variant
-        method_result_list = []
-        #method_result_list = dict()
+        method_result_list = dict()
 
         # iterate over all methods that are chosen to be considered
         for method in HYPER.QUERY_VARIANTS_ACT_LRN:
@@ -425,18 +421,14 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
             )
 
             # add results to method_result_list
-            method_result_list.append(AL_result)
-            #method_result_list[method] = AL_result
+            method_result_list[method] = AL_result
          
         # add results to var_result_list
-        var_result_list.append(method_result_list)
-        #var_result_list[query_variable] = method_result_list
+        var_result_list[query_variable] = method_result_list
     
     # add results to total result_list and random_result_list
-    AL_result_list.append(var_result_list)
-    PL_result_list.append(PL_result)
-    #AL_result_list[pred_type] = var_result_list
-    #PL_result_list[pred_type] = PL_result
+    AL_result_list[pred_type] = var_result_list
+    PL_result_list[pred_type] = PL_result
 
 
 # save results

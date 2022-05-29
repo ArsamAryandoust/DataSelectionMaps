@@ -56,13 +56,13 @@ def save_act_lrn_models(
 
     if HYPER.SAVE_ACT_LRN_MODELS:
 
-        for index_pred, pred_type in enumerate(HYPER.PRED_LIST_ACT_LRN):
+        for pred_type in HYPER.PRED_LIST_ACT_LRN:
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[index_pred]
+            var_result_list = AL_result_list[pred_type]
 
             # get random results
-            PL_results = PL_result_list[index_pred]
+            PL_results = PL_result_list[pred_type]
 
             prediction_model = PL_results['prediction_model']
 
@@ -77,17 +77,15 @@ def save_act_lrn_models(
             # save currently iterated model
             prediction_model.save(path_to_model)
 
-            for index_var, AL_variable in enumerate(HYPER.QUERY_VARIABLES_ACT_LRN):
+            for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
 
                 # get variable result list
-                method_result_list = var_result_list[index_var]
+                method_result_list = var_result_list[AL_variable]
 
-                for index_method, method in enumerate(
-                    HYPER.QUERY_VARIANTS_ACT_LRN
-                ):
+                for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
                     # get result object and prediction model
-                    AL_result = method_result_list[index_method]
+                    AL_result = method_result_list[method]
                     prediction_model = AL_result['prediction_model']
 
                     # create the full path for saving currently iterated model
@@ -120,7 +118,7 @@ def save_act_lrn_results(
 
     if HYPER.SAVE_ACT_LRN_RESULTS:
 
-        for pred_index, pred_type in enumerate(HYPER.PRED_LIST_ACT_LRN):
+        for pred_type in HYPER.PRED_LIST_ACT_LRN:
             saving_path = raw_data.path_to_AL_results + pred_type + '/'
             
             if not os.path.exists(saving_path):
@@ -136,12 +134,12 @@ def save_act_lrn_results(
             RF_loss = RF_results[pred_type]
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[pred_index]
+            var_result_list = AL_result_list[pred_type]
 
             ### Save PL results ###
             
             # get PL results
-            PL_results = PL_result_list[pred_index]
+            PL_results = PL_result_list[pred_type]
 
             n_iterations = HYPER.N_ITER_ACT_LRN
             t_iterations = PL_results['iter_time']
@@ -273,16 +271,14 @@ def save_act_lrn_results(
                 )
             
             
-            for index_var, AL_variable in enumerate(HYPER.QUERY_VARIABLES_ACT_LRN):
+            for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
 
                 ### Save main AL results ### 
-                method_result_list = var_result_list[index_var]
+                method_result_list = var_result_list[AL_variable]
 
-                for index_method, method in enumerate(
-                    HYPER.QUERY_VARIANTS_ACT_LRN
-                ):
+                for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-                    AL_result = method_result_list[index_method]
+                    AL_result = method_result_list[method]
 
                     n_iterations = HYPER.N_ITER_ACT_LRN
                     t_iterations = AL_result['iter_time']
@@ -515,7 +511,7 @@ def save_hyper_params(HYPER, raw_data):
 
     if HYPER.SAVE_HYPER_PARAMS:
 
-        for pred_index, pred_type in enumerate(HYPER.PRED_LIST_ACT_LRN):
+        for pred_type in HYPER.PRED_LIST_ACT_LRN:
             saving_path = raw_data.path_to_AL_results + pred_type + '/'
             
             if not os.path.exists(saving_path):
@@ -867,17 +863,17 @@ def save_act_lrn_test_sample(
             print('Feature not available')
             return
 
-        for index_pred, pred_type in enumerate(HYPER.PRED_LIST_ACT_LRN):
+        for pred_type in HYPER.PRED_LIST_ACT_LRN:
             saving_path = raw_data.path_to_AL_test_samples + pred_type + '/'
             
             if not os.path.exists(saving_path):
                 os.mkdir(saving_path)
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[index_pred]
+            var_result_list = AL_result_list[pred_type]
 
             # get random results
-            PL_results = PL_result_list[index_pred]
+            PL_results = PL_result_list[pred_type]
             test_data = PL_results['test_data']
 
             X_t = test_data.X_t
@@ -898,15 +894,13 @@ def save_act_lrn_test_sample(
                 command = 'np.save(path_to_var, ' + var + ')'
                 exec(command)
 
-            for index_var, AL_variable in enumerate(HYPER.QUERY_VARIABLES_ACT_LRN):
+            for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
                 # get variable result list
-                method_result_list = var_result_list[index_var]
+                method_result_list = var_result_list[AL_variable]
 
-                for index_method, method in enumerate(
-                    HYPER.QUERY_VARIANTS_ACT_LRN
-                ):
+                for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-                    AL_result = method_result_list[index_method]
+                    AL_result = method_result_list[method]
                     test_data = AL_result['test_data']
 
                     X_t = test_data.X_t
