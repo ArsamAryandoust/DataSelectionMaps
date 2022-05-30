@@ -6,9 +6,9 @@ import pandas as pd
 def saveallresults(
     HYPER,
     raw_data,
-    RF_results, 
-    AL_result_list, 
-    PL_result_list
+    RF_result, 
+    AL_result_dict, 
+    PL_result_dict
 
 ):
 
@@ -18,9 +18,9 @@ def saveallresults(
     save_act_lrn_results(
         HYPER, 
         raw_data, 
-        RF_results, 
-        AL_result_list, 
-        PL_result_list
+        RF_result, 
+        AL_result_dict, 
+        PL_result_dict
     )
 
     # save hyper parameters
@@ -33,23 +33,24 @@ def saveallresults(
     save_act_lrn_models(
         HYPER, 
         raw_data, 
-        AL_result_list, 
-        PL_result_list
+        AL_result_dict, 
+        PL_result_dict
     )
 
     # save the test data sample
     save_act_lrn_test_sample(
         HYPER, 
         raw_data, 
-        AL_result_list, 
-        PL_result_list
+        AL_result_dict, 
+        PL_result_dict
     )
+
 
 def save_act_lrn_models(
     HYPER, 
     raw_data, 
-    AL_result_list, 
-    PL_result_list
+    AL_result_dict, 
+    PL_result_dict
 ):
 
     """ Saves the actively trained prediction models. """
@@ -59,12 +60,12 @@ def save_act_lrn_models(
         for pred_type in HYPER.PRED_LIST_ACT_LRN:
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[pred_type]
+            var_result_dict = AL_result_dict[pred_type]
 
             # get random results
-            PL_results = PL_result_list[pred_type]
+            PL_result = PL_result_dict[pred_type]
 
-            prediction_model = PL_results['prediction_model']
+            prediction_model = PL_result['prediction_model']
 
             # create the full path for saving random  prediction model
             saving_path = raw_data.path_to_AL_models + pred_type + '/'
@@ -80,12 +81,12 @@ def save_act_lrn_models(
             for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
 
                 # get variable result list
-                method_result_list = var_result_list[AL_variable]
+                method_result_dict = var_result_dict[AL_variable]
 
                 for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
                     # get result object and prediction model
-                    AL_result = method_result_list[method]
+                    AL_result = method_result_dict[method]
                     prediction_model = AL_result['prediction_model']
 
                     # create the full path for saving currently iterated model
@@ -104,9 +105,9 @@ def save_act_lrn_models(
 def save_act_lrn_results(
     HYPER, 
     raw_data, 
-    RF_results, 
-    AL_result_list, 
-    PL_result_list
+    RF_result, 
+    AL_result_dict, 
+    PL_result_dict
 ):
 
     """ Saves the active learning results, including number of iterations used, 
@@ -131,25 +132,26 @@ def save_act_lrn_results(
             df_list = []
 
             # baseline results
-            RF_loss = RF_results[pred_type]
+            RF_loss = RF_result[pred_type]
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[pred_type]
+            var_result_dict = AL_result_dict[pred_type]
 
             ### Save PL results ###
             
             # get PL results
-            PL_results = PL_result_list[pred_type]
+            PL_result = PL_result_dict[pred_type]
 
             n_iterations = HYPER.N_ITER_ACT_LRN
-            t_iterations = PL_results['iter_time']
-            budget_usage = PL_results['budget_usage_hist'][-1]
-            sensor_usage = PL_results['sensor_usage_hist'][-1]
-            streamtime_usage = PL_results['streamtime_usage_hist'][-1]
-            test_loss = PL_results['test_loss']
+            t_total = PL_result['t_total']
+            t_iter_avg = sum(PL_result['iter_time_hist']) / len(PL_result['iter_time_hist'])
+            budget_usage = PL_result['budget_usage_hist'][-1]
+            sensor_usage = PL_result['sensor_usage_hist'][-1]
+            streamtime_usage = PL_result['streamtime_usage_hist'][-1]
+            test_loss = PL_result['test_loss']
 
-            train_hist = PL_results['train_hist']
-            val_hist = PL_results['val_hist']
+            train_hist = PL_result['train_hist']
+            val_hist = PL_result['val_hist']
 
             col_name_train = '{} {} {} train'.format(pred_type, None, 'PL')
             col_name_val = '{} {} {} val'.format(pred_type, None, 'PL')
@@ -157,7 +159,8 @@ def save_act_lrn_results(
             meta_entry = np.array(
                 [
                     n_iterations,
-                    t_iterations,
+                    t_total,
+                    t_iter_avg,
                     budget_usage,
                     sensor_usage,
                     streamtime_usage,
@@ -189,11 +192,19 @@ def save_act_lrn_results(
             path_to_budgetvsaccuracy_file = saving_path + 'budget_vs_accuracy.csv'
             budgetvsaccuracy_df = pd.DataFrame()
             budgetvsaccuracy_df_list = []
-            data = np.rint(100 * np.array(PL_results['budget_usage_hist'])).astype(int)
-            sensors = np.rint(100 * np.array(PL_results['sensor_usage_hist'])).astype(int)
-            streamtimes = np.rint(100 * np.array(PL_results['streamtime_usage_hist'])).astype(int)
-            val_loss_hist = PL_results['val_loss_hist']
-            accuracy = np.rint(100 * (1 - np.minimum(1, val_loss_hist / RF_loss))).astype(int)
+            data = np.rint(
+                100 * np.array(PL_result['budget_usage_hist'])
+            ).astype(int)
+            sensors = np.rint(
+                100 * np.array(PL_result['sensor_usage_hist'])
+            ).astype(int)
+            streamtimes = np.rint(
+                100 * np.array(PL_result['streamtime_usage_hist'])
+            ).astype(int)
+            val_loss_hist = PL_result['val_loss_hist']
+            accuracy = np.rint(
+                100 * (1 - np.minimum(1, val_loss_hist / RF_loss))
+            ).astype(int)
             
             col_name_data = '{} {} {} data'.format(
                 pred_type, 
@@ -215,7 +226,6 @@ def save_act_lrn_results(
                 None, 
                 'PL'
             )
-
  
             budgetvsaccuracy_df_list.append(
                 pd.DataFrame({col_name_data: pd.Series(data)})
@@ -234,9 +244,9 @@ def save_act_lrn_results(
             path_to_spacetime_file = saving_path + 'spacetime_selection.csv'
             spacetime_df = pd.DataFrame()
             spacetime_df_list = []
-            picked_times_index_hist = PL_results['picked_times_index_hist']
-            picked_spaces_index_hist = PL_results['picked_spaces_index_hist']
-            initial_sensors_list = PL_results['initial_sensors_list']
+            picked_times_index_hist = PL_result['picked_times_index_hist']
+            picked_spaces_index_hist = PL_result['picked_spaces_index_hist']
+            initial_sensors_list = PL_result['initial_sensors_list']
             
             col_name_initial_sensors = '{} - initial sensors'.format(
                 pred_type
@@ -274,14 +284,15 @@ def save_act_lrn_results(
             for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
 
                 ### Save main AL results ### 
-                method_result_list = var_result_list[AL_variable]
+                method_result_dict = var_result_dict[AL_variable]
 
                 for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-                    AL_result = method_result_list[method]
+                    AL_result = method_result_dict[method]
 
                     n_iterations = HYPER.N_ITER_ACT_LRN
-                    t_iterations = AL_result['iter_time']
+                    t_total = AL_result['t_total']
+                    t_iter_avg = sum(AL_result['iter_time_hist']) / len(AL_result['iter_time_hist'])
                     budget_usage = AL_result['budget_usage_hist'][-1]
                     sensor_usage = AL_result['sensor_usage_hist'][-1]
                     streamtime_usage = AL_result['streamtime_usage_hist'][-1]
@@ -289,7 +300,7 @@ def save_act_lrn_results(
                     delta_loss_RF = AL_result['test_loss'] - RF_loss
                     delta_loss_PL = (
                         AL_result['test_loss']
-                        - PL_results['test_loss']
+                        - PL_result['test_loss']
                     )
 
                     train_hist = AL_result['train_hist']
@@ -309,7 +320,8 @@ def save_act_lrn_results(
                     meta_entry = np.array(
                         [
                             n_iterations,
-                            t_iterations,
+                            t_total,
+                            t_iter_avg,
                             budget_usage,
                             sensor_usage,
                             streamtime_usage,
@@ -329,16 +341,20 @@ def save_act_lrn_results(
                         pd.DataFrame({col_name_val: pd.Series(entry_val)})
                     )
                     
+                    
+                    
                     ### Save sequence importance for AL ### 
                     if HYPER.TEST_SEQUENCE_IMPORTANCE:
+                    
+                        seqimportance_results = AL_result['seqimportance']
                         train_loss_seqimportance = (
-                            AL_result['seqimportance_train_loss']
+                            seqimportance_results['train_hist']
                         )
                         val_loss_seqimportance = (
-                            AL_result['seqimportance_val_loss']
+                            seqimportance_results['val_hist']
                         )
                         test_loss_seqimportance = (
-                            AL_result['seqimportance_test_loss']
+                            seqimportance_results['test_loss']
                         )
                         meta_entry = np.array(
                             [
@@ -376,11 +392,19 @@ def save_act_lrn_results(
                         
                         
                     ### Save budget vs accuracy for AL ### 
-                    data = np.rint(100 * np.array(AL_result['budget_usage_hist'])).astype(int)
-                    sensors = np.rint(100 * np.array(AL_result['sensor_usage_hist'])).astype(int)
-                    streamtimes = np.rint(100 * np.array(AL_result['streamtime_usage_hist'])).astype(int)
+                    data = np.rint(
+                        100 * np.array(AL_result['budget_usage_hist'])
+                    ).astype(int)
+                    sensors = np.rint(
+                        100 * np.array(AL_result['sensor_usage_hist'])
+                    ).astype(int)
+                    streamtimes = np.rint(
+                        100 * np.array(AL_result['streamtime_usage_hist'])
+                    ).astype(int)
                     val_loss_hist = AL_result['val_loss_hist']
-                    accuracy = np.rint(100 * (1 - np.minimum(1, val_loss_hist / RF_loss))).astype(int)
+                    accuracy = np.rint(
+                        100 * (1 - np.minimum(1, val_loss_hist / RF_loss))
+                    ).astype(int)
                     
                     col_name_data = '{} {} {} data'.format(
                         pred_type, 
@@ -463,7 +487,8 @@ def save_act_lrn_results(
             # create the index column
             df_index = [
                 'n_iterations',
-                't_iterations',
+                't_total',
+                't_iter_avg',
                 'budget_usage',
                 'sensor_usage',
                 'streamtime_usage',
@@ -851,8 +876,8 @@ def save_hyper_params(HYPER, raw_data):
 def save_act_lrn_test_sample(
     HYPER, 
     raw_data, 
-    AL_result_list, 
-    PL_result_list):
+    AL_result_dict, 
+    PL_result_dict):
 
     """ Saves a random sample of 1,000 data points from the candidate data pool 
     which were not seen by the actively trained prediction models.
@@ -870,11 +895,11 @@ def save_act_lrn_test_sample(
                 os.mkdir(saving_path)
 
             # get method_result_list of currently iterated prediction type
-            var_result_list = AL_result_list[pred_type]
+            var_result_dict = AL_result_dict[pred_type]
 
             # get random results
-            PL_results = PL_result_list[pred_type]
-            test_data = PL_results['test_data']
+            PL_result = PL_result_dict[pred_type]
+            test_data = PL_result['test_data']
 
             X_t = test_data.X_t
             X_s = test_data.X_s
@@ -896,11 +921,11 @@ def save_act_lrn_test_sample(
 
             for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
                 # get variable result list
-                method_result_list = var_result_list[AL_variable]
+                method_result_dict = var_result_dict[AL_variable]
 
                 for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-                    AL_result = method_result_list[method]
+                    AL_result = method_result_dict[method]
                     test_data = AL_result['test_data']
 
                     X_t = test_data.X_t

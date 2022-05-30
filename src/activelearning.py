@@ -962,7 +962,7 @@ def feature_embedding_AL(
         print('---' * 20)
 
     # time in seconds that is eventually used
-    iter_time = math.ceil(t_end - t_start_0)
+    t_total = math.ceil(t_end - t_start_0)
 
 
     ### Create test dataset and predict ###
@@ -1068,25 +1068,23 @@ def feature_embedding_AL(
     ### Create a results object ###
 
     # create an ActLrnResults object and pass the results for compactness
-    results = dict(
-        {
-            'train_hist': train_hist,
-            'val_hist': val_hist,
-            'test_loss': test_loss,
-            'iter_time': iter_time,
-            'prediction_model': models.prediction_model,
-            'test_data': test_data,
-            'picked_cand_index_set': picked_cand_index_set,
-            'picked_times_index_hist': picked_times_index_hist,
-            'picked_spaces_index_hist': picked_spaces_index_hist,
-            'picked_inf_score_hist': picked_inf_score_hist,
-            'budget_usage_hist': budget_usage_hist,
-            'iter_time_hist': iter_time_hist,
-            'sensor_usage_hist': sensor_usage_hist,
-            'streamtime_usage_hist': streamtime_usage_hist,
-            'val_loss_hist': val_loss_hist,
-            'initial_sensors_list': initial_sensors_list
-        }
-    )
+    results = {
+        'train_hist': train_hist,
+        'val_hist': val_hist,
+        'test_loss': test_loss,
+        't_total': t_total,
+        'prediction_model': models.prediction_model,
+        'test_data': test_data,
+        'picked_cand_index_set': picked_cand_index_set,
+        'picked_times_index_hist': picked_times_index_hist,
+        'picked_spaces_index_hist': picked_spaces_index_hist,
+        'picked_inf_score_hist': picked_inf_score_hist,
+        'budget_usage_hist': budget_usage_hist,
+        'iter_time_hist': iter_time_hist,
+        'sensor_usage_hist': sensor_usage_hist,
+        'streamtime_usage_hist': streamtime_usage_hist,
+        'val_loss_hist': val_loss_hist,
+        'initial_sensors_list': initial_sensors_list
+    }
 
     return results

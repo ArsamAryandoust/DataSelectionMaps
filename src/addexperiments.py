@@ -21,7 +21,7 @@ def test_AL_sequence_importance(
     optimizer,
     mean_loss,
     loss_function,
-    AL_results,
+    AL_result,
     method,
     AL_variable=None,
     silent=True
@@ -77,7 +77,7 @@ def test_AL_sequence_importance(
             data_budget_total / HYPER.N_ITER_ACT_LRN
         )
         picked_cand_index_set = set()
-        available_index_set_update = AL_results['picked_cand_index_set']
+        available_index_set_update = AL_result['picked_cand_index_set']
         data_counter = 0
         
         # start AL iterations
@@ -328,15 +328,19 @@ def test_AL_sequence_importance(
             loss_function 
         )
 
-        AL_results['seqimportance_train_loss'] = train_hist
-        AL_results['seqimportance_val_loss'] = val_hist
-        AL_results['seqimportance_test_loss'] = test_loss
+        seqimportance_dict = {
+            'train_hist': train_hist,
+            'val_hist': val_hist,
+            'test_loss': test_loss,
+        }
+        
+        AL_result['seqimportance'] = seqimportance_dict
 
         if not silent: 
             # Indicate termination of execute
             print('---' * 20)
 
-    return AL_results
+    return AL_result
 
 
 def test_AL_heuristic_importance(
@@ -350,7 +354,7 @@ def test_AL_heuristic_importance(
     optimizer,
     mean_loss,
     loss_function,
-    AL_results,
+    AL_result,
     method,
     AL_variable=None,
     silent=True
@@ -367,7 +371,7 @@ def test_AL_heuristic_importance(
         # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
         # and POINTS_PER_CLUSTER_ACT_LRN
         cand_subsample_test_list = [0.1, 0.5, 0.8]
-        points_percluster_test_list = [0.1, 0.5, 0.8]
+        points_percluster_test_list = [1.e-5, 0.5, 0.8]
         
         if not silent:
             # create a progress bar for training
@@ -407,14 +411,17 @@ def test_AL_heuristic_importance(
             progbar_heuimportance.add(len(cand_subsample_test_list))
         else:
             
+            # initialize empty list for saving heuristic results
+            heuristic_results_list = []
+            
             # iterate over heuristic values
-            for index, heuristic_value in enumerate(cand_subsample_test_list):
+            for heuristic_value in cand_subsample_test_list:
             
                 # set the hyper parameter to currently iterated value
                 HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
                 
                 # create heuristic results
-                heuristic_results = activelearning.feature_embedding_AL(
+                results = activelearning.feature_embedding_AL(
                     HYPER, 
                     pred_type, 
                     models, 
@@ -429,24 +436,21 @@ def test_AL_heuristic_importance(
                     AL_variable=AL_variable, 
                 )
                 
-                # Add the heuristic results to your results object
-                if index == 0:
-                    AL_results['subsample01_train_loss'] = heuristic_results['train_loss']
-                    AL_results['subsample01_val_loss'] = heuristic_results['val_loss']
-                    AL_results['subsample01_test_loss'] = heuristic_results['test_loss']
-                    
-                elif index == 1:
-                    AL_results['subsample05_train_loss'] = heuristic_results['train_loss']
-                    AL_results['subsample05_val_loss'] = heuristic_results['val_loss']
-                    AL_results['subsample05_test_loss'] = heuristic_results['test_loss']
-                    
-                else:
-                    AL_results['subsample08_train_loss'] = heuristic_results['train_loss']
-                    AL_results['subsample08_val_loss'] = heuristic_results['val_loss']
-                    AL_results['subsample08_test_loss'] = heuristic_results['test_loss']
-                    
+                heuristic_results_dict = {
+                    'heuristic_value': heuristic_value,
+                    'train_hist': results['train_hist'],
+                    'val_hist': results['val_hist'],
+                    'test_loss': results['test_loss'],
+                }
+                
+                heuristic_results_list.append(heuristic_results_dict)
+                
                 # increment progress bar
                 progbar_heuimportance.add(1)
+            
+            # Add the heuristic results to your results object
+            AL_result['heuristics_subsample'] = heuristic_results_list
+                    
 
         if HYPER.POINTS_PER_CLUSTER_ACT_LRN != 1:
             print(
@@ -459,14 +463,17 @@ def test_AL_heuristic_importance(
             progbar_heuimportance.add(len(points_percluster_test_list))
         else:
             
+            # initialize empty list for saving heuristic results
+            heuristic_results_list = []
+            
             # iterate over heuristic values
-            for index, heuristic_value in enumerate(points_percluster_test_list):
+            for heuristic_value in points_percluster_test_list:
             
                 # set the hyper parameter to currently iterated value
                 HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
                 
                 # create heuristic results
-                heuristic_results = activelearning.feature_embedding_AL(
+                results = activelearning.feature_embedding_AL(
                     HYPER, 
                     pred_type, 
                     models, 
@@ -481,27 +488,24 @@ def test_AL_heuristic_importance(
                     AL_variable=AL_variable, 
                 )
                 
-                # Add the heuristic results to your results object
-                if index == 0:
-                    AL_results['pointspercluster01_train_loss'] = heuristic_results['train_loss']
-                    AL_results['pointspercluster01_val_loss'] = heuristic_results['val_loss']
-                    AL_results['pointspercluster01_test_loss'] = heuristic_results['test_loss']
+                heuristic_results_dict = {
+                    'heuristic_value': heuristic_value,
+                    'train_hist': results['train_hist'],
+                    'val_hist': results['val_hist'],
+                    'test_loss': results['test_loss'],
+                }
                     
-                elif index == 1:
-                    AL_results['pointspercluster05_train_loss'] = heuristic_results['train_loss']
-                    AL_results['pointspercluster05_val_loss'] = heuristic_results['val_loss']
-                    AL_results['pointspercluster05_test_loss'] = heuristic_results['test_loss']
-                    
-                else:
-                    AL_results['pointspercluster08_train_loss'] = heuristic_results['train_loss']
-                    AL_results['pointspercluster08_val_loss'] = heuristic_results['val_loss']
-                    AL_results['pointspercluster08_test_loss'] = heuristic_results['test_loss']
-                    
+                heuristic_results_list.append(heuristic_results_dict)
+                
                 # increment progress bar
                 progbar_heuimportance.add(1)
+                
+            # Add the heuristic results to your results object
+            AL_result['heuristics_pointspercluster'] = heuristic_results_list
                     
-        # reset original hyper parameter values
+                    
+        # reset original hyper parameter values for following evaluations
         HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
         HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
         
-    return AL_results
+    return AL_result
