@@ -196,14 +196,14 @@ def save_act_lrn_results(
                 df_list_pointspercluster = []
                 path_to_pointspercluster_file = (
                     saving_path 
-                    + 'pointspercluster_heuristic.csv'
+                    + 'heuristic_pointspercluster.csv'
                 )
                 
                 subsample_df = pd.DataFrame()
                 df_list_subsample = []
                 path_to_subsample_file = (
                     saving_path 
-                    + 'subsampling_heuristic.csv'
+                    + 'heuristic_subsampling.csv'
                 )
 
 

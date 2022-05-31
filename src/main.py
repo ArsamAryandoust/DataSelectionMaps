@@ -339,6 +339,9 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
     if pred_type=='spatio-temporal':
         dataset = dataset_list[2]
         
+    # create empty PL dict
+    PL_result = {}
+    
     # create random result for benchmark once only for this pred_type
     PL_result =  activelearning.feature_embedding_AL(
         HYPER, 
@@ -351,6 +354,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         optimizer, 
         mean_loss,
         loss_function,
+        PL_result,
         'PL', 
         silent=False
     )
@@ -367,7 +371,30 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         # iterate over all methods that are chosen to be considered
         for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-            # test AL with currently iterated AL variable and variant
+            # create empty results dict first
+            AL_result = {}
+            
+            # test heuristic methods FIRST for iterated AL variable and variant
+            AL_result = addexperiments.test_AL_heuristic_importance(
+                HYPER, 
+                pred_type, 
+                models, 
+                raw_data, 
+                training_data, 
+                dataset, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                AL_result,
+                method, 
+                AL_variable=query_variable, 
+                silent=False
+            )
+            
+            # test main AL settings SECOND with iterated AL variable and variant
+            # Note: Testing it after test_AL_heuristic_importance() is important
+            # for the models being saved at the end. 
             AL_result = activelearning.feature_embedding_AL(
                 HYPER, 
                 pred_type, 
@@ -379,6 +406,7 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                 optimizer, 
                 mean_loss,
                 loss_function,
+                AL_result,
                 method, 
                 AL_variable=query_variable, 
                 silent=False
@@ -402,24 +430,6 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                 silent=False
             )
             
-            # test heuristic methods for iterated AL variable and variant
-            AL_result = addexperiments.test_AL_heuristic_importance(
-                HYPER, 
-                pred_type, 
-                models, 
-                raw_data, 
-                training_data, 
-                dataset, 
-                loss_object, 
-                optimizer, 
-                mean_loss,
-                loss_function, 
-                AL_result,
-                method, 
-                AL_variable=query_variable, 
-                silent=False
-            )
-
             # add results to method_result_list
             method_result_dict[method] = AL_result
          

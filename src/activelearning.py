@@ -291,6 +291,7 @@ def feature_embedding_AL(
     optimizer,
     mean_loss,
     loss_function,
+    result_dict,
     method,
     AL_variable=None,
     silent=True,
@@ -1065,26 +1066,22 @@ def feature_embedding_AL(
     )
 
     
-    ### Create a results object ###
+    ### Add to results dict ###
+    result_dict['train_hist'] = train_hist
+    result_dict['val_hist'] = val_hist
+    result_dict['test_loss'] = test_loss
+    result_dict['t_total'] = t_total
+    result_dict['prediction_model'] = models.prediction_model
+    result_dict['test_data'] = test_data
+    result_dict['picked_cand_index_set'] = picked_cand_index_set
+    result_dict['picked_times_index_hist'] = picked_times_index_hist
+    result_dict['picked_spaces_index_hist'] = picked_spaces_index_hist
+    result_dict['picked_inf_score_hist'] = picked_inf_score_hist
+    result_dict['budget_usage_hist'] = budget_usage_hist
+    result_dict['iter_time_hist'] = iter_time_hist
+    result_dict['sensor_usage_hist'] = sensor_usage_hist
+    result_dict['streamtime_usage_hist'] = streamtime_usage_hist
+    result_dict['val_loss_hist'] = val_loss_hist
+    result_dict['initial_sensors_list'] = initial_sensors_list
 
-    # create an ActLrnResults object and pass the results for compactness
-    results = {
-        'train_hist': train_hist,
-        'val_hist': val_hist,
-        'test_loss': test_loss,
-        't_total': t_total,
-        'prediction_model': models.prediction_model,
-        'test_data': test_data,
-        'picked_cand_index_set': picked_cand_index_set,
-        'picked_times_index_hist': picked_times_index_hist,
-        'picked_spaces_index_hist': picked_spaces_index_hist,
-        'picked_inf_score_hist': picked_inf_score_hist,
-        'budget_usage_hist': budget_usage_hist,
-        'iter_time_hist': iter_time_hist,
-        'sensor_usage_hist': sensor_usage_hist,
-        'streamtime_usage_hist': streamtime_usage_hist,
-        'val_loss_hist': val_loss_hist,
-        'initial_sensors_list': initial_sensors_list
-    }
-
-    return results
+    return result_dict

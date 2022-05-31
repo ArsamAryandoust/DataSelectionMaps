@@ -295,7 +295,7 @@ def test_AL_sequence_importance(
             picked_cand_index_list, 
             0
         )
-
+        
         if HYPER.SPATIAL_FEATURES != "image":
             X_s1_test = np.delete(
                 candidate_dataset.X_s1, 
@@ -304,7 +304,7 @@ def test_AL_sequence_importance(
             )
         else:
             X_s1_test = 0
-
+            
         # create a copy of candidate test data
         test_data = Dataset(
             X_t_ord_1D_test,
@@ -314,7 +314,7 @@ def test_AL_sequence_importance(
             X_st_test, 
             Y_test
         )
-
+        
         # Predict on candidate datapoints that are not in training data
         title = '{} {} {}'.format(pred_type, AL_variable, method)
         
@@ -327,7 +327,7 @@ def test_AL_sequence_importance(
             mean_loss,
             loss_function 
         )
-
+        
         seqimportance_dict = {
             'train_hist': train_hist,
             'val_hist': val_hist,
@@ -354,7 +354,7 @@ def test_AL_heuristic_importance(
     optimizer,
     mean_loss,
     loss_function,
-    AL_result,
+    result_dict,
     method,
     AL_variable=None,
     silent=True
@@ -420,6 +420,9 @@ def test_AL_heuristic_importance(
                 # set the hyper parameter to currently iterated value
                 HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
                 
+                # create empty results dict
+                results = {}
+                
                 # create heuristic results
                 results = activelearning.feature_embedding_AL(
                     HYPER, 
@@ -432,6 +435,7 @@ def test_AL_heuristic_importance(
                     optimizer, 
                     mean_loss,
                     loss_function,
+                    results,
                     method, 
                     AL_variable=AL_variable, 
                 )
@@ -439,9 +443,9 @@ def test_AL_heuristic_importance(
                 heuristic_results_dict = {
                     'heuristic_value': heuristic_value,
                     't_total': results['t_total'],
-                    't_iter_avg': sum(
-                        results['iter_time_hist']) 
-                        / len(results['iter_time_hist']
+                    't_iter_avg': (
+                        sum(results['iter_time_hist']) 
+                        / len(results['iter_time_hist'])
                     ),
                     'budget_usage': results['budget_usage_hist'][-1],
                     'sensor_usage': results['sensor_usage_hist'][-1],
@@ -457,7 +461,7 @@ def test_AL_heuristic_importance(
                 progbar_heuimportance.add(1)
             
             # Add the heuristic results to your results object
-            AL_result['heuristics_subsample'] = heuristic_results_list
+            result_dict['heuristics_subsample'] = heuristic_results_list
                     
         # reset original hyper parameter values for following evaluations
         HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
@@ -482,6 +486,9 @@ def test_AL_heuristic_importance(
                 # set the hyper parameter to currently iterated value
                 HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
                 
+                # create empty results dict
+                results = {}
+                
                 # create heuristic results
                 results = activelearning.feature_embedding_AL(
                     HYPER, 
@@ -494,6 +501,7 @@ def test_AL_heuristic_importance(
                     optimizer, 
                     mean_loss,
                     loss_function,
+                    results,
                     method, 
                     AL_variable=AL_variable, 
                 )
@@ -519,9 +527,9 @@ def test_AL_heuristic_importance(
                 progbar_heuimportance.add(1)
                 
             # Add the heuristic results to your results object
-            AL_result['heuristics_pointspercluster'] = heuristic_results_list
+            result_dict['heuristics_pointspercluster'] = heuristic_results_list
                     
         # reset original hyper parameter values for following evaluations
         HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
         
-    return AL_result
+    return result_dict
