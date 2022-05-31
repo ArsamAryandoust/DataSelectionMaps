@@ -370,8 +370,8 @@ def test_AL_heuristic_importance(
         
         # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
         # and POINTS_PER_CLUSTER_ACT_LRN
-        cand_subsample_test_list = [0.1, 0.5, 0.8]
-        points_percluster_test_list = [1.e-5, 0.5, 0.8]
+        cand_subsample_test_list = [0.1] #[0.1, 0.5, 0.8]
+        points_percluster_test_list = [1.e-5] #[1.e-5, 0.5, 0.8]
         
         if not silent:
             # create a progress bar for training
@@ -438,9 +438,17 @@ def test_AL_heuristic_importance(
                 
                 heuristic_results_dict = {
                     'heuristic_value': heuristic_value,
+                    't_total': results['t_total'],
+                    't_iter_avg': sum(
+                        results['iter_time_hist']) 
+                        / len(results['iter_time_hist']
+                    ),
+                    'budget_usage': results['budget_usage_hist'][-1],
+                    'sensor_usage': results['sensor_usage_hist'][-1],
+                    'streamtime_usage': results['streamtime_usage_hist'][-1],
+                    'test_loss': results['test_loss'],
                     'train_hist': results['train_hist'],
                     'val_hist': results['val_hist'],
-                    'test_loss': results['test_loss'],
                 }
                 
                 heuristic_results_list.append(heuristic_results_dict)
@@ -451,6 +459,8 @@ def test_AL_heuristic_importance(
             # Add the heuristic results to your results object
             AL_result['heuristics_subsample'] = heuristic_results_list
                     
+        # reset original hyper parameter values for following evaluations
+        HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
 
         if HYPER.POINTS_PER_CLUSTER_ACT_LRN != 1:
             print(
@@ -490,9 +500,17 @@ def test_AL_heuristic_importance(
                 
                 heuristic_results_dict = {
                     'heuristic_value': heuristic_value,
+                    't_total': results['t_total'],
+                    't_iter_avg': sum(
+                        results['iter_time_hist']) 
+                        / len(results['iter_time_hist']
+                    ),
+                    'budget_usage': results['budget_usage_hist'][-1],
+                    'sensor_usage': results['sensor_usage_hist'][-1],
+                    'streamtime_usage': results['streamtime_usage_hist'][-1],
+                    'test_loss': results['test_loss'],
                     'train_hist': results['train_hist'],
                     'val_hist': results['val_hist'],
-                    'test_loss': results['test_loss'],
                 }
                     
                 heuristic_results_list.append(heuristic_results_dict)
@@ -503,9 +521,7 @@ def test_AL_heuristic_importance(
             # Add the heuristic results to your results object
             AL_result['heuristics_pointspercluster'] = heuristic_results_list
                     
-                    
         # reset original hyper parameter values for following evaluations
-        HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
         HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
         
     return AL_result

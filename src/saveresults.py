@@ -144,7 +144,10 @@ def save_act_lrn_results(
 
             n_iterations = HYPER.N_ITER_ACT_LRN
             t_total = PL_result['t_total']
-            t_iter_avg = sum(PL_result['iter_time_hist']) / len(PL_result['iter_time_hist'])
+            t_iter_avg = (
+                sum(PL_result['iter_time_hist']) 
+                / len(PL_result['iter_time_hist'])
+            )
             budget_usage = PL_result['budget_usage_hist'][-1]
             sensor_usage = PL_result['sensor_usage_hist'][-1]
             streamtime_usage = PL_result['streamtime_usage_hist'][-1]
@@ -186,6 +189,23 @@ def save_act_lrn_results(
                     saving_path 
                     + 'sequence_importance.csv'
                 )
+                
+            ### Prepare heuristic imporatance for AL ### 
+            if HYPER.TEST_HEURISTIC_IMPORTANCE:
+                pointspercluster_df = pd.DataFrame()
+                df_list_pointspercluster = []
+                path_to_pointspercluster_file = (
+                    saving_path 
+                    + 'pointspercluster_heuristic.csv'
+                )
+                
+                subsample_df = pd.DataFrame()
+                df_list_subsample = []
+                path_to_subsample_file = (
+                    saving_path 
+                    + 'subsampling_heuristic.csv'
+                )
+
 
             ### Prepare budget vs accuracy for PL ###
             
@@ -297,12 +317,6 @@ def save_act_lrn_results(
                     sensor_usage = AL_result['sensor_usage_hist'][-1]
                     streamtime_usage = AL_result['streamtime_usage_hist'][-1]
                     test_loss = AL_result['test_loss']
-                    delta_loss_RF = AL_result['test_loss'] - RF_loss
-                    delta_loss_PL = (
-                        AL_result['test_loss']
-                        - PL_result['test_loss']
-                    )
-
                     train_hist = AL_result['train_hist']
                     val_hist = AL_result['val_hist']
                     
@@ -325,10 +339,8 @@ def save_act_lrn_results(
                             budget_usage,
                             sensor_usage,
                             streamtime_usage,
-                            RF_loss,
                             test_loss,
-                            delta_loss_RF,
-                            delta_loss_PL,
+                            RF_loss
                         ]
                     )
                     entry_train = np.concatenate((meta_entry, train_hist))
@@ -340,7 +352,6 @@ def save_act_lrn_results(
                     df_list.append(
                         pd.DataFrame({col_name_val: pd.Series(entry_val)})
                     )
-                    
                     
                     
                     ### Save sequence importance for AL ### 
@@ -389,6 +400,105 @@ def save_act_lrn_results(
                                 )}
                             )
                         )
+                        
+                    ### Save heuristic importance for AL ### 
+                    if HYPER.TEST_HEURISTIC_IMPORTANCE:
+                        
+                        # provide a list of key used to save results in addexperiments.py
+                        list_of_heuristics = [
+                            'heuristics_subsample', 
+                            'heuristics_pointspercluster'
+                        ]
+                        
+                        for heuristics in list_of_heuristics:
+                            ### Save heuristics results for subsampling tests ###
+                            heuristics_list = AL_result[heuristics]
+                            
+                            for heuristic_dict in heuristics_list:
+                                heuristic_value = (
+                                    heuristic_dict['heuristic_value']
+                                )
+                                t_total = (
+                                    heuristic_dict['t_total']
+                                )
+                                t_iter_avg = (
+                                    heuristic_dict['t_iter_avg']
+                                )
+                                budget_usage = (
+                                    heuristic_dict['budget_usage']
+                                )
+                                sensor_usage = (
+                                    heuristic_dict['sensor_usage']
+                                )
+                                streamtime_usage = (
+                                    heuristic_dict['streamtime_usage']
+                                )
+                                test_loss = (
+                                    heuristic_dict['test_loss']
+                                )
+                                train_hist = (
+                                    heuristic_dict['train_hist']
+                                )
+                                val_hist = (
+                                    heuristic_dict['val_hist']
+                                )
+                                
+                                meta_entry = np.array(
+                                    [
+                                        heuristic_value,
+                                        t_total,
+                                        t_iter_avg,
+                                        budget_usage,
+                                        sensor_usage,
+                                        streamtime_usage,
+                                        test_loss,
+                                        RF_loss
+                                    ]
+                                )
+                                
+                                entry_train = np.concatenate(
+                                    (
+                                        meta_entry, 
+                                        train_hist
+                                    )
+                                )
+                                entry_val = np.concatenate(
+                                    (
+                                        meta_entry, 
+                                        val_hist
+                                    )
+                                )
+                                
+                                if heuristics == 'heuristics_subsample':
+                                    df_list_subsample.append(
+                                        pd.DataFrame(
+                                            {col_name_train: pd.Series(
+                                                entry_train
+                                            )}
+                                        )
+                                    )
+                                    df_list_subsample.append(
+                                        pd.DataFrame(
+                                            {col_name_val: pd.Series(
+                                                entry_val
+                                            )}
+                                        )
+                                    )
+                                elif heuristics == 'heuristics_pointspercluster':
+                                    df_list_pointspercluster.append(
+                                        pd.DataFrame(
+                                            {col_name_train: pd.Series(
+                                                entry_train
+                                            )}
+                                        )
+                                    )
+                                    df_list_pointspercluster.append(
+                                        pd.DataFrame(
+                                            {col_name_val: pd.Series(
+                                                entry_val
+                                            )}
+                                        )
+                                    )
                         
                         
                     ### Save budget vs accuracy for AL ### 
@@ -484,6 +594,8 @@ def save_act_lrn_results(
                                 pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
                             )
 
+            ### Save main results ###
+            
             # create the index column
             df_index = [
                 'n_iterations',
@@ -492,8 +604,8 @@ def save_act_lrn_results(
                 'budget_usage',
                 'sensor_usage',
                 'streamtime_usage',
-                'RF_loss',
                 'test_loss',
+                'RF_loss',
             ]
             
             # concatenate the list of all DataFrames to final (empty) Frame
@@ -508,22 +620,59 @@ def save_act_lrn_results(
             # save results to a CSV file
             result_df.to_csv(path_to_results_file)
             
+            ### Save sequence importance test results ###
             if HYPER.TEST_SEQUENCE_IMPORTANCE:
                 df_index = [
                     'test_loss',
                 ]
-                
                 seqimportance_df = pd.concat(df_list_seqimportance, axis=1)
-                
                 for i in range(len(seqimportance_df) - len(df_index)):
                     df_index.append(i)
-                    
                 seqimportance_df.index = df_index
                 seqimportance_df.to_csv(path_to_seqimportance_file)
             
+            ### Save heuristic importance test results ###
+            if HYPER.TEST_HEURISTIC_IMPORTANCE:
+            
+                ### Save results for subsample test ###
+                df_index = [
+                    'heuristic_value',
+                    't_total',
+                    't_iter_avg',
+                    'budget_usage',
+                    'sensor_usage',
+                    'streamtime_usage',
+                    'test_loss',
+                    'RF_loss'
+                ]
+                subsample_df = pd.concat(df_list_subsample, axis=1)
+                for i in range(len(subsample_df) - len(df_index)):
+                    df_index.append(i)
+                subsample_df.index = df_index
+                subsample_df.to_csv(path_to_subsample_file)
+                
+                ### Save results for pointspercluster test ###
+                df_index = [
+                    'heuristic_value',
+                    't_total',
+                    't_iter_avg',
+                    'budget_usage',
+                    'sensor_usage',
+                    'streamtime_usage',
+                    'test_loss',
+                    'RF_loss'
+                ]
+                pointspercluster_df = pd.concat(df_list_pointspercluster, axis=1)
+                for i in range(len(pointspercluster_df) - len(df_index)):
+                    df_index.append(i)
+                pointspercluster_df.index = df_index
+                pointspercluster_df.to_csv(path_to_pointspercluster_file)
+                
+            ### Save results fur budget vs. accuracy ###
             budgetvsaccuracy_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
             budgetvsaccuracy_df.to_csv(path_to_budgetvsaccuracy_file)
             
+            ### Save results for spacetime data points selection ###
             spacetime_df = pd.concat(spacetime_df_list, axis=1)
             spacetime_df.to_csv(path_to_spacetime_file)
             
