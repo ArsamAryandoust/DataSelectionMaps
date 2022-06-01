@@ -1,6 +1,6 @@
 from sklearn.cluster import KMeans
 from sklearn.metrics.pairwise import rbf_kernel
-from sklearn.metrics.pairwise import laplacian_kernel 
+from sklearn.metrics.pairwise import laplacian_kernel
 from sklearn.metrics.pairwise import cosine_similarity
 import tensorflow as tf
 import time
@@ -14,7 +14,8 @@ class HyperParameter:
     3. prediction model
     4. feature engineering
     """
-
+    
+    
     ### General parameters ###
     
     # Keep a value of False if you have access to public data only.
@@ -73,42 +74,41 @@ class HyperParameter:
         'max d_c', 
         #'avg d_c'
     ]
-
+    
     # Decide how many iterations to go at max for batch active learning
     N_ITER_ACT_LRN = 10
-
+    
     # Choose which share of candidate data pool we want to set as our entire
     # data budget for new queries form it
     DATA_BUDGET_ACT_LRN = 0.5
-
-    # Choose how many clusters to build per point that we want to query. Choose
-    # a value between 0.1 and 1. A value of one means we build one cluster for
-    # each data point we query, and a value of 0.1 means we build one cluster for
-    # every ten data points we query. I.e. we query ten points per cluster.
+    
+    # Heuristics. Choose a value between 0 and 1. A value of 0 creates one cluster
+    # only for querying candidates. A value of 1 creates one cluster for each point
     POINTS_PER_CLUSTER_ACT_LRN = 1
     
-    # Choose None or a value between 0.1 and 1 as subsample percentage of candidates.
-    CAND_SUBSAMPLE_ACT_LRN = None
-
+    # Heuristics. Choose a value between 0 and 1. A value of 0 creates a candidate
+    # subsample that is equal to 
+    CAND_SUBSAMPLE_ACT_LRN = 1
+    
     # Decide how many epochs you want to train your model during active learning
     EPOCHS_ACT_LRN = 30
-
+    
     # Decide how many epochs to have patience on an increasing
     # validation loss when training for early stopping
     PATIENCE_ACT_LRN = 10
-
+    
     # Decide for which metrics to calculate the problem. Choose
     # from rbf_kernel, laplacian_kernel and cosine_similarity
     METRIC_DISTANCES = [laplacian_kernel]
-
+    
     # Decide for which clustering mehtods to cluster candidate data
     # points. Choose from KMeans
     METHOD_CLUSTERS = [KMeans]
-
+    
     # Decide how many samples to save for each AL test
     SAVED_SAMPLES_ACT_LRN = 1000
-
-
+    
+    
     ### 2. Hypothesis and prediciton problem ###
 
     # Decide how to formulate the problem. Choose from
@@ -150,7 +150,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.002
+    POINTS_PER_PROFILE = 0.001
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.

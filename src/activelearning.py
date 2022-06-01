@@ -20,6 +20,7 @@ def encode_features(
     models, 
     dataset,
     available_index_set_update,
+    subsample_size,
     AL_variable, 
     silent=True
 ):
@@ -45,12 +46,12 @@ def encode_features(
     index_array = list(available_index_set_update)
 
     # if we chose a subset of candidate data points, create a random sub-sample
-    if (
-        HYPER.CAND_SUBSAMPLE_ACT_LRN is not None and 
-        HYPER.CAND_SUBSAMPLE_ACT_LRN * dataset.n_datapoints < n_datapoints
-    ):
-
-        n_datapoints = math.floor(HYPER.CAND_SUBSAMPLE_ACT_LRN * dataset.n_datapoints)
+    if (subsample_size < len(available_index_set_update)):
+        
+        if not silent:
+            print('\nPerforming subsampling!')
+        
+        n_datapoints = subsample_size
         index_array = random.sample(
             available_index_set_update, 
             n_datapoints
@@ -197,8 +198,8 @@ def compute_clusters(
     method = HYPER.METHOD_CLUSTERS[0]
     
     # calculate number of clusters
-    n_clusters = math.ceil(
-        data_budget_per_iter * HYPER.POINTS_PER_CLUSTER_ACT_LRN
+    n_clusters = round(
+        1 + HYPER.POINTS_PER_CLUSTER_ACT_LRN * (data_budget_per_iter - 1)
     )
 
     # set number of clusters equal to passed or corrected value
@@ -466,11 +467,13 @@ def feature_embedding_AL(
         t_start = timeit.default_timer()
         
         # calculate candidate subsample size to compare vs batch query size
-        if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
-            subsample_size = math.floor(
-                candidate_dataset.n_datapoints 
-                * HYPER.CAND_SUBSAMPLE_ACT_LRN 
+        subsample_size = math.floor(
+            data_budget_per_iter
+            + HYPER.CAND_SUBSAMPLE_ACT_LRN * (
+                len(available_index_set_update) 
+                - data_budget_per_iter
             )
+        )
         
         ### Choose candidates to query ###
   
@@ -482,27 +485,24 @@ def feature_embedding_AL(
                 available_index_set_update, 
                 data_budget_per_iter
             )
-
-        elif HYPER.CAND_SUBSAMPLE_ACT_LRN is not None and subsample_size <= data_budget_per_iter:
-           ### AL Exception: choose queries at random *tested* ###
-
-            # tell us what is going on
+            
+        elif subsample_size == data_budget_per_iter:
+            ### AL exception: equal to performing passive learning ###
+            
             if not silent:
-                print('Attention! Candidate subsample is smaller than query batch')
-                print('subsample size:', subsample_size)
-                print('query batch size:', data_budget_per_iter)
-            
-            # set batch size equal to subsample size for printing later if not silent
-            data_budget_per_iter = int(subsample_size)
-            
-            # create a list of length data_budget_per_iter with zero information scores 
-            inf_score_list = [0] * data_budget_per_iter
-            
+                print(
+                    'Note: Subsample size is equal to query batch size. This is',
+                    'equal to performing passive learning.'
+                )
+                
             # Create a random batch_index_array
             batch_index_list = random.sample(
                 available_index_set_update, 
                 data_budget_per_iter
             )
+            
+            # create a list of length data_budget_per_iter with 0 information scores 
+            inf_score_list = [0] * data_budget_per_iter
         
         else:
             ### Encode data points *tested* ###
@@ -513,7 +513,8 @@ def feature_embedding_AL(
                 models,
                 candidate_dataset,
                 available_index_set_update,
-                AL_variable,
+                subsample_size,
+                AL_variable
             )
             
             ### Calculate clusters *tested* ###
@@ -760,8 +761,7 @@ def feature_embedding_AL(
             available_index_set_update = (
                 available_index_set_update - picked_cand_index_set
             )
-
-
+            
         ### Create (updated) validation data ###
 
         # update validation data if chosen so
@@ -792,10 +792,6 @@ def feature_embedding_AL(
                 )
             else:
                 X_s1_new_val = 0
-
-            # update for controlling subsampling size vs. query batch size
-            # and for creating the right subsample size during feature encoding
-            candidate_dataset.n_datapoints = len(candidate_dataset.X_t_ord_1D)
 
         else:
             # create new validation data by copying from initial candidate data

@@ -370,8 +370,17 @@ def test_AL_heuristic_importance(
         
         # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
         # and POINTS_PER_CLUSTER_ACT_LRN
-        cand_subsample_test_list = [0.1, 0.5, 0.8] #[0.1, 0.5, 0.8]
-        points_percluster_test_list = [1.e-5, 0.5, 0.8] #[1.e-5, 0.5, 0.8]
+        cand_subsample_test_list = [
+            0.3,
+            0.5,
+            0.7
+        ]
+        points_percluster_test_list = [
+            0,
+            0.3,
+            0.5
+        ]
+            
         
         if not silent:
             # create a progress bar for training
@@ -400,10 +409,10 @@ def test_AL_heuristic_importance(
                 )
             )
             
-        if HYPER.CAND_SUBSAMPLE_ACT_LRN is not None:
+        if HYPER.CAND_SUBSAMPLE_ACT_LRN !=1:
             print(
                 '\nNote: heuristic importance tests not run as CAND_SUBSAMPLE_ACT_LRN '
-                'is not set to None. Please set this to None to have a benchmark, '
+                'is not set to 1. Please set this to 1 for getting a benchmark, '
                 'then repeat the experiments. '
             )
             
