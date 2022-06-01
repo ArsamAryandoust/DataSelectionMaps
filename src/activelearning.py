@@ -32,8 +32,6 @@ def encode_features(
     """
 
     if not silent:
-    
-        # tell us what we are doing
         print(
             'Encoding features into embedded vector spaces for', AL_variable
         )
@@ -42,20 +40,11 @@ def encode_features(
     ### Create random subsample before encoding if wanted ###
 
     # create an index array in the length of the passed dataset
-    n_datapoints = len(available_index_set_update)
-    index_array = list(available_index_set_update)
-
-    # if we chose a subset of candidate data points, create a random sub-sample
-    if (subsample_size < len(available_index_set_update)):
-        
-        if not silent:
-            print('\nPerforming subsampling!')
-        
-        n_datapoints = subsample_size
-        index_array = random.sample(
-            available_index_set_update, 
-            n_datapoints
-        )
+    n_datapoints = subsample_size
+    index_array = random.sample(
+        available_index_set_update, 
+        n_datapoints
+    )
 
     # create copy of dataset
     X_t = dataset.X_t[index_array]
@@ -189,7 +178,6 @@ def compute_clusters(
     """
 
     if not silent:
-        # tell us what we are doing
         print(
             'Creating clusters in encodings with n_clusters=', data_budget_per_iter
         )
@@ -245,7 +233,6 @@ def compute_similarity(
     """
 
     if not silent:
-        # tell us what we are doing
         print("Calculating distances" )
 
         # create a progress bar for training
@@ -353,7 +340,6 @@ def feature_embedding_AL(
     initial_sensors_list = list(set(train_data.X_s[:, 0]))
 
     if not silent:
-        # tell us what we are doing
         print(
             'prediction task:             {}'.format(
                 pred_type
@@ -917,7 +903,6 @@ def feature_embedding_AL(
         val_loss_hist.append(val_hist[-1])
 
         if not silent:
-            # tell us the numbers
             print(
                 'Iteration:                            {}'.format(
                     iteration
@@ -1060,7 +1045,7 @@ def feature_embedding_AL(
         X_st_test, 
         Y_test
     )
-
+    
     
     ### Add to results dict ###
     result_dict['train_hist'] = train_hist

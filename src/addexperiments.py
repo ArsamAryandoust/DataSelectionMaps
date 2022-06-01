@@ -55,6 +55,7 @@ def test_AL_sequence_importance(
                 )
             )
         
+        
         ### Load model weights ###
 
         # Note: if you load entire initial models, instead of their weights only,
@@ -65,6 +66,7 @@ def test_AL_sequence_importance(
             models, 
             pred_type
         )
+
 
         ### Start AL algorithm with random sequence selection ###
 
@@ -173,6 +175,7 @@ def test_AL_sequence_importance(
                     available_index_set_update - picked_cand_index_set
                 )
 
+
             ### Create (updated) validation data ###
             
             if HYPER.UPD_VAL_DATA_ACT_LRN:
@@ -212,8 +215,8 @@ def test_AL_sequence_importance(
                     X_s1_new_val = candidate_dataset.X_s1
                 else:
                     X_s1_new_val = 0
-
-
+                    
+                    
             ### Train with new batch ###
 
             # bundle chosen batch of candidate data points as Dataset object
@@ -260,8 +263,8 @@ def test_AL_sequence_importance(
             if not silent:
                 # increment progress bar
                 progbar_seqimportance.add(1)
-
-
+                
+                
         ### Create test dataset and predict ###
 
         # create new validation data by deleting the batch of picked data from 
@@ -418,8 +421,8 @@ def test_AL_heuristic_importance(
             
             # increment progress bar
             progbar_heuimportance.add(len(cand_subsample_test_list))
-        else:
             
+        else:
             # initialize empty list for saving heuristic results
             heuristic_results_list = []
             
@@ -484,6 +487,7 @@ def test_AL_heuristic_importance(
             
             # increment progress bar
             progbar_heuimportance.add(len(points_percluster_test_list))
+            
         else:
             
             # initialize empty list for saving heuristic results

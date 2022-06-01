@@ -28,8 +28,8 @@ class HyperParameter:
     TEST_HEURISTIC_IMPORTANCE = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_ACT_LRN_RESULTS = True
     SAVE_HYPER_PARAMS = True
+    SAVE_ACT_LRN_RESULTS = True
     SAVE_ACT_LRN_MODELS = True
     SAVE_ACT_LRN_TEST_SAMPLE = True
     
