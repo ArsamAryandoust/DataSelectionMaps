@@ -22,10 +22,10 @@ class HyperParameter:
     PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
+    TEST_SEQUENCE_IMPORTANCE = False
     
     # Decide whether to test heuristics for the evaluated method.
-    TEST_HEURISTIC_IMPORTANCE = True
+    TEST_HEURISTIC_IMPORTANCE = False
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_HYPER_PARAMS = True
@@ -58,21 +58,21 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
-        #'X_t',
-        #'X_s1',
-        'X_st', 
+        'X_t',
+        'X_s1',
+        #'X_st', 
         #'X_(t,s)', 
         #'Y_hat_(t,s)', 
-        'Y_(t,s)'
+        #'Y_(t,s)'
     ]
-
+    
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
     # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
         'rnd d_c', 
-        #'min d_c', 
+        'min d_c', 
         'max d_c', 
-        #'avg d_c'
+        'avg d_c'
     ]
     
     # Decide how many iterations to go at max for batch active learning
@@ -84,7 +84,7 @@ class HyperParameter:
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates one cluster
     # only for querying candidates. A value of 1 creates one cluster for each point
-    POINTS_PER_CLUSTER_ACT_LRN = 1
+    POINTS_PER_CLUSTER_ACT_LRN = 0
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates a candidate
     # subsample that is equal to 
@@ -136,7 +136,8 @@ class HyperParameter:
     PROFILE_YEARS = [
         '2014'
     ]
-
+    
+    
     # Decide which dataset you want to process. You can choose between
     # 'profiles_100' and 'profiles_400'
     PROFILE_SET = 'profiles_100'
@@ -150,7 +151,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.001
+    POINTS_PER_PROFILE = 0.003
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -166,8 +167,8 @@ class HyperParameter:
     # Decide in which frequency to do train-validation split. 1 equals 
     # one datapoint per bin, 0.5 equals two datapoints per bin.
     SPLIT_INTERAVALS = 0.05
-
-
+    
+    
     ### 3. Prediction model ###
 
     # Decide for how many epochs you want to train your model.
@@ -190,20 +191,21 @@ class HyperParameter:
     ENCODING_NODES_X_s = 100
     ENCODING_NODES_X_st = 100
     ENCODING_NODES_X_joint = 100
-
+    
+    
     # Decide which activation function to use on last encoding layer.
     # Choose from None, "relu", "tanh", "selu", "elu", "exponential".
     ENCODING_ACTIVATION = 'relu'
-
+    
     # Decide how many layers you want to use after encoders.
     # This is your network depth.
     NETWORK_LAYERS = 1
-
+    
     # Decide how many nodes per layer you want to use.
     NODES_PER_LAYER_DENSE = 1000
     FILTERS_PER_LAYER_CNN = 16
     STATES_PER_LAYER_LSTM = 200
-
+    
     # Decide which layers to use for X_st inputs. Choose one
     # from "ANN", "CNN", "LSTM".
     LAYER_TYPE_X_ST = 'CNN'
