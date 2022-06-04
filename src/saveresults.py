@@ -128,7 +128,6 @@ def save_act_lrn_results(
             path_to_results_file = saving_path + 'results.csv'
             
             # create empty DataFrame
-            result_df = pd.DataFrame()
             df_list = []
 
             # baseline results
@@ -183,7 +182,6 @@ def save_act_lrn_results(
             
             ### Prepare sequence imporatance for AL ### 
             if HYPER.TEST_SEQUENCE_IMPORTANCE:
-                seqimportance_df = pd.DataFrame()
                 df_list_seqimportance = []
                 path_to_seqimportance_file = (
                     saving_path 
@@ -192,7 +190,6 @@ def save_act_lrn_results(
                 
             ### Prepare heuristic imporatance for AL ### 
             if HYPER.TEST_HEURISTIC_IMPORTANCE:
-                pointspercluster_df = pd.DataFrame()
                 df_list_pointspercluster = []
                 path_to_pointspercluster_file = (
                     saving_path 
@@ -203,14 +200,24 @@ def save_act_lrn_results(
                 df_list_subsample = []
                 path_to_subsample_file = (
                     saving_path 
+                    
                     + 'heuristic_subsampling.csv'
+                )
+
+            ### Prepare query by coordinate imporatance for AL ### 
+            if (
+                'X_t' in HYPER.QUERY_VARIABLES_ACT_LRN or
+                'X_s1' in HYPER.QUERY_VARIABLES_ACT_LRN
+            ):
+                df_list_querybycoordinate = df_list.copy()
+                path_to_querybycoordinate_file = (
+                    saving_path 
+                    + 'heuristic_querybycoordinate.csv'
                 )
 
 
             ### Prepare budget vs accuracy for PL ###
-            
             path_to_budgetvsaccuracy_file = saving_path + 'budget_vs_accuracy.csv'
-            budgetvsaccuracy_df = pd.DataFrame()
             budgetvsaccuracy_df_list = []
             data = np.rint(
                 100 * np.array(PL_result['budget_usage_hist'])
@@ -346,13 +353,23 @@ def save_act_lrn_results(
                     entry_train = np.concatenate((meta_entry, train_hist))
                     entry_val = np.concatenate((meta_entry, val_hist))
 
-                    df_list.append(
-                        pd.DataFrame({col_name_train: pd.Series(entry_train)})
-                    )
-                    df_list.append(
-                        pd.DataFrame({col_name_val: pd.Series(entry_val)})
-                    )
+                    if AL_variable == 'X_t' or AL_variable == 'X_s1':
                     
+                        df_list_querybycoordinate.append(
+                            pd.DataFrame({col_name_train: pd.Series(entry_train)})
+                        )
+                        df_list_querybycoordinate.append(
+                            pd.DataFrame({col_name_val: pd.Series(entry_val)})
+                        )
+                        
+                    else:
+                    
+                        df_list.append(
+                            pd.DataFrame({col_name_train: pd.Series(entry_train)})
+                        )
+                        df_list.append(
+                            pd.DataFrame({col_name_val: pd.Series(entry_val)})
+                        )
                     
                     ### Save sequence importance for AL ### 
                     if HYPER.TEST_SEQUENCE_IMPORTANCE:
@@ -411,6 +428,7 @@ def save_act_lrn_results(
                         ]
                         
                         for heuristics in list_of_heuristics:
+                        
                             ### Save heuristics results for subsampling tests ###
                             heuristics_list = AL_result[heuristics]
                             
@@ -499,7 +517,6 @@ def save_act_lrn_results(
                                             )}
                                         )
                                     )
-                        
                         
                     ### Save budget vs accuracy for AL ### 
                     data = np.rint(
@@ -594,10 +611,11 @@ def save_act_lrn_results(
                                 pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
                             )
 
+
             ### Save main results ###
             
             # create the index column
-            df_index = [
+            df_index_base = [
                 'n_iterations',
                 't_total',
                 't_iter_avg',
@@ -608,73 +626,67 @@ def save_act_lrn_results(
                 'RF_loss',
             ]
             
-            # concatenate the list of all DataFrames to final (empty) Frame
-            result_df = pd.concat(df_list, axis=1)
+            if len(df_list) > 0:
             
-            for i in range(len(result_df) - len(df_index)):
-                df_index.append(i)
-
-            # set the index column
-            result_df.index = df_index
-
-            # save results to a CSV file
-            result_df.to_csv(path_to_results_file)
-            
-            ### Save sequence importance test results ###
-            if HYPER.TEST_SEQUENCE_IMPORTANCE:
-                df_index = [
-                    'test_loss',
-                ]
-                seqimportance_df = pd.concat(df_list_seqimportance, axis=1)
-                for i in range(len(seqimportance_df) - len(df_index)):
+                # copy df_index base
+                df_index = df_index_base.copy()
+                
+                # concatenate the list of all DataFrames to single DataFrame
+                result_df = pd.concat(df_list, axis=1)
+                
+                for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
-                seqimportance_df.index = df_index
-                seqimportance_df.to_csv(path_to_seqimportance_file)
+
+                # set the index column
+                result_df.index = df_index
+
+                # save results to a CSV file
+                result_df.to_csv(path_to_results_file)
             
-            ### Save heuristic importance test results ###
+            ### Save query by coordinate test results ###
+            if len(df_list_querybycoordinate) > 0:
+                df_index = df_index_base.copy()
+                result_df = pd.concat(df_list_querybycoordinate, axis=1)
+                for i in range(len(result_df) - len(df_index)):
+                    df_index.append(i)
+                result_df.index = df_index
+                result_df.to_csv(path_to_querybycoordinate_file)
+            
+            ### Save sequence importance results ###
+            if HYPER.TEST_SEQUENCE_IMPORTANCE:
+                df_index = ['test_loss']
+                result_df = pd.concat(df_list_seqimportance, axis=1)
+                for i in range(len(result_df) - len(df_index)):
+                    df_index.append(i)
+                result_df.index = df_index
+                result_df.to_csv(path_to_seqimportance_file)
+            
+            ### Save heuristic importance results ###
             if HYPER.TEST_HEURISTIC_IMPORTANCE:
             
                 ### Save results for subsample test ###
-                df_index = [
-                    'heuristic_value',
-                    't_total',
-                    't_iter_avg',
-                    'budget_usage',
-                    'sensor_usage',
-                    'streamtime_usage',
-                    'test_loss',
-                    'RF_loss'
-                ]
-                subsample_df = pd.concat(df_list_subsample, axis=1)
-                for i in range(len(subsample_df) - len(df_index)):
+                df_index = df_index_base.copy()
+                result_df = pd.concat(df_list_subsample, axis=1)
+                for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
-                subsample_df.index = df_index
-                subsample_df.to_csv(path_to_subsample_file)
+                result_df.index = df_index
+                result_df.to_csv(path_to_subsample_file)
                 
                 ### Save results for pointspercluster test ###
-                df_index = [
-                    'heuristic_value',
-                    't_total',
-                    't_iter_avg',
-                    'budget_usage',
-                    'sensor_usage',
-                    'streamtime_usage',
-                    'test_loss',
-                    'RF_loss'
-                ]
-                pointspercluster_df = pd.concat(df_list_pointspercluster, axis=1)
-                for i in range(len(pointspercluster_df) - len(df_index)):
+                df_index = df_index_base.copy()
+                result_df = pd.concat(df_list_pointspercluster, axis=1)
+                for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
-                pointspercluster_df.index = df_index
-                pointspercluster_df.to_csv(path_to_pointspercluster_file)
+                result_df.index = df_index
+                result_df.to_csv(path_to_pointspercluster_file)
                 
             ### Save results fur budget vs. accuracy ###
-            budgetvsaccuracy_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
-            budgetvsaccuracy_df.to_csv(path_to_budgetvsaccuracy_file)
+            result_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
+            result_df.to_csv(path_to_budgetvsaccuracy_file)
             
             ### Save results for spacetime data points selection ###
-            spacetime_df = pd.concat(spacetime_df_list, axis=1)
-            spacetime_df.to_csv(path_to_spacetime_file)
+            result_df = pd.concat(spacetime_df_list, axis=1)
+            result_df.to_csv(path_to_spacetime_file)
             
 
 def save_hyper_params(HYPER, raw_data):

@@ -60,7 +60,7 @@ class HyperParameter:
     QUERY_VARIABLES_ACT_LRN = [
         'X_t',
         'X_s1',
-        #'X_st', 
+        'X_st', 
         #'X_(t,s)', 
         #'Y_hat_(t,s)', 
         #'Y_(t,s)'
@@ -69,8 +69,8 @@ class HyperParameter:
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
     # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
-        'rnd d_c', 
-        'min d_c', 
+        #'rnd d_c', 
+        #'min d_c', 
         'max d_c', 
         'avg d_c'
     ]
@@ -137,7 +137,6 @@ class HyperParameter:
         '2014'
     ]
     
-    
     # Decide which dataset you want to process. You can choose between
     # 'profiles_100' and 'profiles_400'
     PROFILE_SET = 'profiles_100'
@@ -151,7 +150,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.003
+    POINTS_PER_PROFILE = 0.001
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
