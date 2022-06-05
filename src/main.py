@@ -1,26 +1,15 @@
 
 ### Package imports and computation environment setup ###
 
+# Import existing packages
 import gc
 import os
 import random
 import math
-
 import numpy as np
-
-# decide which GPU(s) should be seen by CUDA before importing tf.
-# Choose '-1' for calculation on CPU
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
-
 import tensorflow as tf
 
-# tell us how many GPUS are visible to CUDA and tensorflow
-print(
-    'Num GPUs Available: ', 
-    len(tf.config.experimental.list_physical_devices('GPU'))
-)
-
-# Import application source code
+# Import own application source code
 import hyperparameters
 import data
 import prediction
@@ -30,45 +19,9 @@ import saveresults
 
 # Set a randomization seed for better reproducability of results
 seed = 3
-
-if seed is not None:
-
-    random.seed(seed)
-    np.random.seed(seed)
-    tf.random.set_seed(seed)
-
-    # Set seed for tf weight initialzers
-    random_normal = tf.keras.initializers.RandomNormal(
-        mean=0.0, 
-        stddev=0.05, 
-        seed=seed
-    )
-    random_uniform = tf.keras.initializers.RandomUniform(
-        minval=-0.05, 
-        maxval=0.05, 
-        seed=seed
-    )
-    truncated_normal = tf.keras.initializers.TruncatedNormal(
-        mean=0.0, 
-        stddev=0.05, 
-        seed=seed
-    )
-    glorot_normal = tf.keras.initializers.GlorotNormal(
-        seed=seed
-    )
-    glorot_uniform = tf.keras.initializers.GlorotUniform(
-        seed=seed
-    )
-    orthogonal = tf.keras.initializers.Orthogonal(
-        gain=1.0, 
-        seed=seed
-    )
-    variance_scaling = tf.keras.initializers.VarianceScaling(
-        scale=1.0, 
-        mode='fan_in', 
-        distribution='truncated_normal', 
-        seed=seed
-    )
+random.seed(seed)
+np.random.seed(seed)
+tf.random.set_seed(seed)
 
 # class instance that contains all our hyperparameters
 HYPER = hyperparameters.HyperParameter(random_seed=seed)

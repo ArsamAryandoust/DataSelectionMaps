@@ -1,7 +1,5 @@
-from sklearn.cluster import KMeans
-from sklearn.metrics.pairwise import rbf_kernel
-from sklearn.metrics.pairwise import laplacian_kernel
-from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.cluster import KMeans, MiniBatchKMeans
+from sklearn.metrics.pairwise import rbf_kernel, laplacian_kernel, cosine_similarity
 import tensorflow as tf
 import time
 
@@ -22,10 +20,10 @@ class HyperParameter:
     PRIVATE_DATA_ACCESS = True
 
     # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = False
+    TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether to test heuristics for the evaluated method.
-    TEST_HEURISTIC_IMPORTANCE = False
+    TEST_HEURISTIC_IMPORTANCE = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_HYPER_PARAMS = True
@@ -39,7 +37,7 @@ class HyperParameter:
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
-    EXTEND_TRAIN_DATA_ACT_LRN = True
+    EXTEND_TRAIN_DATA_ACT_LRN = False
 
     # Decide whether to remove queried candidates from candidate data pool.
     RED_CAND_DATA_ACT_LRN = True
@@ -58,12 +56,12 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
-        'X_t',
+        #'X_t',
         'X_s1',
         'X_st', 
         #'X_(t,s)', 
         #'Y_hat_(t,s)', 
-        #'Y_(t,s)'
+        'Y_(t,s)'
     ]
     
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
@@ -84,7 +82,7 @@ class HyperParameter:
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates one cluster
     # only for querying candidates. A value of 1 creates one cluster for each point
-    POINTS_PER_CLUSTER_ACT_LRN = 0
+    POINTS_PER_CLUSTER_ACT_LRN = 1
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates a candidate
     # subsample that is equal to 
@@ -98,12 +96,12 @@ class HyperParameter:
     PATIENCE_ACT_LRN = 10
     
     # Decide for which metrics to calculate the problem. Choose
-    # from rbf_kernel, laplacian_kernel and cosine_similarity
-    METRIC_DISTANCES = [laplacian_kernel]
+    # from 'Gaussian', 'Laplacian' and 'CosineSimilarity'
+    DISTANCE_METRIC_ACT_LRN = 'Gaussian'
     
     # Decide for which clustering mehtods to cluster candidate data
-    # points. Choose from KMeans
-    METHOD_CLUSTERS = [KMeans]
+    # points. Choose from 'KMeans', 'MiniBatchKMeans'
+    CLUSTER_METHOD_ACT_LRN = 'KMeans'
     
     # Decide how many samples to save for each AL test
     SAVED_SAMPLES_ACT_LRN = 1000
@@ -115,14 +113,10 @@ class HyperParameter:
     # 'regression' and 'classification'
     PROBLEM_TYPE = 'regression'
     
-    # Choose from: mean_squared_error, mean_absolute_error,
-    #  mean_squared_logarithmic_error, huber, log_cosh
-    REGRESSION_LOSS = [tf.keras.losses.mean_squared_error]
+    # Choose from: 'mean_squared_error', 'mean_absolute_error',
+    # 'mean_squared_logarithmic_error', 'huber', 'log_cosh'
+    REGRESSION_LOSS_NAME = 'mean_squared_error'
     
-    # Choose from: tf.keras.losses.sparse_categorical_crossentropy. Only applies
-    # if PROBLEM_TYPE='classification'.
-    CLASSIFICATION_LOSS = [tf.keras.losses.sparse_categorical_crossentropy] 
-
     # Decide how many classes to consider. Only applies if 
     # PROBLEM_TYPE='classification'.
     REGRESSION_CLASSES = 200
@@ -139,7 +133,7 @@ class HyperParameter:
     
     # Decide which dataset you want to process. You can choose between
     # 'profiles_100' and 'profiles_400'
-    PROFILE_SET = 'profiles_100'
+    PROFILE_SET = 'profiles_400'
 
     # Decide how many building-year profiles you want to
     # consider for each year. Choose a share between 0 and 1. A value of 1
@@ -150,7 +144,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.001
+    POINTS_PER_PROFILE = 0.002
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -191,7 +185,6 @@ class HyperParameter:
     ENCODING_NODES_X_st = 100
     ENCODING_NODES_X_joint = 100
     
-    
     # Decide which activation function to use on last encoding layer.
     # Choose from None, "relu", "tanh", "selu", "elu", "exponential".
     ENCODING_ACTIVATION = 'relu'
@@ -221,18 +214,14 @@ class HyperParameter:
     INITIALIZATION_METHOD = 'glorot_normal'
     INITIALIZATION_METHOD_LSTM = 'orthogonal'
 
-    # set on calling __init__
-    INITIALIZATION = None
-    LSTM_RECURENT_INITIALIZATION = None
-
     # decide whether or not to use batch normalization on each layer in your NN. 
     # Choose between True or False
     BATCH_NORMALIZATION = False
 
     # decide how to regularize weights. Choose from None, 'l1', 'l2', 'l1_l2'
     REGULARIZER = 'l1_l2'
-
-
+    
+    
     ### 4. Feature engineering ###
 
     # decide which time stamp information to consider. Choose from: '15min',
@@ -260,8 +249,8 @@ class HyperParameter:
     GREY_SCALE = True
 
     # decide whether and how to downscale spatial imagery data. Choose any 
-    # integer to the power of two or 'None'
-    DOWN_SCALE_BUILDING_IMAGES = None
+    # integer to the power of two or 0 for no downscaling
+    DOWN_SCALE_BUILDING_IMAGES = 0
 
     # Decide which meteo data types to consider. Choose from "air_density", 
     # "cloud_cover",  "precipitation", "radiation_surface", "radiation_toa", 
@@ -354,7 +343,7 @@ class HyperParameter:
 
                 time.sleep(3)
 
-            if self.DOWN_SCALE_BUILDING_IMAGES is not None:
+            if self.DOWN_SCALE_BUILDING_IMAGES != 0:
 
                 print(
                     '\n\n You chose DOWN_SCALE_BUILDING_IMAGES={}'.format(
@@ -365,29 +354,10 @@ class HyperParameter:
                     'any down scaling. \n\n'
                 )
 
-                self.DOWN_SCALE_BUILDING_IMAGES = None
+                self.DOWN_SCALE_BUILDING_IMAGES = 0
                 
                 time.sleep(3)
         
-        self.INITIALIZATION = tf.keras.initializers.GlorotNormal(
-            seed=random_seed
-        )
-        self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.Orthogonal(
-            gain=1.0, 
-            seed=random_seed
-        )
-            
-        if self.METRIC_DISTANCES[0] == rbf_kernel:
-            self.DISTANCE_METRIC_ACT_LRN = 'Gaussian'
-            
-        elif self.METRIC_DISTANCES[0] == laplacian_kernel:
-            self.DISTANCE_METRIC_ACT_LRN = 'Laplacian'
-            
-        elif self.METRIC_DISTANCES[0] == cosine_similarity:
-            self.DISTANCE_METRIC_ACT_LRN = 'Cosine similarity'
-
-        if self.METHOD_CLUSTERS[0] == KMeans:
-            self.CLUSTER_METHOD_ACT_LRN = 'KMeans'
         else:
             print(
                 'If you do not own the private data, your experiment will not',
@@ -395,7 +365,117 @@ class HyperParameter:
                 'PUBLIC_ACCESS=True'
             )
         
-
+        # Set the initialization for regular weights.
+        if self.INITIALIZATION_METHOD == 'glorot_normal':
+            self.INITIALIZATION = tf.keras.initializers.GlorotNormal(
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'glorot_uniform':
+            self.INITIALIZATION = tf.keras.initializers.GlorotUniform(
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'random_uniform':
+            self.INITIALIZATION = tf.keras.initializers.RandomUniform(
+                minval=-0.05, 
+                maxval=0.05, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'truncated_normal':
+            self.INITIALIZATION = tf.keras.initializers.TruncatedNormal(
+                mean=0.0, 
+                stddev=0.05, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'orthogonal':
+            self.INITIALIZATION = tf.keras.initializers.Orthogonal(
+                gain=1.0, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'variance_scaling':
+            self.INITIALIZATION = tf.keras.initializers.VarianceScaling(
+                scale=1.0, 
+                mode='fan_in', 
+                distribution='truncated_normal', 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD == 'random_normal':
+            self.INITIALIZATION = tf.keras.initializers.RandomNormal(
+                mean=0.0, 
+                stddev=0.05, 
+                seed=random_seed
+            )
+        
+        
+        # Set the initialization for LSTM layer weights.
+        if self.INITIALIZATION_METHOD_LSTM == 'glorot_normal':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.GlorotNormal(
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'glorot_uniform':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.GlorotUniform(
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'random_uniform':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.RandomUniform(
+                minval=-0.05, 
+                maxval=0.05, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'truncated_normal':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.TruncatedNormal(
+                mean=0.0, 
+                stddev=0.05, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'orthogonal':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.Orthogonal(
+                gain=1.0, 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'variance_scaling':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.VarianceScaling(
+                scale=1.0, 
+                mode='fan_in', 
+                distribution='truncated_normal', 
+                seed=random_seed
+            )
+        elif self.INITIALIZATION_METHOD_LSTM == 'random_normal':
+            self.LSTM_RECURENT_INITIALIZATION = tf.keras.initializers.RandomNormal(
+                mean=0.0, 
+                stddev=0.05, 
+                seed=random_seed
+            )
+        
+        # Set distance metric
+        if self.DISTANCE_METRIC_ACT_LRN == 'Gaussian':
+            self.METRIC_DISTANCES = [rbf_kernel]
+        elif self.DISTANCE_METRIC_ACT_LRN == 'Laplacian':
+            self.METRIC_DISTANCES = [laplacian_kernel]
+        elif self.DISTANCE_METRIC_ACT_LRN == 'CosineSimilarity':
+            self.METRIC_DISTANCES = [cosine_similarity]
+        
+        # set cluster method
+        if self.CLUSTER_METHOD_ACT_LRN == 'KMeans':
+            self.METHOD_CLUSTERS = [KMeans]
+        elif self.CLUSTER_METHOD_ACT_LRN == 'MiniBatchKMeans':
+            self.METHOD_CLUSTERS = [MiniBatchKMeans]
+        
+        # Set classification loss. Only applies if PROBLEM_TYPE='classification'.
+        self.CLASSIFICATION_LOSS = [tf.keras.losses.sparse_categorical_crossentropy] 
+        
+        # Set regression loss function
+        if self.REGRESSION_LOSS_NAME == 'mean_squared_error':
+            self.REGRESSION_LOSS = [tf.keras.losses.mean_squared_error]
+        elif self.REGRESSION_LOSS_NAME == 'mean_absolute_error':
+            self.REGRESSION_LOSS = [tf.keras.losses.mean_absolute_error]
+        elif self.REGRESSION_LOSS_NAME == 'mean_squared_logarithmic_error':
+            self.REGRESSION_LOSS = [tf.keras.losses.mean_squared_logarithmic_error]
+        elif self.REGRESSION_LOSS_NAME == 'huber':
+            self.REGRESSION_LOSS = [tf.keras.losses.huber]
+        elif self.REGRESSION_LOSS_NAME == 'log_cosh':
+            self.REGRESSION_LOSS = [tf.keras.losses.log_cosh] 
+        
+        
     def set_act_lrn_params(self):
 
         """ Should be called only after training initial model. Resets the 
@@ -410,7 +490,5 @@ class HyperParameter:
 
         """ Prints out the key-value pairs of all attributes of this class. """
 
-
         for attr, value in self.__dict__.items():
-        
             print(attr, ':', value)

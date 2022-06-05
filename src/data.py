@@ -469,7 +469,7 @@ def import_building_images(HYPER, raw_data, silent=False, plot=True):
             # multiplication with a large factor ensured that rounding errors 
             # are small, and one can again down-sample with the same factor 
             # during training with no loss of RAM and information
-            if HYPER.DOWN_SCALE_BUILDING_IMAGES is not None:
+            if HYPER.DOWN_SCALE_BUILDING_IMAGES != 0:
 
                 # note that downscaled have float entries instead of integers
                 image = rescale(
