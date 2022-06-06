@@ -18,12 +18,15 @@ class HyperParameter:
     
     # Keep a value of False if you have access to public data only.
     PRIVATE_DATA_ACCESS = True
-
-    # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
     
+    # Decide whether to test query per cooridnate for the evaluated method.
+    TEST_QUERYBYCOORDINATE_IMPORTANCE = False
+
     # Decide whether to test heuristics for the evaluated method.
     TEST_HEURISTIC_IMPORTANCE = True
+    
+    # Decide whether to test the sequence importance of queried candidates.
+    TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_HYPER_PARAMS = True
@@ -57,7 +60,7 @@ class HyperParameter:
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
         #'X_t',
-        'X_s1',
+        #'X_s1',
         'X_st', 
         #'X_(t,s)', 
         #'Y_hat_(t,s)', 
@@ -133,7 +136,7 @@ class HyperParameter:
     
     # Decide which dataset you want to process. You can choose between
     # 'profiles_100' and 'profiles_400'
-    PROFILE_SET = 'profiles_400'
+    PROFILE_SET = 'profiles_100'
 
     # Decide how many building-year profiles you want to
     # consider for each year. Choose a share between 0 and 1. A value of 1
@@ -144,7 +147,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.002
+    POINTS_PER_PROFILE = 0.001
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -475,7 +478,50 @@ class HyperParameter:
         elif self.REGRESSION_LOSS_NAME == 'log_cosh':
             self.REGRESSION_LOSS = [tf.keras.losses.log_cosh] 
         
+        # set heuristic importance test value lists
+        self.CAND_SUBSAMPLE_TEST_LIST = [
+            0.3,
+            0.5,
+            0.7
+        ]
+        self.POINTS_PERCLUSTER_TEST_LIST = [
+            0,
+            0.3,
+            0.5
+        ]
         
+        if self.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+            print(
+                'Caution!! You decided to test query by coordinates through '
+                'setting TEST_QUERYBYCOORDINATE_IMPORTANCE=True. This will '
+                'set the following hyper paramters before performing ADL: \n',
+                'TEST_SEQUENCE_IMPORTANCE = False \n',
+                'TEST_HEURISTIC_IMPORTANCE = False \n',
+                'QUERY_VARIABLES_ACT_LRN = ["X_t", "X_s1"] \n',
+                'TEST_HEURISTIC_IMPORTANCE = ["max d_c"] \n',
+                'POINTS_PER_CLUSTER_ACT_LRN = 0 \n',
+                'CAND_SUBSAMPLE_TEST_LIST.append(1) \n'
+            )
+            
+            self.TEST_SEQUENCE_IMPORTANCE = False
+            self.TEST_HEURISTIC_IMPORTANCE = False
+            self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
+            self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
+            self.POINTS_PER_CLUSTER_ACT_LRN = 0
+            self.CAND_SUBSAMPLE_TEST_LIST.append(1)
+            
+        elif self.TEST_HEURISTIC_IMPORTANCE:
+            print(
+                'Caution!! You decided to test heuristics importance through '
+                'setting TEST_HEURISTIC_IMPORTANCE=True. This will set the following '
+                'hyper paramters for benchmark before performing ADL: \n',
+                'CAND_SUBSAMPLE_ACT_LRN = 1 \n',
+                'POINTS_PER_CLUSTER_ACT_LRN = 1 \n',
+            )
+            
+            self.CAND_SUBSAMPLE_ACT_LRN = 1
+            self.POINTS_PER_CLUSTER_ACT_LRN = 1
+            
     def set_act_lrn_params(self):
 
         """ Should be called only after training initial model. Resets the 

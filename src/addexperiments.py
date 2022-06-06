@@ -365,184 +365,162 @@ def test_AL_heuristic_importance(
     
     """ Tests heuristic methods for passed AL results """
 
-    if HYPER.TEST_HEURISTIC_IMPORTANCE:
-    
-        # save original hyper parameter values
-        original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
-        original_pointspercluster = HYPER.POINTS_PER_CLUSTER_ACT_LRN
+    # save original hyper parameter values
+    original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
+    original_pointspercluster = HYPER.POINTS_PER_CLUSTER_ACT_LRN
         
-        # define a list of values you want to evaluate for CAND_SUBSAMPLE_ACT_LRN
-        # and POINTS_PER_CLUSTER_ACT_LRN
-        cand_subsample_test_list = [
-            0.3,
-            0.5,
-            0.7
-        ]
-        points_percluster_test_list = [
-            0,
-            0.3,
-            0.5
-        ]
-            
+    if HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
         
         if not silent:
-            # create a progress bar for training
             progbar_heuimportance = tf.keras.utils.Progbar(
-                len(cand_subsample_test_list) + len(points_percluster_test_list)
+                len(HYPER.CAND_SUBSAMPLE_TEST_LIST)
             )
-
-            # tell us what we are doing
-            print('Testing heuristic importance for')
-            
+            print('Testing query by coordinate importance for')
             print(
                 'prediction type:                      {}'.format(
                     pred_type
                 )
             )
-            
             print(
                 'query variable:                       {}'.format(
                     AL_variable
                 )
             )
-            
             print(
                 'query variant:                        {}'.format(
                     method
                 )
             )
             
-        if HYPER.CAND_SUBSAMPLE_ACT_LRN !=1:
-            print(
-                '\nNote: subsampling heuristics not run as CAND_SUBSAMPLE_ACT_LRN '
-                'is not set to 1. Please set this to 1 for getting a benchmark, '
-                'then repeat the experiments. '
+        heuristic_results_list = []
+        for heuristic_subsample in HYPER.CAND_SUBSAMPLE_TEST_LIST:
+            HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_subsample
+            
+            results = {}
+            results = activelearning.feature_embedding_AL(
+                HYPER, 
+                pred_type, 
+                models, 
+                raw_data, 
+                train_data, 
+                candidate_dataset,
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function,
+                results,
+                method, 
+                AL_variable=AL_variable, 
             )
             
-            # increment progress bar
-            progbar_heuimportance.add(len(cand_subsample_test_list))
-            
-        else:
-            # initialize empty list for saving heuristic results
-            heuristic_results_list = []
-            
-            # iterate over heuristic values
-            for heuristic_value in cand_subsample_test_list:
-            
-                # set the hyper parameter to currently iterated value
-                HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
-                
-                # create empty results dict
-                results = {}
-                
-                # create heuristic results
-                results = activelearning.feature_embedding_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    train_data, 
-                    candidate_dataset,
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function,
-                    results,
-                    method, 
-                    AL_variable=AL_variable, 
+            heuristic_results_dict = set_heuristic_results(results)
+            heuristic_results_list.append(heuristic_results_dict)
+            progbar_heuimportance.add(1)
+        
+        result_dict['heuristics_querybycoordinate'] = heuristic_results_list
+        HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
+        
+    elif HYPER.TEST_HEURISTIC_IMPORTANCE:
+        
+        if not silent:
+            progbar_heuimportance = tf.keras.utils.Progbar(
+                len(HYPER.CAND_SUBSAMPLE_TEST_LIST) + len(HYPER.POINTS_PERCLUSTER_TEST_LIST)
+            )
+            print('Testing heuristic importance for')
+            print(
+                'prediction type:                      {}'.format(
+                    pred_type
                 )
-                
-                heuristic_results_dict = {
-                    'heuristic_value': heuristic_value,
-                    't_total': results['t_total'],
-                    't_iter_avg': (
-                        sum(results['iter_time_hist']) 
-                        / len(results['iter_time_hist'])
-                    ),
-                    'budget_usage': results['budget_usage_hist'][-1],
-                    'sensor_usage': results['sensor_usage_hist'][-1],
-                    'streamtime_usage': results['streamtime_usage_hist'][-1],
-                    'test_loss': results['test_loss'],
-                    'train_hist': results['train_hist'],
-                    'val_hist': results['val_hist'],
-                }
-                
-                heuristic_results_list.append(heuristic_results_dict)
-                
-                # increment progress bar
-                progbar_heuimportance.add(1)
+            )
+            print(
+                'query variable:                       {}'.format(
+                    AL_variable
+                )
+            )
+            print(
+                'query variant:                        {}'.format(
+                    method
+                )
+            )
             
-            # Add the heuristic results to your results object
-            result_dict['heuristics_subsample'] = heuristic_results_list
-                    
-        # reset original hyper parameter values for following evaluations
+        heuristic_results_list = []
+        for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
+            HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
+            
+            results = {}
+            results = activelearning.feature_embedding_AL(
+                HYPER, 
+                pred_type, 
+                models, 
+                raw_data, 
+                train_data, 
+                candidate_dataset,
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function,
+                results,
+                method, 
+                AL_variable=AL_variable, 
+            )
+            
+            heuristic_results_dict = set_heuristic_results(results)
+            heuristic_results_list.append(heuristic_results_dict)
+            progbar_heuimportance.add(1)
+        
+        result_dict['heuristics_subsample'] = heuristic_results_list
         HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
 
-        if HYPER.POINTS_PER_CLUSTER_ACT_LRN != 1:
-            print(
-                '\nNote: multiple points per cluster heuristics not run as '
-                'POINTS_PER_CLUSTER_ACT_LRN is not set to 1. Please set this to '
-                '1 to have a benchmark, then repeat the experiments.'
+        heuristic_results_list = []
+        for heuristic_value in HYPER.POINTS_PERCLUSTER_TEST_LIST:
+            HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
+            
+            results = {}
+            results = activelearning.feature_embedding_AL(
+                HYPER, 
+                pred_type, 
+                models, 
+                raw_data, 
+                train_data, 
+                candidate_dataset,
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function,
+                results,
+                method, 
+                AL_variable=AL_variable, 
             )
             
-            # increment progress bar
-            progbar_heuimportance.add(len(points_percluster_test_list))
+            heuristic_results_dict = set_heuristic_results(results)
+            heuristic_results_list.append(heuristic_results_dict)
+            progbar_heuimportance.add(1)
             
-        else:
-            
-            # initialize empty list for saving heuristic results
-            heuristic_results_list = []
-            
-            # iterate over heuristic values
-            for heuristic_value in points_percluster_test_list:
-            
-                # set the hyper parameter to currently iterated value
-                HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
-                
-                # create empty results dict
-                results = {}
-                
-                # create heuristic results
-                results = activelearning.feature_embedding_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    train_data, 
-                    candidate_dataset,
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function,
-                    results,
-                    method, 
-                    AL_variable=AL_variable, 
-                )
-                
-                heuristic_results_dict = {
-                    'heuristic_value': heuristic_value,
-                    't_total': results['t_total'],
-                    't_iter_avg': sum(
-                        results['iter_time_hist']) 
-                        / len(results['iter_time_hist']
-                    ),
-                    'budget_usage': results['budget_usage_hist'][-1],
-                    'sensor_usage': results['sensor_usage_hist'][-1],
-                    'streamtime_usage': results['streamtime_usage_hist'][-1],
-                    'test_loss': results['test_loss'],
-                    'train_hist': results['train_hist'],
-                    'val_hist': results['val_hist'],
-                }
-                    
-                heuristic_results_list.append(heuristic_results_dict)
-                
-                # increment progress bar
-                progbar_heuimportance.add(1)
-                
-            # Add the heuristic results to your results object
-            result_dict['heuristics_pointspercluster'] = heuristic_results_list
-                    
-        # reset original hyper parameter values for following evaluations
+        result_dict['heuristics_pointspercluster'] = heuristic_results_list
         HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
         
     return result_dict
+    
+def set_heuristic_results(results):
+
+    """ Extracts this chosen subset of results from the generated ADL test run
+    and generates a heuristic results dictionary that it returns.
+    """
+    
+    heuristic_results_dict = {
+        'cand_subsample_rate': results['cand_subsample_rate'],
+        'points_percluster_rate': results['points_percluster_rate'],
+        't_total': results['t_total'],
+        't_iter_avg': (
+            sum(results['iter_time_hist']) 
+            / len(results['iter_time_hist'])
+        ),
+        'budget_usage': results['budget_usage_hist'][-1],
+        'sensor_usage': results['sensor_usage_hist'][-1],
+        'streamtime_usage': results['streamtime_usage_hist'][-1],
+        'test_loss': results['test_loss'],
+        'train_hist': results['train_hist'],
+        'val_hist': results['val_hist'],
+    }
+    
+    return heuristic_results_dict

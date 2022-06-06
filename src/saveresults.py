@@ -55,7 +55,7 @@ def save_act_lrn_models(
 
     """ Saves the actively trained prediction models. """
 
-    if HYPER.SAVE_ACT_LRN_MODELS:
+    if HYPER.SAVE_ACT_LRN_MODELS and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
 
         for pred_type in HYPER.PRED_LIST_ACT_LRN:
 
@@ -125,20 +125,14 @@ def save_act_lrn_results(
             if not os.path.exists(saving_path):
                 os.mkdir(saving_path)
                 
+            
+            df_list_main = []
             path_to_results_file = saving_path + 'results.csv'
             
-            # create empty DataFrame
-            df_list = []
-
-            # baseline results
             RF_loss = RF_result[pred_type]
-
-            # get method_result_list of currently iterated prediction type
             var_result_dict = AL_result_dict[pred_type]
 
             ### Save PL results ###
-            
-            # get PL results
             PL_result = PL_result_dict[pred_type]
 
             n_iterations = HYPER.N_ITER_ACT_LRN
@@ -160,23 +154,23 @@ def save_act_lrn_results(
 
             meta_entry = np.array(
                 [
-                    n_iterations,
-                    t_total,
                     t_iter_avg,
                     budget_usage,
                     sensor_usage,
                     streamtime_usage,
                     test_loss,
-                    RF_loss
+                    RF_loss,
+                    '-',
+                    '-'
                 ]
             )
             entry_train = np.concatenate((meta_entry, train_hist))
             entry_val = np.concatenate((meta_entry, val_hist))
 
-            df_list.append(
+            df_list_main.append(
                 pd.DataFrame({col_name_train: pd.Series(entry_train)})
             )
-            df_list.append(
+            df_list_main.append(
                 pd.DataFrame({col_name_val: pd.Series(entry_val)})
             )
             
@@ -202,16 +196,28 @@ def save_act_lrn_results(
             )
 
             ### Prepare query by coordinate imporatance for AL ### 
-            df_list_querybycoordinate = df_list.copy()
+            df_list_querybycoordinate = df_list_main.copy()
             path_to_querybycoordinate_file = (
                 saving_path 
                 + 'heuristic_querybycoordinate.csv'
             )
 
-
             ### Prepare budget vs accuracy for PL ###
-            path_to_budgetvsaccuracy_file = saving_path + 'budget_vs_accuracy.csv'
-            budgetvsaccuracy_df_list = []
+            df_list_budgetvsaccuracy = []
+            path_to_budgetvsaccuracy_file = (
+                saving_path 
+                + 'budget_vs_accuracy.csv'
+            )
+            
+            ### Prepare picked times and spaces for PL ###
+            df_list_spacetime = []
+            path_to_spacetime_file = (
+                saving_path 
+                + 'spacetime_selection.csv'
+            )
+            
+            
+            ### Create entries for budgets vs accuracy results ###
             data = np.rint(
                 100 * np.array(PL_result['budget_usage_hist'])
             ).astype(int)
@@ -221,9 +227,8 @@ def save_act_lrn_results(
             streamtimes = np.rint(
                 100 * np.array(PL_result['streamtime_usage_hist'])
             ).astype(int)
-            val_loss_hist = PL_result['val_loss_hist']
             accuracy = np.rint(
-                100 * (1 - np.minimum(1, val_loss_hist / RF_loss))
+                100 * (1 - np.minimum(1, PL_result['val_loss_hist'] / RF_loss))
             ).astype(int)
             
             col_name_data = '{} {} {} data'.format(
@@ -247,23 +252,20 @@ def save_act_lrn_results(
                 'PL'
             )
  
-            budgetvsaccuracy_df_list.append(
+            df_list_budgetvsaccuracy.append(
                 pd.DataFrame({col_name_data: pd.Series(data)})
             )
-            budgetvsaccuracy_df_list.append(
+            df_list_budgetvsaccuracy.append(
                 pd.DataFrame({col_name_sensors: pd.Series(sensors)})
             )
-            budgetvsaccuracy_df_list.append(
+            df_list_budgetvsaccuracy.append(
                 pd.DataFrame({col_name_streamtimes: pd.Series(streamtimes)})
             )
-            budgetvsaccuracy_df_list.append(
+            df_list_budgetvsaccuracy.append(
                 pd.DataFrame({col_name_accuracy: pd.Series(accuracy)})
             )
-                
-            ### Prepare picked times and spaces for PL ###
-            path_to_spacetime_file = saving_path + 'spacetime_selection.csv'
-            spacetime_df = pd.DataFrame()
-            spacetime_df_list = []
+            
+            ### Create entries for spacetime results ###
             picked_times_index_hist = PL_result['picked_times_index_hist']
             picked_spaces_index_hist = PL_result['picked_spaces_index_hist']
             initial_sensors_list = PL_result['initial_sensors_list']
@@ -272,7 +274,7 @@ def save_act_lrn_results(
                 pred_type
             )
             
-            spacetime_df_list.append(
+            df_list_spacetime.append(
                   pd.DataFrame({col_name_initial_sensors: pd.Series(initial_sensors_list)})
               )
             
@@ -293,33 +295,19 @@ def save_act_lrn_results(
                     iteration
                 )
                 
-                spacetime_df_list.append(
+                df_list_spacetime.append(
                     pd.DataFrame({col_name_times: pd.Series(picked_times_list)})
                 )
-                spacetime_df_list.append(
+                df_list_spacetime.append(
                     pd.DataFrame({col_name_spaces: pd.Series(picked_spaces_list)})
                 )
             
             
             for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
-
-                ### Save main AL results ### 
                 method_result_dict = var_result_dict[AL_variable]
 
                 for method in HYPER.QUERY_VARIANTS_ACT_LRN:
-
                     AL_result = method_result_dict[method]
-
-                    n_iterations = HYPER.N_ITER_ACT_LRN
-                    t_total = AL_result['t_total']
-                    t_iter_avg = sum(AL_result['iter_time_hist']) / len(AL_result['iter_time_hist'])
-                    budget_usage = AL_result['budget_usage_hist'][-1]
-                    sensor_usage = AL_result['sensor_usage_hist'][-1]
-                    streamtime_usage = AL_result['streamtime_usage_hist'][-1]
-                    test_loss = AL_result['test_loss']
-                    train_hist = AL_result['train_hist']
-                    val_hist = AL_result['val_hist']
-                    
                     col_name_train = '{} {} {} train'.format(
                         pred_type, 
                         AL_variable, 
@@ -330,309 +318,372 @@ def save_act_lrn_results(
                         AL_variable, 
                         method
                     )
-
-                    meta_entry = np.array(
-                        [
-                            n_iterations,
-                            t_total,
-                            t_iter_avg,
-                            budget_usage,
-                            sensor_usage,
-                            streamtime_usage,
-                            test_loss,
-                            RF_loss
-                        ]
-                    )
-                    entry_train = np.concatenate((meta_entry, train_hist))
-                    entry_val = np.concatenate((meta_entry, val_hist))
-
-                    if AL_variable == 'X_t' or AL_variable == 'X_s1':
                     
-                        df_list_querybycoordinate.append(
-                            pd.DataFrame({col_name_train: pd.Series(entry_train)})
-                        )
-                        df_list_querybycoordinate.append(
-                            pd.DataFrame({col_name_val: pd.Series(entry_val)})
-                        )
+                    ### Save heuristics test results for query by coordinate ###
+                    if HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+                        heuristics_result_list = AL_result['heuristics_querybycoordinate']
+                        for heuristic_dict in heuristics_result_list:
+                            cand_subsample_rate = (
+                                heuristic_dict['cand_subsample_rate']
+                            )
+                            points_percluster_rate = (
+                                heuristic_dict['points_percluster_rate']
+                            )
+                            t_iter_avg = (
+                                heuristic_dict['t_iter_avg']
+                            )
+                            budget_usage = (
+                                heuristic_dict['budget_usage']
+                            )
+                            sensor_usage = (
+                                heuristic_dict['sensor_usage']
+                            )
+                            streamtime_usage = (
+                                heuristic_dict['streamtime_usage']
+                            )
+                            test_loss = (
+                                heuristic_dict['test_loss']
+                            )
+                            train_hist = (
+                                heuristic_dict['train_hist']
+                            )
+                            val_hist = (
+                                heuristic_dict['val_hist']
+                            )
+                            
+                            meta_entry = np.array(
+                                [
+                                    t_iter_avg,
+                                    budget_usage,
+                                    sensor_usage,
+                                    streamtime_usage,
+                                    test_loss,
+                                    RF_loss,
+                                    cand_subsample_rate,
+                                    points_percluster_rate
+                                ]
+                            )
+                            
+                            entry_train = np.concatenate(
+                                (
+                                    meta_entry, 
+                                    train_hist
+                                )
+                            )
+                            entry_val = np.concatenate(
+                                (
+                                    meta_entry, 
+                                    val_hist
+                                )
+                            )
+                        
+                            df_list_querybycoordinate.append(
+                                pd.DataFrame(
+                                    {col_name_train: pd.Series(
+                                        entry_train
+                                    )}
+                                )
+                            )
+                            df_list_querybycoordinate.append(
+                                pd.DataFrame(
+                                    {col_name_val: pd.Series(
+                                        entry_val
+                                    )}
+                                )
+                            )
                         
                     else:
-                    
-                        df_list.append(
-                            pd.DataFrame({col_name_train: pd.Series(entry_train)})
-                        )
-                        df_list.append(
-                            pd.DataFrame({col_name_val: pd.Series(entry_val)})
-                        )
-                    
-                    ### Save sequence importance for AL ### 
-                    if HYPER.TEST_SEQUENCE_IMPORTANCE:
-                    
-                        seqimportance_results = AL_result['seqimportance']
-                        train_loss_seqimportance = (
-                            seqimportance_results['train_hist']
-                        )
-                        val_loss_seqimportance = (
-                            seqimportance_results['val_hist']
-                        )
-                        test_loss_seqimportance = (
-                            seqimportance_results['test_loss']
-                        )
+                        ### Save main AL results ### 
+                        t_iter_avg = sum(AL_result['iter_time_hist']) / len(AL_result['iter_time_hist'])
+                        budget_usage = AL_result['budget_usage_hist'][-1]
+                        sensor_usage = AL_result['sensor_usage_hist'][-1]
+                        streamtime_usage = AL_result['streamtime_usage_hist'][-1]
+                        test_loss = AL_result['test_loss']
+                        cand_subsample_rate = AL_result['cand_subsample_rate']
+                        points_percluster_rate = AL_result['points_percluster_rate']
+                        train_hist = AL_result['train_hist']
+                        val_hist = AL_result['val_hist']
+                        
                         meta_entry = np.array(
                             [
-                                test_loss_seqimportance
+                                t_iter_avg,
+                                budget_usage,
+                                sensor_usage,
+                                streamtime_usage,
+                                test_loss,
+                                RF_loss,
+                                cand_subsample_rate,
+                                points_percluster_rate
                             ]
                         )
-                        
-                        entry_train_seqimportance = np.concatenate(
-                            (
-                                meta_entry, 
-                                train_loss_seqimportance
-                            )
+                        entry_train = np.concatenate((meta_entry, train_hist))
+                        entry_val = np.concatenate((meta_entry, val_hist))
+
+                        df_list_main.append(
+                            pd.DataFrame({col_name_train: pd.Series(entry_train)})
                         )
-                        entry_val_seqimportance = np.concatenate(
-                            (
-                                meta_entry, 
-                                val_loss_seqimportance
-                            )
+                        df_list_main.append(
+                            pd.DataFrame({col_name_val: pd.Series(entry_val)})
                         )
                         
-                        df_list_seqimportance.append(
-                            pd.DataFrame(
-                                {col_name_train: pd.Series(
-                                    entry_train_seqimportance
-                                )}
-                            )
-                        )
-                        df_list_seqimportance.append(
-                            pd.DataFrame(
-                                {col_name_val: pd.Series(
-                                    entry_val_seqimportance
-                                )}
-                            )
-                        )
                         
-                    ### Save heuristic importance for AL ### 
-                    if HYPER.TEST_HEURISTIC_IMPORTANCE:
+                        ### Save budget vs accuracy for ADL ###
+                        data = np.rint(
+                            100 * np.array(AL_result['budget_usage_hist'])
+                        ).astype(int)
+                        sensors = np.rint(
+                            100 * np.array(AL_result['sensor_usage_hist'])
+                        ).astype(int)
+                        streamtimes = np.rint(
+                            100 * np.array(AL_result['streamtime_usage_hist'])
+                        ).astype(int)
+                        accuracy = np.rint(
+                            100 * (1 - np.minimum(1, AL_result['val_loss_hist'] / RF_loss))
+                        ).astype(int)
                         
-                        # provide a list of key used to save results in addexperiments.py
-                        list_of_heuristics = [
-                            'heuristics_subsample', 
-                            'heuristics_pointspercluster'
-                        ]
-                        
-                        for heuristics in list_of_heuristics:
-                            if heuristics in AL_result:
-                                heuristics_list = AL_result[heuristics]
-                                
-                                for heuristic_dict in heuristics_list:
-                                    heuristic_value = (
-                                        heuristic_dict['heuristic_value']
-                                    )
-                                    t_total = (
-                                        heuristic_dict['t_total']
-                                    )
-                                    t_iter_avg = (
-                                        heuristic_dict['t_iter_avg']
-                                    )
-                                    budget_usage = (
-                                        heuristic_dict['budget_usage']
-                                    )
-                                    sensor_usage = (
-                                        heuristic_dict['sensor_usage']
-                                    )
-                                    streamtime_usage = (
-                                        heuristic_dict['streamtime_usage']
-                                    )
-                                    test_loss = (
-                                        heuristic_dict['test_loss']
-                                    )
-                                    train_hist = (
-                                        heuristic_dict['train_hist']
-                                    )
-                                    val_hist = (
-                                        heuristic_dict['val_hist']
-                                    )
-                                    
-                                    meta_entry = np.array(
-                                        [
-                                            heuristic_value,
-                                            t_total,
-                                            t_iter_avg,
-                                            budget_usage,
-                                            sensor_usage,
-                                            streamtime_usage,
-                                            test_loss,
-                                            RF_loss
-                                        ]
-                                    )
-                                    
-                                    entry_train = np.concatenate(
-                                        (
-                                            meta_entry, 
-                                            train_hist
-                                        )
-                                    )
-                                    entry_val = np.concatenate(
-                                        (
-                                            meta_entry, 
-                                            val_hist
-                                        )
-                                    )
-                                    
-                                    if heuristics == 'heuristics_subsample':
-                                        df_list_subsample.append(
-                                            pd.DataFrame(
-                                                {col_name_train: pd.Series(
-                                                    entry_train
-                                                )}
-                                            )
-                                        )
-                                        df_list_subsample.append(
-                                            pd.DataFrame(
-                                                {col_name_val: pd.Series(
-                                                    entry_val
-                                                )}
-                                            )
-                                        )
-                                    elif heuristics == 'heuristics_pointspercluster':
-                                        df_list_pointspercluster.append(
-                                            pd.DataFrame(
-                                                {col_name_train: pd.Series(
-                                                    entry_train
-                                                )}
-                                            )
-                                        )
-                                        df_list_pointspercluster.append(
-                                            pd.DataFrame(
-                                                {col_name_val: pd.Series(
-                                                    entry_val
-                                                )}
-                                            )
-                                        )
-                        
-                    ### Save budget vs accuracy for AL ### 
-                    data = np.rint(
-                        100 * np.array(AL_result['budget_usage_hist'])
-                    ).astype(int)
-                    sensors = np.rint(
-                        100 * np.array(AL_result['sensor_usage_hist'])
-                    ).astype(int)
-                    streamtimes = np.rint(
-                        100 * np.array(AL_result['streamtime_usage_hist'])
-                    ).astype(int)
-                    val_loss_hist = AL_result['val_loss_hist']
-                    accuracy = np.rint(
-                        100 * (1 - np.minimum(1, val_loss_hist / RF_loss))
-                    ).astype(int)
-                    
-                    col_name_data = '{} {} {} data'.format(
-                        pred_type, 
-                        AL_variable, 
-                        method
-                    )
-                    col_name_sensors = '{} {} {} sensors'.format(
-                        pred_type, 
-                        AL_variable, 
-                        method
-                    )
-                    col_name_streamtimes = '{} {} {} streamtimes'.format(
-                        pred_type, 
-                        AL_variable, 
-                        method
-                    )
-                    col_name_accuracy = '{} {} {} accuracy'.format(
-                        pred_type, 
-                        AL_variable, 
-                        method 
-                    )
-                    
-                    budgetvsaccuracy_df_list.append(
-                        pd.DataFrame({col_name_data: pd.Series(data)})
-                    )
-                    budgetvsaccuracy_df_list.append(
-                        pd.DataFrame({col_name_sensors: pd.Series(sensors)})
-                    )
-                    budgetvsaccuracy_df_list.append(
-                        pd.DataFrame({col_name_streamtimes: pd.Series(streamtimes)})
-                    )
-                    budgetvsaccuracy_df_list.append(
-                        pd.DataFrame({col_name_accuracy: pd.Series(accuracy)})
-                    )
-                    
-                    picked_times_index_hist = AL_result['picked_times_index_hist']
-                    picked_spaces_index_hist = AL_result['picked_spaces_index_hist']
-                    picked_inf_score_hist = AL_result['picked_inf_score_hist']
-                    
-                    
-                    for iteration in range(n_iterations):
-                        picked_times_list = picked_times_index_hist[iteration]
-                        picked_spaces_list = picked_spaces_index_hist[iteration]
-                        
-                        col_name_times = '{} {} {} - iter {} time'.format(
+                        col_name_data = '{} {} {} data'.format(
                             pred_type, 
                             AL_variable, 
-                            method,
-                            iteration
+                            method
                         )
-                        col_name_spaces = '{} {} {} - iter {} space'.format(
+                        col_name_sensors = '{} {} {} sensors'.format(
                             pred_type, 
                             AL_variable, 
-                            method,
-                            iteration
+                            method
+                        )
+                        col_name_streamtimes = '{} {} {} streamtimes'.format(
+                            pred_type, 
+                            AL_variable, 
+                            method
+                        )
+                        col_name_accuracy = '{} {} {} accuracy'.format(
+                            pred_type, 
+                            AL_variable, 
+                            method 
                         )
                         
-                        spacetime_df_list.append(
-                            pd.DataFrame({col_name_times: pd.Series(picked_times_list)})
+                        df_list_budgetvsaccuracy.append(
+                            pd.DataFrame({col_name_data: pd.Series(data)})
                         )
-                        spacetime_df_list.append(
-                            pd.DataFrame({col_name_spaces: pd.Series(picked_spaces_list)})
+                        df_list_budgetvsaccuracy.append(
+                            pd.DataFrame({col_name_sensors: pd.Series(sensors)})
+                        )
+                        df_list_budgetvsaccuracy.append(
+                            pd.DataFrame({col_name_streamtimes: pd.Series(streamtimes)})
+                        )
+                        df_list_budgetvsaccuracy.append(
+                            pd.DataFrame({col_name_accuracy: pd.Series(accuracy)})
                         )
                         
-                        # check if list is empty, in this case it is 'rnd d_c' method
-                        # where no information score is available
-                        if method != 'PL' and method != 'rnd d_c':
+                        ### Save space time selection for ADL ###
+                        picked_times_index_hist = AL_result['picked_times_index_hist']
+                        picked_spaces_index_hist = AL_result['picked_spaces_index_hist']
+                        picked_inf_score_hist = AL_result['picked_inf_score_hist']
                         
-                            picked_scores_list = picked_inf_score_hist[iteration] 
-                            col_name_scores = '{} {} {} - iter {} score'.format(
+                        for iteration in range(n_iterations):
+                            picked_times_list = picked_times_index_hist[iteration]
+                            picked_spaces_list = picked_spaces_index_hist[iteration]
+                            
+                            col_name_times = '{} {} {} - iter {} time'.format(
                                 pred_type, 
                                 AL_variable, 
                                 method,
                                 iteration
                             )
-                            spacetime_df_list.append(
-                                pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
+                            col_name_spaces = '{} {} {} - iter {} space'.format(
+                                pred_type, 
+                                AL_variable, 
+                                method,
+                                iteration
                             )
+                            
+                            df_list_spacetime.append(
+                                pd.DataFrame({col_name_times: pd.Series(picked_times_list)})
+                            )
+                            df_list_spacetime.append(
+                                pd.DataFrame({col_name_spaces: pd.Series(picked_spaces_list)})
+                            )
+                            
+                            # check if list is empty, in this case it is 'rnd d_c' method
+                            # where no information score is available
+                            if method != 'PL' and method != 'rnd d_c':
+                            
+                                picked_scores_list = picked_inf_score_hist[iteration] 
+                                col_name_scores = '{} {} {} - iter {} score'.format(
+                                    pred_type, 
+                                    AL_variable, 
+                                    method,
+                                    iteration
+                                )
+                                df_list_spacetime.append(
+                                    pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
+                                )
+                    
+                        ### Save sequence importance for AL ### 
+                        if HYPER.TEST_SEQUENCE_IMPORTANCE:
+                        
+                            seqimportance_results = AL_result['seqimportance']
+                            train_loss_seqimportance = (
+                                seqimportance_results['train_hist']
+                            )
+                            val_loss_seqimportance = (
+                                seqimportance_results['val_hist']
+                            )
+                            test_loss_seqimportance = (
+                                seqimportance_results['test_loss']
+                            )
+                            meta_entry = np.array(
+                                [
+                                    test_loss_seqimportance
+                                ]
+                            )
+                            
+                            entry_train_seqimportance = np.concatenate(
+                                (
+                                    meta_entry, 
+                                    train_loss_seqimportance
+                                )
+                            )
+                            entry_val_seqimportance = np.concatenate(
+                                (
+                                    meta_entry, 
+                                    val_loss_seqimportance
+                                )
+                            )
+                            
+                            df_list_seqimportance.append(
+                                pd.DataFrame(
+                                    {col_name_train: pd.Series(
+                                        entry_train_seqimportance
+                                    )}
+                                )
+                            )
+                            df_list_seqimportance.append(
+                                pd.DataFrame(
+                                    {col_name_val: pd.Series(
+                                        entry_val_seqimportance
+                                    )}
+                                )
+                            )
+                        
+                        ### Save heuristic importance for AL ### 
+                        if HYPER.TEST_HEURISTIC_IMPORTANCE:
+                            
+                            # provide a list of key used to save results in addexperiments.py
+                            list_of_heuristics = [
+                                'heuristics_subsample', 
+                                'heuristics_pointspercluster'
+                            ]
+                            
+                            for heuristics in list_of_heuristics:
+                                if heuristics in AL_result:
+                                    heuristics_list = AL_result[heuristics]
+                                    for heuristic_dict in heuristics_list:
+                                        cand_subsample_rate = (
+                                            heuristic_dict['cand_subsample_rate']
+                                        )
+                                        points_percluster_rate = (
+                                            heuristic_dict['points_percluster_rate']
+                                        )
+                                        t_iter_avg = (
+                                            heuristic_dict['t_iter_avg']
+                                        )
+                                        budget_usage = (
+                                            heuristic_dict['budget_usage']
+                                        )
+                                        sensor_usage = (
+                                            heuristic_dict['sensor_usage']
+                                        )
+                                        streamtime_usage = (
+                                            heuristic_dict['streamtime_usage']
+                                        )
+                                        test_loss = (
+                                            heuristic_dict['test_loss']
+                                        )
+                                        train_hist = (
+                                            heuristic_dict['train_hist']
+                                        )
+                                        val_hist = (
+                                            heuristic_dict['val_hist']
+                                        )
+                                        
+                                        meta_entry = np.array(
+                                            [
+                                                t_iter_avg,
+                                                budget_usage,
+                                                sensor_usage,
+                                                streamtime_usage,
+                                                test_loss,
+                                                RF_loss,
+                                                cand_subsample_rate,
+                                                points_percluster_rate
+                                            ]
+                                        )
+                                        
+                                        entry_train = np.concatenate(
+                                            (
+                                                meta_entry, 
+                                                train_hist
+                                            )
+                                        )
+                                        entry_val = np.concatenate(
+                                            (
+                                                meta_entry, 
+                                                val_hist
+                                            )
+                                        )
+                                        
+                                        if heuristics == 'heuristics_subsample':
+                                            df_list_subsample.append(
+                                                pd.DataFrame(
+                                                    {col_name_train: pd.Series(
+                                                        entry_train
+                                                    )}
+                                                )
+                                            )
+                                            df_list_subsample.append(
+                                                pd.DataFrame(
+                                                    {col_name_val: pd.Series(
+                                                        entry_val
+                                                    )}
+                                                )
+                                            )
+                                        elif heuristics == 'heuristics_pointspercluster':
+                                            df_list_pointspercluster.append(
+                                                pd.DataFrame(
+                                                    {col_name_train: pd.Series(
+                                                        entry_train
+                                                    )}
+                                                )
+                                            )
+                                            df_list_pointspercluster.append(
+                                                pd.DataFrame(
+                                                    {col_name_val: pd.Series(
+                                                        entry_val
+                                                    )}
+                                                )
+                                            )
+                        
 
-
-            ### Save main results ###
-            
-            # create the index column
+            ### Create base index column ###
             df_index_base = [
-                'n_iterations',
-                't_total',
                 't_iter_avg',
                 'budget_usage',
                 'sensor_usage',
                 'streamtime_usage',
                 'test_loss',
                 'RF_loss',
+                'cand_subsample_rate',
+                'points_percluster_rate'
             ]
             
-            if len(df_list) > 2:
-            
-                # copy df_index base
+            ### Save main results ###
+            if len(df_list_main) > 2:
                 df_index = df_index_base.copy()
-                
-                # concatenate the list of all DataFrames to single DataFrame
-                result_df = pd.concat(df_list, axis=1)
-                
+                result_df = pd.concat(df_list_main, axis=1)
                 for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
-
-                # set the index column
                 result_df.index = df_index
-
-                # save results to a CSV file
                 result_df.to_csv(path_to_results_file)
                 
             ### Save query by coordinate results ###
@@ -656,7 +707,7 @@ def save_act_lrn_results(
             ### Save results for subsample test ###
             if len(df_list_subsample) > 0:
                 df_index = df_index_base.copy() 
-                df_index.pop().insert(0, 'subsample_rate')
+                df_index.pop()
                 result_df = pd.concat(df_list_subsample, axis=1)
                 for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
@@ -666,7 +717,7 @@ def save_act_lrn_results(
             ### Save results for pointspercluster test ###
             if len(df_list_pointspercluster) > 0:    
                 df_index = df_index_base.copy() 
-                df_index.pop().insert(0, 'pointspercluster_rate')
+                df_index.pop()
                 result_df = pd.concat(df_list_pointspercluster, axis=1)
                 for i in range(len(result_df) - len(df_index)):
                     df_index.append(i)
@@ -674,12 +725,14 @@ def save_act_lrn_results(
                 result_df.to_csv(path_to_pointspercluster_file)
             
             ### Save results fur budget vs. accuracy ###
-            result_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
-            result_df.to_csv(path_to_budgetvsaccuracy_file)
+            if len(df_list_budgetvsaccuracy) > 4:
+                result_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
+                result_df.to_csv(path_to_budgetvsaccuracy_file)
             
             ### Save results for spacetime data points selection ###
-            result_df = pd.concat(spacetime_df_list, axis=1)
-            result_df.to_csv(path_to_spacetime_file)
+            if len(df_list_spacetime) > 1+ 2*n_iterations:
+                result_df = pd.concat(spacetime_df_list, axis=1)
+                result_df.to_csv(path_to_spacetime_file)
             
 
 def save_hyper_params(HYPER, raw_data):
@@ -688,8 +741,8 @@ def save_hyper_params(HYPER, raw_data):
     results.
     """
 
-    if HYPER.SAVE_HYPER_PARAMS:
-
+    if HYPER.SAVE_HYPER_PARAMS and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+    
         for pred_type in HYPER.PRED_LIST_ACT_LRN:
             saving_path = raw_data.path_to_AL_results + pred_type + '/'
             
@@ -704,7 +757,9 @@ def save_hyper_params(HYPER, raw_data):
             
             # general parameters
             df_list.append(
-                pd.DataFrame({'private_data_access': pd.Series(HYPER.PRIVATE_DATA_ACCESS)})
+                pd.DataFrame({'private_data_access': pd.Series(
+                    HYPER.PRIVATE_DATA_ACCESS
+                )})
             )
             df_list.append(
                 pd.DataFrame({'test_sequence_importance': pd.Series(
@@ -1047,7 +1102,7 @@ def save_act_lrn_test_sample(
     which were not seen by the actively trained prediction models.
     """
 
-    if HYPER.SAVE_ACT_LRN_TEST_SAMPLE:
+    if HYPER.SAVE_ACT_LRN_TEST_SAMPLE and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
         if HYPER.SPATIAL_FEATURES == 'image':
             print('Feature not available')
             return

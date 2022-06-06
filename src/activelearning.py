@@ -1064,5 +1064,8 @@ def feature_embedding_AL(
     result_dict['streamtime_usage_hist'] = streamtime_usage_hist
     result_dict['val_loss_hist'] = val_loss_hist
     result_dict['initial_sensors_list'] = initial_sensors_list
-
+    result_dict['cand_subsample_rate'] = HYPER.CAND_SUBSAMPLE_ACT_LRN
+    result_dict['points_percluster_rate'] = HYPER.POINTS_PER_CLUSTER_ACT_LRN
+    result_dict['n_iterations'] = HYPER.N_ITER_ACT_LRN
+    
     return result_dict
