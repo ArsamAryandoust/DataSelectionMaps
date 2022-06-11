@@ -142,54 +142,35 @@ class RawData:
         
         # set the path to the folder for saving trained encoders     
         self.path_to_encoder_weights = path_to_results + 'encoder weights/'
-
         if not os.path.exists(self.path_to_encoder_weights):
             os.mkdir(self.path_to_encoder_weights)
-            
         self.path_to_encoder_weights += self.experiment_name + '/'
-
         if not os.path.exists(self.path_to_encoder_weights):
             os.mkdir(self.path_to_encoder_weights)
-        
-        
-        # set the path to the folder for saving trained AL models
-        if HYPER.SAVE_ACT_LRN_MODELS and HYPER.TEST_EXPERIMENT_CHOICE=='main_experiments':
+            
+        if HYPER.SAVE_RESULTS:
             self.path_to_AL_models = path_to_results +'models/'
-            
             if not os.path.exists(self.path_to_AL_models):
                 os.mkdir(self.path_to_AL_models)
-                
             self.path_to_AL_models += self.experiment_name + '/'
-            
             if not os.path.exists(self.path_to_AL_models):
                 os.mkdir(self.path_to_AL_models)
-        
-                
-        # set the path to the folder for saving AL test results or hyper params       
-        if HYPER.SAVE_ACT_LRN_RESULTS or HYPER.SAVE_HYPER_PARAMS:
+            
             self.path_to_AL_results = path_to_results + 'values/'
-        
             if not os.path.exists(self.path_to_AL_results):
                 os.mkdir(self.path_to_AL_results)
-
             self.path_to_AL_results += self.experiment_name + '/'
-            
             if not os.path.exists(self.path_to_AL_results):
                 os.mkdir(self.path_to_AL_results)
                 
-                
-        # set the path to the folder for saving AL test results or hyper params       
-        if HYPER.SAVE_ACT_LRN_TEST_SAMPLE and HYPER.TEST_EXPERIMENT_CHOICE=='main_experiments':
             self.path_to_AL_test_samples = path_to_results + 'samples/'
-        
             if not os.path.exists(self.path_to_AL_test_samples):
                 os.mkdir(self.path_to_AL_test_samples)
-
             self.path_to_AL_test_samples += self.experiment_name + '/'
-            
             if not os.path.exists(self.path_to_AL_test_samples):
                 os.mkdir(self.path_to_AL_test_samples)
-                
+        
+      
 
     def show_attributes(self):
 

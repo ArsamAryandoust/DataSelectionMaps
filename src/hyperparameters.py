@@ -22,13 +22,10 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
+    TEST_EXPERIMENT_CHOICE = 'main_experiments'
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_HYPER_PARAMS = False
-    SAVE_ACT_LRN_RESULTS = False
-    SAVE_ACT_LRN_MODELS = False
-    SAVE_ACT_LRN_TEST_SAMPLE = False
+    SAVE_RESULTS = False
     
     
     ### 1. Active Learning algorithm ###
@@ -475,30 +472,31 @@ class HyperParameter:
             self.REGRESSION_LOSS = [tf.keras.losses.log_cosh] 
         
         # set heuristic importance test value lists
-        self.CAND_SUBSAMPLE_TEST_LIST = [
-            0.3,
-            0.5,
-            0.7,
-            1
-        ]
-        self.POINTS_PERCLUSTER_TEST_LIST = [
-            0,
-            0.3,
-            0.5,
-            1
-        ]
+        if (
+            self.TEST_EXPERIMENT_CHOICE != 'main_experiments' or 
+            self.TEST_EXPERIMENT_CHOICE != 'sequence_importance'
+        ):
+            self.CAND_SUBSAMPLE_TEST_LIST = [
+                0.3,
+                0.5,
+                0.7,
+                1
+            ]
+            self.POINTS_PERCLUSTER_TEST_LIST = [
+                0,
+                0.3,
+                0.5,
+                1
+            ]
         
-        if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
+        if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
             print(
                 'Caution!! You decided to test query by coordinates through '
                 'setting TEST_QUERYBYCOORDINATE_IMPORTANCE=True. This will '
                 'set the following hyper paramters before performing ADL: \n',
-                'TEST_SEQUENCE_IMPORTANCE = False \n',
-                'TEST_HEURISTIC_IMPORTANCE = False \n',
                 'QUERY_VARIABLES_ACT_LRN = ["X_t", "X_s1"] \n',
                 'TEST_HEURISTIC_IMPORTANCE = ["max d_c"] \n',
                 'POINTS_PER_CLUSTER_ACT_LRN = 0 \n',
-                'CAND_SUBSAMPLE_TEST_LIST.append(1) \n'
             )
             
             self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']

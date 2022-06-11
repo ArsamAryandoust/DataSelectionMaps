@@ -170,7 +170,7 @@ def save_prediction_model(HYPER, raw_data, model, model_name):
 
     """ Saves the passed prediction model when called. """
     
-    if HYPER.SAVE_ACT_LRN_MODELS and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+    if HYPER.SAVE_RESULTS and HYPER.TEST_EXPERIMENT_CHOICE != 'main_experiments':
     
         for pred_type in HYPER.PRED_LIST_ACT_LRN:
             saving_path = raw_data.path_to_AL_models + pred_type + '/'
