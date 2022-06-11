@@ -11,3 +11,5 @@ src/__pycache__
 src/*.pyc
 
 .ninja_token
+
+tmp\ encoder\ weights

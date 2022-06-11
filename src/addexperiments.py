@@ -26,6 +26,13 @@ def test_sequence_importance_AL(
     silent=True
 ):
 
+    if not silent:
+        print('Testing query sequence importance')
+        print('prediction type:                      {}'.format(pred_type))
+        print('query variable:                       {}'.format(AL_variable))
+        print('query variant:                        {}'.format(method))
+        progbar = tf.keras.utils.Progbar(2)
+
     AL_result = activelearning.feature_embedding_AL(
         HYPER, 
         pred_type, 
@@ -38,9 +45,12 @@ def test_sequence_importance_AL(
         mean_loss,
         loss_function,
         method, 
-        AL_variable 
+        AL_variable
     )
     
+    if not silent:
+        progbar.add(1)
+        
     random_AL_result = randomize_sequence_AL(
         HYPER,
         pred_type,
@@ -54,8 +64,12 @@ def test_sequence_importance_AL(
         loss_function,
         AL_result,
         method,
-        AL_variable
+        AL_variable,
+        silent=silent
     )
+    
+    if not silent:
+        progbar.add(1)
     
     result_dict = {
         'AL_sequence' : AL_result,
@@ -84,32 +98,6 @@ def randomize_sequence_AL(
     
     """ Tests the importance of the query sequence for passed AL results """
 
-    if not silent:
-        # create a progress bar for training
-        progbar_seqimportance = tf.keras.utils.Progbar(HYPER.N_ITER_ACT_LRN)
-
-        # tell us what we are doing
-        print('Testing sequence importance for')
-        
-        print(
-            'prediction type:                      {}'.format(
-                pred_type
-            )
-        )
-        
-        print(
-            'query variable:                       {}'.format(
-                AL_variable
-            )
-        )
-        
-        print(
-            'query variant:                        {}'.format(
-                method
-            )
-        )
-    
-    
     ### Load model weights ###
 
     # Note: if you load entire initial models, instead of their weights only,
@@ -120,7 +108,6 @@ def randomize_sequence_AL(
         models, 
         pred_type
     )
-
 
     ### Start AL algorithm with random sequence selection ###
 
@@ -314,11 +301,6 @@ def randomize_sequence_AL(
             train_hist = np.concatenate((train_hist, train_hist_batch))
             val_hist = np.concatenate((val_hist, val_hist_batch))
 
-        if not silent:
-            # increment progress bar
-            progbar_seqimportance.add(1)
-            
-            
     ### Create test dataset and predict ###
 
     # create new validation data by deleting the batch of picked data from 
@@ -391,10 +373,6 @@ def randomize_sequence_AL(
         'test_loss': test_loss
     }
 
-    if not silent: 
-        # Indicate termination of execute
-        print('---' * 20)
-
     return random_sequence
 
 
@@ -442,7 +420,7 @@ def test_subsample_importance_AL(
             mean_loss,
             loss_function,
             method, 
-            AL_variable=AL_variable, 
+            AL_variable=AL_variable
         )
         
         heuristic_results_list.append(results)
@@ -500,7 +478,7 @@ def test_pointspercluster_importance_AL(
             mean_loss,
             loss_function,
             method, 
-            AL_variable=AL_variable, 
+            AL_variable=AL_variable
         )
         
         heuristic_results_list.append(results)
@@ -558,7 +536,7 @@ def test_querybycoordinate_importance_AL(
             mean_loss,
             loss_function,
             method, 
-            AL_variable=AL_variable, 
+            AL_variable=AL_variable
         )
         
         heuristic_results_list.append(results)

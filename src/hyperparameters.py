@@ -33,7 +33,7 @@ class HyperParameter:
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
-    EXTEND_TRAIN_DATA_ACT_LRN = False
+    EXTEND_TRAIN_DATA_ACT_LRN = True
 
     # Decide whether to remove queried candidates from candidate data pool.
     RED_CAND_DATA_ACT_LRN = True
@@ -473,7 +473,7 @@ class HyperParameter:
         
         # set heuristic importance test value lists
         if (
-            self.TEST_EXPERIMENT_CHOICE != 'main_experiments' or 
+            self.TEST_EXPERIMENT_CHOICE != 'main_experiments' and 
             self.TEST_EXPERIMENT_CHOICE != 'sequence_importance'
         ):
             self.CAND_SUBSAMPLE_TEST_LIST = [

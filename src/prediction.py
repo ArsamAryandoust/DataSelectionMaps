@@ -186,11 +186,11 @@ def save_encoder_and_predictor_weights(HYPER, raw_data, models):
 
     """ Saves the encoder and the prediction model weights of the 
     EncodersAndPredictor object that is passed, in a path that is contained in 
-    the RawData object under attribute path_to_encoder_weights.
+    the RawData object under attribute path_to_tmp_encoder_weights.
     """
     
     for pred_type in HYPER.PRED_LIST_ACT_LRN:
-        saving_path = raw_data.path_to_encoder_weights + pred_type + '/'
+        saving_path = raw_data.path_to_tmp_encoder_weights + pred_type + '/'
         
         if not os.path.exists(saving_path):
             os.mkdir(saving_path)
@@ -213,7 +213,7 @@ def load_encoder_and_predictor_weights(raw_data, models, pred_type):
 
         # create the full path for saving currently iterated model
         loading_path = (
-            raw_data.path_to_encoder_weights 
+            raw_data.path_to_tmp_encoder_weights 
             + pred_type 
             + '/' 
             + model_name
