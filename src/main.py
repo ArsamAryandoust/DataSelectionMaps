@@ -350,13 +350,16 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                     mean_loss,
                     loss_function, 
                     method, 
-                    query_variable, 
+                    AL_variable=query_variable,
                     silent=False
                 )
+                
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
                 pass
+                
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
                 pass
+                
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 pass
                 
