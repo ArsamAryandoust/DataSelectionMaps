@@ -390,7 +390,7 @@ def randomize_sequence_AL(
             'train_hist': AL_result['train_hist'],
             'val_hist': AL_result['val_hist'],
             'test_loss': AL_result['test_loss']
-        {
+        }
         result_dict = {
             'random_sequence': random_sequence,
             'AL_sequence' : AL_sequence

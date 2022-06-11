@@ -292,9 +292,6 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
     if pred_type=='spatio-temporal':
         dataset = dataset_list[2]
         
-    # create empty PL dict
-    PL_result = {}
-    
     # create random result for benchmark once only for this pred_type
     PL_result =  activelearning.feature_embedding_AL(
         HYPER, 
@@ -307,7 +304,6 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         optimizer, 
         mean_loss,
         loss_function,
-        PL_result,
         'PL', 
         silent=False
     )
@@ -324,7 +320,6 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         # iterate over all methods that are chosen to be considered
         for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-            
             if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
                 AL_result = activelearning.feature_embedding_AL(
                     HYPER, 
@@ -359,10 +354,12 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                     silent=False
                 )
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
-            
+                pass
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
+                pass
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
-            
+                pass
+                
             # add results to method_result_list
             method_result_dict[method] = AL_result
          

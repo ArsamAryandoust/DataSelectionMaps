@@ -22,7 +22,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    TEST_EXPERIMENT_CHOICE = 'sequence_importance'
     
     # Decide whether to test query per cooridnate for the evaluated method.
     TEST_QUERYBYCOORDINATE_IMPORTANCE = False
