@@ -22,7 +22,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'subsample_importance'
+    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
     
     # Decide whether to test query per cooridnate for the evaluated method.
     TEST_QUERYBYCOORDINATE_IMPORTANCE = False
@@ -487,15 +487,17 @@ class HyperParameter:
         self.CAND_SUBSAMPLE_TEST_LIST = [
             0.3,
             0.5,
-            0.7
+            0.7,
+            1
         ]
         self.POINTS_PERCLUSTER_TEST_LIST = [
             0,
             0.3,
-            0.5
+            0.5,
+            1
         ]
         
-        if self.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+        if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
             print(
                 'Caution!! You decided to test query by coordinates through '
                 'setting TEST_QUERYBYCOORDINATE_IMPORTANCE=True. This will '
@@ -508,24 +510,9 @@ class HyperParameter:
                 'CAND_SUBSAMPLE_TEST_LIST.append(1) \n'
             )
             
-            self.TEST_SEQUENCE_IMPORTANCE = False
-            self.TEST_HEURISTIC_IMPORTANCE = False
             self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
             self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
             self.POINTS_PER_CLUSTER_ACT_LRN = 0
-            self.CAND_SUBSAMPLE_TEST_LIST.append(1)
-            
-        elif self.TEST_HEURISTIC_IMPORTANCE:
-            print(
-                'Caution!! You decided to test heuristics importance through '
-                'setting TEST_HEURISTIC_IMPORTANCE=True. This will set the following '
-                'hyper paramters for benchmark before performing ADL: \n',
-                'CAND_SUBSAMPLE_ACT_LRN = 1 \n',
-                'POINTS_PER_CLUSTER_ACT_LRN = 1 \n',
-            )
-            
-            self.CAND_SUBSAMPLE_ACT_LRN = 1
-            self.POINTS_PER_CLUSTER_ACT_LRN = 1
             
     def set_act_lrn_params(self):
 
