@@ -324,31 +324,8 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
         # iterate over all methods that are chosen to be considered
         for method in HYPER.QUERY_VARIANTS_ACT_LRN:
 
-            # create empty results dict first
-            AL_result = {}
             
-            # test heuristic methods FIRST for iterated AL variable and variant
-            AL_result = addexperiments.test_AL_heuristic_importance(
-                HYPER, 
-                pred_type, 
-                models, 
-                raw_data, 
-                training_data, 
-                dataset, 
-                loss_object, 
-                optimizer, 
-                mean_loss,
-                loss_function, 
-                AL_result,
-                method, 
-                AL_variable=query_variable, 
-                silent=False
-            )
-            
-            # test main AL settings SECOND with iterated AL variable and variant
-            # Note: Testing it after test_AL_heuristic_importance() is important
-            # for the models being saved at the end.
-            if not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+            if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
                 AL_result = activelearning.feature_embedding_AL(
                     HYPER, 
                     pred_type, 
@@ -360,14 +337,13 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                     optimizer, 
                     mean_loss,
                     loss_function,
-                    AL_result,
                     method, 
                     AL_variable=query_variable, 
                     silent=False
                 )
-            
-                # test sequence importance for iterated AL variable and variant
-                AL_result = addexperiments.test_AL_sequence_importance(
+                
+            elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
+                AL_result = addexperiments.test_sequence_importance_AL(
                     HYPER, 
                     pred_type, 
                     models, 
@@ -378,11 +354,14 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                     optimizer, 
                     mean_loss,
                     loss_function, 
-                    AL_result,
                     method, 
-                    AL_variable=query_variable, 
+                    query_variable, 
                     silent=False
                 )
+            elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
+            
+            elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
+            elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
             
             # add results to method_result_list
             method_result_dict[method] = AL_result

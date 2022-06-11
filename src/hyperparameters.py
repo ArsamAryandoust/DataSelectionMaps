@@ -19,6 +19,11 @@ class HyperParameter:
     # Keep a value of False if you have access to public data only.
     PRIVATE_DATA_ACCESS = True
     
+    # Decide whether and which test to run. Choose from 'main_experiments',
+    # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
+    # 'querybycoordinate_importance'.
+    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    
     # Decide whether to test query per cooridnate for the evaluated method.
     TEST_QUERYBYCOORDINATE_IMPORTANCE = False
 
@@ -29,10 +34,10 @@ class HyperParameter:
     TEST_SEQUENCE_IMPORTANCE = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_HYPER_PARAMS = True
-    SAVE_ACT_LRN_RESULTS = True
-    SAVE_ACT_LRN_MODELS = True
-    SAVE_ACT_LRN_TEST_SAMPLE = True
+    SAVE_HYPER_PARAMS = False
+    SAVE_ACT_LRN_RESULTS = False
+    SAVE_ACT_LRN_MODELS = False
+    SAVE_ACT_LRN_TEST_SAMPLE = False
     
     
     ### 1. Active Learning algorithm ###
@@ -100,7 +105,7 @@ class HyperParameter:
     
     # Decide for which metrics to calculate the problem. Choose
     # from 'Gaussian', 'Laplacian' and 'CosineSimilarity'
-    DISTANCE_METRIC_ACT_LRN = 'Gaussian'
+    DISTANCE_METRIC_ACT_LRN = 'Laplacian'
     
     # Decide for which clustering mehtods to cluster candidate data
     # points. Choose from 'KMeans', 'MiniBatchKMeans'

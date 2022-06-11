@@ -152,6 +152,17 @@ def save_act_lrn_results(
             col_name_train = '{} {} {} train'.format(pred_type, None, 'PL')
             col_name_val = '{} {} {} val'.format(pred_type, None, 'PL')
 
+            df_index_base = [
+                't_iter_avg',
+                'budget_usage',
+                'sensor_usage',
+                'streamtime_usage',
+                'test_loss',
+                'RF_loss',
+                'cand_subsample_rate',
+                'points_percluster_rate'
+            ]
+            
             meta_entry = np.array(
                 [
                     t_iter_avg,
@@ -665,17 +676,6 @@ def save_act_lrn_results(
                                             )
                         
 
-            ### Create base index column ###
-            df_index_base = [
-                't_iter_avg',
-                'budget_usage',
-                'sensor_usage',
-                'streamtime_usage',
-                'test_loss',
-                'RF_loss',
-                'cand_subsample_rate',
-                'points_percluster_rate'
-            ]
             
             ### Save main results ###
             if len(df_list_main) > 2:
@@ -726,12 +726,12 @@ def save_act_lrn_results(
             
             ### Save results fur budget vs. accuracy ###
             if len(df_list_budgetvsaccuracy) > 4:
-                result_df = pd.concat(budgetvsaccuracy_df_list, axis=1)
+                result_df = pd.concat(df_list_budgetvsaccuracy, axis=1)
                 result_df.to_csv(path_to_budgetvsaccuracy_file)
             
             ### Save results for spacetime data points selection ###
             if len(df_list_spacetime) > 1+ 2*n_iterations:
-                result_df = pd.concat(spacetime_df_list, axis=1)
+                result_df = pd.concat(df_list_spacetime, axis=1)
                 result_df.to_csv(path_to_spacetime_file)
             
 
