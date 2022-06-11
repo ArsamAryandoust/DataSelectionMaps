@@ -389,7 +389,21 @@ for pred_type in HYPER.PRED_LIST_ACT_LRN:
                 )
                 
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
-                pass
+                AL_result = addexperiments.test_querybycoordinate_importance_AL(
+                    HYPER, 
+                    pred_type, 
+                    models, 
+                    raw_data, 
+                    training_data, 
+                    dataset, 
+                    loss_object, 
+                    optimizer, 
+                    mean_loss,
+                    loss_function, 
+                    method, 
+                    AL_variable=query_variable,
+                    silent=False
+                )
                 
             # add results to method_result_list
             method_result_dict[method] = AL_result

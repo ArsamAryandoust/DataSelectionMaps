@@ -153,7 +153,7 @@ class RawData:
         
         
         # set the path to the folder for saving trained AL models
-        if HYPER.SAVE_ACT_LRN_MODELS and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+        if HYPER.SAVE_ACT_LRN_MODELS and HYPER.TEST_EXPERIMENT_CHOICE=='main_experiments':
             self.path_to_AL_models = path_to_results +'models/'
             
             if not os.path.exists(self.path_to_AL_models):
@@ -179,7 +179,7 @@ class RawData:
                 
                 
         # set the path to the folder for saving AL test results or hyper params       
-        if HYPER.SAVE_ACT_LRN_TEST_SAMPLE and not HYPER.TEST_QUERYBYCOORDINATE_IMPORTANCE:
+        if HYPER.SAVE_ACT_LRN_TEST_SAMPLE and HYPER.TEST_EXPERIMENT_CHOICE=='main_experiments':
             self.path_to_AL_test_samples = path_to_results + 'samples/'
         
             if not os.path.exists(self.path_to_AL_test_samples):

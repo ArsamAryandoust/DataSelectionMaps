@@ -22,16 +22,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
-    
-    # Decide whether to test query per cooridnate for the evaluated method.
-    TEST_QUERYBYCOORDINATE_IMPORTANCE = False
-
-    # Decide whether to test heuristics for the evaluated method.
-    TEST_HEURISTIC_IMPORTANCE = True
-    
-    # Decide whether to test the sequence importance of queried candidates.
-    TEST_SEQUENCE_IMPORTANCE = True
+    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_HYPER_PARAMS = False
@@ -513,6 +504,7 @@ class HyperParameter:
             self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
             self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
             self.POINTS_PER_CLUSTER_ACT_LRN = 0
+            
             
     def set_act_lrn_params(self):
 
