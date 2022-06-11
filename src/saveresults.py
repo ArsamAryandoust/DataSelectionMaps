@@ -136,7 +136,6 @@ def save_act_lrn_results(
             PL_result = PL_result_dict[pred_type]
 
             n_iterations = HYPER.N_ITER_ACT_LRN
-            t_total = PL_result['t_total']
             t_iter_avg = (
                 sum(PL_result['iter_time_hist']) 
                 / len(PL_result['iter_time_hist'])

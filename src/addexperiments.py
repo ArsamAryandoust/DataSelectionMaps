@@ -403,6 +403,122 @@ def randomize_sequence_AL(
     return result_dict
 
 
+def test_subsample_importance_AL(
+    HYPER,
+    pred_type,
+    models,
+    raw_data,
+    training_data,
+    dataset,
+    loss_object,
+    optimizer,
+    mean_loss,
+    loss_function,
+    method,
+    AL_variable,
+    silent=True
+):
+    
+    """ Tests heuristic methods for passed AL results """
+
+    if not silent:
+        print('Testing subsample importance')
+        print('prediction type:                      {}'.format(pred_type))
+        print('query variable:                       {}'.format(AL_variable))
+        print('query variant:                        {}'.format(method))
+        progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
+            
+    # save original hyper parameter values
+    original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
+            
+    heuristic_results_list = []
+    for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
+        HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
+        
+        results = activelearning.feature_embedding_AL(
+            HYPER, 
+            pred_type, 
+            models, 
+            raw_data, 
+            training_data, 
+            dataset,
+            loss_object, 
+            optimizer, 
+            mean_loss,
+            loss_function,
+            method, 
+            AL_variable=AL_variable, 
+        )
+        
+        heuristic_results_list.append(results)
+        if not silent:
+            progbar.add(1)
+    
+    HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
+    result_dict = {
+        'heuristics_subsample' : heuristic_results_list
+    }
+
+    return result_dict
+
+def test_pointspercluster_importance_AL(
+    HYPER,
+    pred_type,
+    models,
+    raw_data,
+    training_data,
+    dataset,
+    loss_object,
+    optimizer,
+    mean_loss,
+    loss_function,
+    method,
+    AL_variable,
+    silent=True
+):
+    
+    """ Tests heuristic methods for passed AL results """
+
+    if not silent:
+        print('Testing points per cluster importance')
+        print('prediction type:                      {}'.format(pred_type))
+        print('query variable:                       {}'.format(AL_variable))
+        print('query variant:                        {}'.format(method))
+        progbar = tf.keras.utils.Progbar(len(HYPER.POINTS_PERCLUSTER_TEST_LIST))
+            
+    # save original hyper parameter values
+    original_pointspercluster = HYPER.POINTS_PER_CLUSTER_ACT_LRN
+            
+    heuristic_results_list = []
+    for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
+        HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
+        
+        results = activelearning.feature_embedding_AL(
+            HYPER, 
+            pred_type, 
+            models, 
+            raw_data, 
+            training_data, 
+            dataset,
+            loss_object, 
+            optimizer, 
+            mean_loss,
+            loss_function,
+            method, 
+            AL_variable=AL_variable, 
+        )
+        
+        heuristic_results_list.append(results)
+        if not silent:
+            progbar.add(1)
+    
+    HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
+    result_dict = {
+        'heuristics_querybycoordinate' : heuristic_results_list
+    }
+
+    return result_dict
+
 def test_AL_heuristic_importance(
     HYPER,
     pred_type,
@@ -551,7 +667,6 @@ def set_heuristic_results(results):
     heuristic_results_dict = {
         'cand_subsample_rate': results['cand_subsample_rate'],
         'points_percluster_rate': results['points_percluster_rate'],
-        't_total': results['t_total'],
         't_iter_avg': (
             sum(results['iter_time_hist']) 
             / len(results['iter_time_hist'])
