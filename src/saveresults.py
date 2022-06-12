@@ -107,9 +107,7 @@ def save_act_lrn_results(
     histories.
     """
 
-    saving_path = raw_data.path_to_AL_results + HYPER.PRED_TYPE_ACT_LRN + '/'
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
+    saving_path = raw_data.path_to_AL_results 
         
     df_list_main = []
     path_to_results_file = saving_path + 'results.csv'
@@ -823,14 +821,8 @@ def save_hyper_params(HYPER, raw_data):
     """ Saves all hyper parameter values which are used for calculating these 
     results.
     """
-
     
-    saving_path = raw_data.path_to_AL_results + HYPER.PRED_TYPE_ACT_LRN + '/'
-    
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
-        
-    saving_path += 'hyper.csv'
+    saving_path = raw_data.path_to_AL_results + 'hyper.csv'
 
     # create empty DataFrame
     hyper_df = pd.DataFrame()
@@ -1171,12 +1163,9 @@ def save_act_lrn_test_sample(
     if HYPER.SPATIAL_FEATURES == 'image':
         print('Feature not available')
         return
-
-    saving_path = raw_data.path_to_AL_test_samples + HYPER.PRED_TYPE_ACT_LRN + '/'
     
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
-
+    saving_path = raw_data.path_to_AL_test_samples
+    
     # get method_result_list of currently iterated prediction type
     var_result_dict = results_dict['AL_result']
 

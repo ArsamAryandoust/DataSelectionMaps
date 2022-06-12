@@ -396,9 +396,6 @@ def test_subsample_importance_AL(
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
             
-    # save original hyper parameter values
-    original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
-            
     heuristic_results_list = []
     for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
         HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
@@ -421,12 +418,12 @@ def test_subsample_importance_AL(
         if not silent:
             progbar.add(1)
     
-    HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
     result_dict = {
         'heuristics_subsample' : heuristic_results_list
     }
 
     return result_dict
+
 
 def test_pointspercluster_importance_AL(
     HYPER,
@@ -452,11 +449,8 @@ def test_pointspercluster_importance_AL(
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.POINTS_PERCLUSTER_TEST_LIST))
             
-    # save original hyper parameter values
-    original_pointspercluster = HYPER.POINTS_PER_CLUSTER_ACT_LRN
-            
     heuristic_results_list = []
-    for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
+    for heuristic_value in HYPER.POINTS_PERCLUSTER_TEST_LIST:
         HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
         
         results = activelearning.feature_embedding_AL(
@@ -477,12 +471,12 @@ def test_pointspercluster_importance_AL(
         if not silent:
             progbar.add(1)
     
-    HYPER.POINTS_PER_CLUSTER_ACT_LRN = original_pointspercluster
     result_dict = {
         'heuristics_pointspercluster' : heuristic_results_list
     }
 
     return result_dict
+    
     
 def test_querybycoordinate_importance_AL(
     HYPER,
@@ -508,9 +502,6 @@ def test_querybycoordinate_importance_AL(
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
             
-    # save original hyper parameter values
-    original_subsample = HYPER.CAND_SUBSAMPLE_ACT_LRN
-            
     heuristic_results_list = []
     for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
         HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
@@ -533,11 +524,9 @@ def test_querybycoordinate_importance_AL(
         if not silent:
             progbar.add(1)
     
-    HYPER.CAND_SUBSAMPLE_ACT_LRN = original_subsample
     result_dict = {
         'heuristics_querybycoordinate' : heuristic_results_list
     }
 
     return result_dict
     
-    return heuristic_results_dict

@@ -171,10 +171,7 @@ def save_prediction_model(HYPER, raw_data, model, model_name):
     """ Saves the passed prediction model when called. """
     
     if HYPER.SAVE_RESULTS and HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
-        saving_path = raw_data.path_to_AL_models + HYPER.PRED_TYPE_ACT_LRN + '/'
-        if not os.path.exists(saving_path):
-            os.mkdir(saving_path)
-        saving_path += model_name + '.h5'
+        saving_path = raw_data.path_to_AL_models + model_name + '.h5'
         model.save(saving_path)
             
             
@@ -184,16 +181,12 @@ def save_encoder_and_predictor_weights(HYPER, raw_data, models):
     EncodersAndPredictor object that is passed, in a path that is contained in 
     the RawData object under attribute path_to_tmp_encoder_weights.
     """
-    
-    saving_path = raw_data.path_to_tmp_encoder_weights + HYPER.PRED_TYPE_ACT_LRN + '/'
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
 
     # iterate simultaneously over models and their names
     for model_name, tf_model in models.__dict__.items():
 
         # create the full path for saving currently iterated model
-        path_to_model_weights = saving_path + model_name
+        path_to_model_weights = raw_data.path_to_tmp_encoder_weights + model_name
 
         # save currently iterated model
         tf_model.save_weights(path_to_model_weights)
@@ -206,12 +199,7 @@ def load_encoder_and_predictor_weights(HYPER, raw_data, models):
     for model_name, tf_model in models.__dict__.items():
 
         # create the full path for saving currently iterated model
-        loading_path = (
-            raw_data.path_to_tmp_encoder_weights 
-            + HYPER.PRED_TYPE_ACT_LRN 
-            + '/' 
-            + model_name
-        )
+        loading_path = raw_data.path_to_tmp_encoder_weights + model_name
 
         # load currently iterated model
         exec(

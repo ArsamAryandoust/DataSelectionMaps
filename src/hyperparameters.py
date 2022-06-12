@@ -21,7 +21,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = True
@@ -42,7 +42,7 @@ class HyperParameter:
 
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
-    PRED_TYPE_ACT_LRN = 'temporal'
+    PRED_TYPE_ACT_LRN = 'spatio-temporal'
     
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
@@ -133,7 +133,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.01 
     # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.001
+    POINTS_PER_PROFILE = 0.003
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -235,7 +235,7 @@ class HyperParameter:
     HISTO_BINS = 100
 
     # decide whether you want to consider underlying RGB images in grey-scale
-    GREY_SCALE = True
+    GREY_SCALE = False
 
     # decide whether and how to downscale spatial imagery data. Choose any 
     # integer to the power of two or 0 for no downscaling

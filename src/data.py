@@ -114,38 +114,45 @@ class RawData:
                     self.path_to_aerial_imagery_folder 
                     + 'rgb/'
                 )
-            
+        
+        
+        # create the experiment name string for saving models and results
+        if HYPER.RED_CAND_DATA_ACT_LRN:
+            experiment_name = 'delta1'
+        else:
+            experiment_name = 'delta0'
+        if HYPER.UPD_VAL_DATA_ACT_LRN:
+            experiment_name += '_valup1'
+        else:
+            experiment_name += '_valup0'
+        
+        # create a results folder if not existent
+        path_to_results = '../results/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
+        path_to_results += HYPER.PROFILE_SET + '/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
+        path_to_results += HYPER.PRED_TYPE_ACT_LRN + '/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
+        path_to_results += experiment_name + '/'
+        if not os.path.exists(path_to_results):
+            os.mkdir(path_to_results)
         
         ### Set the path to the folder for saving temporary trained encoders ###     
-        self.path_to_tmp_encoder_weights = '../tmp encoder weights/'
+        self.path_to_tmp_encoder_weights = path_to_results + 'tmp_encoder_weights/'
+        if not os.path.exists(self.path_to_tmp_encoder_weights):
+            os.mkdir(self.path_to_tmp_encoder_weights)
+        self.path_to_tmp_encoder_weights += HYPER.TEST_EXPERIMENT_CHOICE + '/'
         if not os.path.exists(self.path_to_tmp_encoder_weights):
             os.mkdir(self.path_to_tmp_encoder_weights)
             
+            
         if HYPER.SAVE_RESULTS:
         
-            # create a results folder if not existent
-            path_to_results = '../results/'
-            if not os.path.exists(path_to_results):
-                os.mkdir(path_to_results)
-            path_to_results += HYPER.PROFILE_SET + '/'
-            if not os.path.exists(path_to_results):
-                os.mkdir(path_to_results)
-            
-            # create the experiment name string for saving models and results
-            if HYPER.RED_CAND_DATA_ACT_LRN:
-                self.experiment_name = 'delta1'
-            else:
-                self.experiment_name = 'delta0'
-            if HYPER.UPD_VAL_DATA_ACT_LRN:
-                self.experiment_name += '_valup1'
-            else:
-                self.experiment_name += '_valup0'
-
             # create path for saving numerical results
             self.path_to_AL_results = path_to_results + 'values/'
-            if not os.path.exists(self.path_to_AL_results):
-                os.mkdir(self.path_to_AL_results)
-            self.path_to_AL_results += self.experiment_name + '/'
             if not os.path.exists(self.path_to_AL_results):
                 os.mkdir(self.path_to_AL_results)
                 
@@ -155,15 +162,9 @@ class RawData:
                 self.path_to_AL_models = path_to_results +'models/'
                 if not os.path.exists(self.path_to_AL_models):
                     os.mkdir(self.path_to_AL_models)
-                self.path_to_AL_models += self.experiment_name + '/'
-                if not os.path.exists(self.path_to_AL_models):
-                    os.mkdir(self.path_to_AL_models)
                 
                 # create path for saving sample data points
                 self.path_to_AL_test_samples = path_to_results + 'samples/'
-                if not os.path.exists(self.path_to_AL_test_samples):
-                    os.mkdir(self.path_to_AL_test_samples)
-                self.path_to_AL_test_samples += self.experiment_name + '/'
                 if not os.path.exists(self.path_to_AL_test_samples):
                     os.mkdir(self.path_to_AL_test_samples)
         
