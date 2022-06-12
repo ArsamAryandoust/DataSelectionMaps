@@ -21,7 +21,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = True
@@ -131,9 +131,9 @@ class HyperParameter:
     PROFILES_PER_YEAR = 1
     
     # Decide how many data points per building-year profile you 
-    # want to consider. Choose a share between 0 and 1. A value of 0.01 
-    # corresponds to approximately 350 points per profile
-    POINTS_PER_PROFILE = 0.003
+    # want to consider. Choose a share between 0 and 1. A value of 0.001 
+    # corresponds to approximately 35 points per profile
+    POINTS_PER_PROFILE = 0.0005
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.

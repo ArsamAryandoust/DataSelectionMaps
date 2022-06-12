@@ -62,12 +62,10 @@ def save_act_lrn_models(
     prediction_model = PL_result['prediction_model']
 
     # create the full path for saving random  prediction model
-    saving_path = raw_data.path_to_AL_models + HYPER.PRED_TYPE_ACT_LRN + '/'
-    if not os.path.exists(saving_path):
-        os.mkdir(saving_path)
-    path_to_model = saving_path + 'PL.h5'
+    saving_path = raw_data.path_to_AL_models
 
     # save currently iterated model
+    path_to_model = saving_path + 'PL.h5'
     prediction_model.save(path_to_model)
 
     for AL_variable in HYPER.QUERY_VARIABLES_ACT_LRN:

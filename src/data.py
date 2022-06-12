@@ -147,8 +147,8 @@ class RawData:
         self.path_to_tmp_encoder_weights += HYPER.TEST_EXPERIMENT_CHOICE + '/'
         if not os.path.exists(self.path_to_tmp_encoder_weights):
             os.mkdir(self.path_to_tmp_encoder_weights)
-            
-            
+        
+        
         if HYPER.SAVE_RESULTS:
         
             # create path for saving numerical results
@@ -167,8 +167,6 @@ class RawData:
                 self.path_to_AL_test_samples = path_to_results + 'samples/'
                 if not os.path.exists(self.path_to_AL_test_samples):
                     os.mkdir(self.path_to_AL_test_samples)
-        
-        
       
 
     def show_attributes(self):
