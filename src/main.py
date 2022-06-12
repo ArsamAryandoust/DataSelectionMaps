@@ -116,7 +116,7 @@ test_pred = prediction.predict_with_RF(
     
 # Calculate the loss on each prediction
 mean_loss.reset_states()
-train_l = mean_loss(
+RF_train_l = mean_loss(
     loss_function(
         training_data.Y, 
         train_pred
@@ -124,7 +124,7 @@ train_l = mean_loss(
 ).numpy()
 
 mean_loss.reset_states()
-val_l = mean_loss(
+RF_val_l = mean_loss(
     loss_function(
         validation_data.Y, 
         val_pred
@@ -132,15 +132,13 @@ val_l = mean_loss(
 ).numpy()
 
 mean_loss.reset_states()
-test_l = mean_loss(
+RF_test_l = mean_loss(
     loss_function(
         testing_data.Y, 
         test_pred
     )
 ).numpy()
 
-RF_result = test_l
-    
 # Tell us the out of bag validation score and prediction losses
 print(
     'The out-of-bag validation score for random forest is:', 
@@ -148,19 +146,22 @@ print(
 )
 print(
     'Loss on training data:             {}'.format(
-        train_l
+        RF_train_l
     )
 )
 print(
     'Loss on validation data:           {}'.format(
-        val_l
+        RF_val_l
     )
 )
 print(
     'Loss on test data:         {}'.format(
-        test_l
+        RF_test_l
     )
 )
+
+# save the test loss results
+RF_result = RF_test_l
 
 # delete the RF model as it occupies memory
 del RF_regr
@@ -168,7 +169,6 @@ _ = gc.collect()
 
 
 ### 2.2 Definition ###
-
 models = prediction.build_prediction_model(
     HYPER, 
     raw_data, 
@@ -178,7 +178,6 @@ models = prediction.build_prediction_model(
 
 
 ### 2.3 Training ###
-
 train_hist, val_hist = prediction.train_model(
     HYPER, 
     models.prediction_model, 
@@ -210,10 +209,10 @@ prediction.save_encoder_and_predictor_weights(
 HYPER.set_act_lrn_params()
 
 
-### 3.4 Batching algorithm ###
+### 3.4 Batch active learning algorithm ###
     
-# create random result for benchmark once only for this pred_type
-PL_result =  activelearning.feature_embedding_AL(
+# create random result for benchmark
+PL_result = activelearning.feature_embedding_AL(
     HYPER, 
     models, 
     raw_data, 

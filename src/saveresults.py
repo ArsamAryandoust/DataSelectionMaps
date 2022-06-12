@@ -744,7 +744,6 @@ def save_act_lrn_results(
                         )
                     )
                 
-
     ### Save main results ###
     if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
         df_index = df_index_base.copy()

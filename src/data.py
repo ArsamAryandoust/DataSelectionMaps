@@ -174,7 +174,6 @@ class RawData:
         """
 
         for attr, value in self.__dict__.items():
-        
             print(attr)
 
 
@@ -305,7 +304,6 @@ def import_consumption_profiles(HYPER, raw_data, silent=False, plot=True):
         building_ids = building_ids[randomize]
         cluster_ids = cluster_ids[randomize]
         year_ids = year_ids[randomize]
-        
         
         # shorten the considered ID lists according to your chosen number of  
         # considerable profiles per year
@@ -1174,10 +1172,11 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
         )
         dataset.X_s1 = dataset.X_s1[:-split_point]
 
-    ###
-    # Set the remaining data as spatial dataset ###
-    ###
 
+    ###
+    # Sample building IDs for seperation as testing data ###
+    ###
+    
     # get number of buildings you want to randomly choose from
     n_test_buildings = math.ceil(
         HYPER.TEST_SPLIT * len(raw_data.building_id_set)
@@ -1191,38 +1190,20 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
 
     # transform building ID strings to integers
     test_building_samples = [int(x) for x in test_building_samples]
-
-    spatial_X_t_ord_1D = dataset.X_t_ord_1D
-    dataset.X_t_ord_1D = 0
     
-    spatial_X_t = dataset.X_t
-    dataset.X_t = 0
-
-    spatial_X_s = dataset.X_s
-    dataset.X_s = 0
-
-    spatial_X_st = dataset.X_st
-    dataset.X_st = 0
-
-    spatial_Y = dataset.Y
-    dataset.Y = 0
-
-    if HYPER.SPATIAL_FEATURES != 'image':
-        spatial_X_s1 = dataset.X_s1
-        dataset.X_s1 = 0
-
+    
     ###
     # Extract temporal and spatio-temporal test sets ###
     ###
 
-    ### create the filtering array ###
+    # writes True for all data points that are in test_building_samples
     boolean_filter_array = np.zeros((len(temporal_X_s),), dtype=bool)
-
     for building_id in test_building_samples:
         boolean_filter_array = boolean_filter_array | (
             temporal_X_s[:, 0] == building_id
         )
-
+        
+    # writes True for all data points that are not in test_building_samples
     inverted_boolean_filter_array = np.invert(boolean_filter_array)
 
     ### Spatio-temporal ###
@@ -1234,7 +1215,6 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
 
     if HYPER.SPATIAL_FEATURES != 'image':
         spatemp_X_s1 = temporal_X_s1[boolean_filter_array]
-
     else:
         spatemp_X_s1 = 0
 
@@ -1264,7 +1244,6 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
 
     if HYPER.SPATIAL_FEATURES != 'image':
         temporal_X_s1 = temporal_X_s1[inverted_boolean_filter_array]
-
     else:
         temporal_X_s1 = 0
 
@@ -1287,39 +1266,29 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
 
 
     ###
-    # Extract spatial test set ###
+    # Extract spatial test set from train and validation ###
     ###
 
-    ### create the filtering array ###
-    boolean_filter_array = np.zeros((len(spatial_X_s),), dtype=bool)
-
+    # writes True for all remaining data points that are in test_building_samples
+    boolean_filter_array = np.zeros((len(dataset.X_s),), dtype=bool)
     for building_id in test_building_samples:
         boolean_filter_array = (
-            boolean_filter_array | (spatial_X_s[:, 0] == building_id)
+            boolean_filter_array | (dataset.X_s[:, 0] == building_id)
         )
 
+    # writes True for all remaining data points that are not in test_building_samples
     inverted_boolean_filter_array = np.invert(boolean_filter_array)
 
-    ### Train-validation split ###
-    train_val_X_t_ord_1D = spatial_X_t_ord_1D[inverted_boolean_filter_array]
-    train_val_X_t = spatial_X_t[inverted_boolean_filter_array]
-    train_val_X_s = spatial_X_s[inverted_boolean_filter_array]
-    train_val_X_st = spatial_X_st[inverted_boolean_filter_array]
-    train_val_Y = spatial_Y[inverted_boolean_filter_array]
-
-    if HYPER.SPATIAL_FEATURES != 'image':
-        train_val_X_s1 = spatial_X_s1[inverted_boolean_filter_array]
-
+        
     ### Spatial ###
-    spatial_X_t_ord_1D = spatial_X_t_ord_1D[boolean_filter_array]
-    spatial_X_t = spatial_X_t[boolean_filter_array]
-    spatial_X_s = spatial_X_s[boolean_filter_array]
-    spatial_X_st = spatial_X_st[boolean_filter_array]
-    spatial_Y = spatial_Y[boolean_filter_array]
+    spatial_X_t_ord_1D = dataset.X_t_ord_1D[boolean_filter_array]
+    spatial_X_t = dataset.X_t[boolean_filter_array]
+    spatial_X_s = dataset.X_s[boolean_filter_array]
+    spatial_X_st = dataset.X_st[boolean_filter_array]
+    spatial_Y = dataset.Y[boolean_filter_array]
 
     if HYPER.SPATIAL_FEATURES != 'image':
-        spatial_X_s1 = spatial_X_s1[boolean_filter_array]
-
+        spatial_X_s1 = dataset.X_s1[boolean_filter_array]
     else:
         spatial_X_s1 = 0
 
@@ -1344,9 +1313,29 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
     ###
     # Split remaining into training and validation datasets using intervals ###
     ###
+    
+    ### Train-validation split ###
+    train_val_X_t_ord_1D = dataset.X_t_ord_1D[inverted_boolean_filter_array]
+    dataset.X_t_ord_1D = 0
+    
+    train_val_X_t = dataset.X_t[inverted_boolean_filter_array]
+    dataset.X_t = 0
+    
+    train_val_X_s = dataset.X_s[inverted_boolean_filter_array]
+    dataset.X_s = 0
+    
+    train_val_X_st = dataset.X_st[inverted_boolean_filter_array]
+    dataset.X_st = 0
+    
+    train_val_Y = dataset.Y[inverted_boolean_filter_array]
+    dataset.Y = 0
+
+    if HYPER.SPATIAL_FEATURES != 'image':
+        train_val_X_s1 = dataset.X_s1[inverted_boolean_filter_array]
+        dataset.X_s1 = 0
+
 
     split_bins = math.ceil(len(train_val_X_t) * HYPER.SPLIT_INTERAVALS)
-
     random_array = np.arange(len(train_val_Y))
     random_array = np.array_split(random_array, split_bins)
     np.random.shuffle(random_array)
@@ -1487,16 +1476,16 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
         )
 
     if HYPER.PRED_TYPE_ACT_LRN=='spatial':
-        test_data = spatial_test_data
+        testing_data = spatial_test_data
     elif HYPER.PRED_TYPE_ACT_LRN=='temporal':
-        test_data = temporal_test_data
+        testing_data = temporal_test_data
     elif HYPER.PRED_TYPE_ACT_LRN=='spatio-temporal':
-        test_data = spatemp_test_data
+        testing_data = spatemp_test_data
         
     return (
         training_data,
         validation_data,
-        test_data
+        testing_data
     )
 
 
@@ -1517,7 +1506,6 @@ def standardize_features(
     if HYPER.STANDARDIZATION:
 
         if not silent:
-
             # tell us what we do
             print('Standardizing data')
 
@@ -1526,13 +1514,11 @@ def standardize_features(
 
         # standardize X_t in the case that it is not OHE
         if HYPER.TIME_ENCODING != 'OHE':
-
             standard_scaler.fit(reference_data.X_t)
             dataset.X_t = standard_scaler.transform(dataset.X_t)
 
         # standardize X_st
         for i in range(len(HYPER.METEO_TYPES)):
-
             standard_scaler.fit(reference_data.X_st[:, :, i])
             dataset.X_st[:, :, i] = standard_scaler.transform(
                 dataset.X_st[:, :, i]
@@ -1542,7 +1528,6 @@ def standardize_features(
         if HYPER.SPATIAL_FEATURES != 'image':
 
             for channel in range(raw_data.n_channels):
-
                 standard_scaler.fit(reference_data.X_s1[:, :, channel])
                 dataset.X_s1[:, :, channel] = standard_scaler.transform(
                     dataset.X_s1[:, :, channel]

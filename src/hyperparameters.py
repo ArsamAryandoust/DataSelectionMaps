@@ -22,7 +22,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = False
