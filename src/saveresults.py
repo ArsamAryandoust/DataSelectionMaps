@@ -315,83 +315,8 @@ def save_act_lrn_results(
                 method
             )
             
-            ### Save heuristics test results for query by coordinate ###
-            if HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
-                heuristics_result_list = AL_result['heuristics_querybycoordinate']
-                
-                for heuristic_dict in heuristics_result_list:
-                    cand_subsample_rate = (
-                        heuristic_dict['cand_subsample_rate']
-                    )
-                    points_percluster_rate = (
-                        heuristic_dict['points_percluster_rate']
-                    )
-                    t_iter_avg = (
-                        sum(heuristic_dict['iter_time_hist']) 
-                        / len(heuristic_dict['iter_time_hist'])
-                    )
-                    budget_usage = (
-                        heuristic_dict['budget_usage_hist'][-1]
-                    )
-                    sensor_usage = (
-                        heuristic_dict['sensor_usage_hist'][-1]
-                    )
-                    streamtime_usage = (
-                        heuristic_dict['streamtime_usage_hist'][-1]
-                    )
-                    test_loss = (
-                        heuristic_dict['test_loss']
-                    )
-                    train_hist = (
-                        heuristic_dict['train_hist']
-                    )
-                    val_hist = (
-                        heuristic_dict['val_hist']
-                    )
-                    
-                    meta_entry = np.array(
-                        [
-                            t_iter_avg,
-                            budget_usage,
-                            sensor_usage,
-                            streamtime_usage,
-                            test_loss,
-                            RF_loss,
-                            cand_subsample_rate,
-                            points_percluster_rate
-                        ]
-                    )
-                    
-                    entry_train = np.concatenate(
-                        (
-                            meta_entry, 
-                            train_hist
-                        )
-                    )
-                    entry_val = np.concatenate(
-                        (
-                            meta_entry, 
-                            val_hist
-                        )
-                    )
-                
-                    df_list_querybycoordinate.append(
-                        pd.DataFrame(
-                            {col_name_train: pd.Series(
-                                entry_train
-                            )}
-                        )
-                    )
-                    df_list_querybycoordinate.append(
-                        pd.DataFrame(
-                            {col_name_val: pd.Series(
-                                entry_val
-                            )}
-                        )
-                    )
-                
             ### Save main AL results ### 
-            elif HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
+            if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
             
                 t_iter_avg = sum(AL_result['iter_time_hist']) / len(AL_result['iter_time_hist'])
                 budget_usage = AL_result['budget_usage_hist'][-1]
@@ -517,7 +442,81 @@ def save_act_lrn_results(
                         df_list_spacetime.append(
                             pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
                         )
-            
+            ### Save heuristics test results for query by coordinate ###
+            elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
+                heuristics_result_list = AL_result['heuristics_querybycoordinate']
+                
+                for heuristic_dict in heuristics_result_list:
+                    cand_subsample_rate = (
+                        heuristic_dict['cand_subsample_rate']
+                    )
+                    points_percluster_rate = (
+                        heuristic_dict['points_percluster_rate']
+                    )
+                    t_iter_avg = (
+                        sum(heuristic_dict['iter_time_hist']) 
+                        / len(heuristic_dict['iter_time_hist'])
+                    )
+                    budget_usage = (
+                        heuristic_dict['budget_usage_hist'][-1]
+                    )
+                    sensor_usage = (
+                        heuristic_dict['sensor_usage_hist'][-1]
+                    )
+                    streamtime_usage = (
+                        heuristic_dict['streamtime_usage_hist'][-1]
+                    )
+                    test_loss = (
+                        heuristic_dict['test_loss']
+                    )
+                    train_hist = (
+                        heuristic_dict['train_hist']
+                    )
+                    val_hist = (
+                        heuristic_dict['val_hist']
+                    )
+                    
+                    meta_entry = np.array(
+                        [
+                            t_iter_avg,
+                            budget_usage,
+                            sensor_usage,
+                            streamtime_usage,
+                            test_loss,
+                            RF_loss,
+                            cand_subsample_rate,
+                            points_percluster_rate
+                        ]
+                    )
+                    
+                    entry_train = np.concatenate(
+                        (
+                            meta_entry, 
+                            train_hist
+                        )
+                    )
+                    entry_val = np.concatenate(
+                        (
+                            meta_entry, 
+                            val_hist
+                        )
+                    )
+                
+                    df_list_querybycoordinate.append(
+                        pd.DataFrame(
+                            {col_name_train: pd.Series(
+                                entry_train
+                            )}
+                        )
+                    )
+                    df_list_querybycoordinate.append(
+                        pd.DataFrame(
+                            {col_name_val: pd.Series(
+                                entry_val
+                            )}
+                        )
+                    )
+                
             ### Save sequence importance for AL ### 
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
                 
@@ -533,7 +532,8 @@ def save_act_lrn_results(
                 )
                 AL_meta_entry = np.array(
                     [
-                        AL_test_loss_seqimportance
+                        AL_test_loss_seqimportance,
+                        RF_loss
                     ]
                 )
                 AL_entry_train_seqimportance = np.concatenate(
@@ -561,7 +561,8 @@ def save_act_lrn_results(
                 )
                 random_meta_entry = np.array(
                     [
-                        random_test_loss_seqimportance
+                        random_test_loss_seqimportance,
+                        RF_loss
                     ]
                 )
                 random_entry_train_seqimportance = np.concatenate(
@@ -772,7 +773,7 @@ def save_act_lrn_results(
     
     ### Save sequence importance results ###
     elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
-        df_index = ['test_loss']
+        df_index = ['test_loss', 'RF_loss']
         result_df = pd.concat(df_list_seqimportance, axis=1)
         for i in range(len(result_df) - len(df_index)):
             df_index.append(i)

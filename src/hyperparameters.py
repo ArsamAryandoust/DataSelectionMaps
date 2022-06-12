@@ -13,7 +13,6 @@ class HyperParameter:
     4. feature engineering
     """
     
-    
     ### General parameters ###
     
     # Keep a value of False if you have access to public data only.
@@ -22,10 +21,10 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
+    TEST_EXPERIMENT_CHOICE = 'sequence_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_RESULTS = False
+    SAVE_RESULTS = True
     
     
     ### 1. Active Learning algorithm ###
