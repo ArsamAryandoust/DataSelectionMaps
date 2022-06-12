@@ -222,7 +222,7 @@ PL_result = activelearning.feature_embedding_AL(
     optimizer, 
     mean_loss,
     loss_function,
-    'PL', 
+    'PL',
     silent=False
 )
 

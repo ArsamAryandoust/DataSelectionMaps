@@ -74,6 +74,7 @@ class RawData:
             + HYPER.PROFILE_SET
             + '/meteo data/'
         )
+        
         # set the path to aerial imagery data
         if HYPER.PRIVATE_DATA_ACCESS:
             self.path_to_aerial_imagery_folder = (
@@ -113,7 +114,6 @@ class RawData:
                     self.path_to_aerial_imagery_folder 
                     + 'rgb/'
                 )
-            
             
         
         ### Set the path to the folder for saving temporary trained encoders ###     

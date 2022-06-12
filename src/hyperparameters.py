@@ -21,7 +21,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'subsample_importance'
+    TEST_EXPERIMENT_CHOICE = 'main_experiments'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = True
@@ -32,7 +32,7 @@ class HyperParameter:
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
-    EXTEND_TRAIN_DATA_ACT_LRN = True
+    EXTEND_TRAIN_DATA_ACT_LRN = False
 
     # Decide whether to remove queried candidates from candidate data pool.
     RED_CAND_DATA_ACT_LRN = True
@@ -42,13 +42,11 @@ class HyperParameter:
 
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
-    PRED_TYPE_ACT_LRN = 'spatio-temporal'
+    PRED_TYPE_ACT_LRN = 'temporal'
     
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
-        #'X_t',
-        #'X_s1',
         'X_st', 
         #'X_(t,s)', 
         #'Y_hat_(t,s)', 

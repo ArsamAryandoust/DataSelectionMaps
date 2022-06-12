@@ -408,7 +408,7 @@ def feature_embedding_AL(
     # alongside training the main prediction model.
     models = load_encoder_and_predictor_weights(
         HYPER,
-        raw_data, 
+        raw_data,
         models
     )
     
@@ -416,7 +416,7 @@ def feature_embedding_AL(
         loss_object, 
         optimizer, 
         loss_function, 
-        mean_loss,
+        mean_loss
     ) = initialize_optimizer(HYPER)
 
 
