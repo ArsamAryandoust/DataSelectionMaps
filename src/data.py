@@ -150,6 +150,7 @@ class RawData:
                 os.mkdir(self.path_to_AL_results)
                 
             if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
+            
                 # create path for saving models            
                 self.path_to_AL_models = path_to_results +'models/'
                 if not os.path.exists(self.path_to_AL_models):

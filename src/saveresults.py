@@ -169,34 +169,6 @@ def save_act_lrn_results(
         pd.DataFrame({col_name_val: pd.Series(entry_val)})
     )
     
-    ### Prepare query by coordinate imporatance for AL ### 
-    df_list_querybycoordinate = df_list_main.copy()
-    path_to_querybycoordinate_file = (
-        saving_path 
-        + 'heuristic_querybycoordinate.csv'
-    )
-    
-    ### Prepare sequence imporatance for AL ### 
-    df_list_seqimportance = []
-    path_to_seqimportance_file = (
-        saving_path 
-        + 'sequence_importance.csv'
-    )
-        
-    ### Prepare points per cluster imporatance for AL ### 
-    df_list_pointspercluster = []
-    path_to_pointspercluster_file = (
-        saving_path 
-        + 'heuristic_pointspercluster.csv'
-    )
-    
-    ### Prepare subsample imporatance for AL ###
-    df_list_subsample = []
-    path_to_subsample_file = (
-        saving_path 
-        + 'heuristic_subsampling.csv'
-    )
-
     ### Prepare budget vs accuracy for PL ###
     df_list_budgetvsaccuracy = []
     path_to_budgetvsaccuracy_file = (
@@ -211,6 +183,33 @@ def save_act_lrn_results(
         + 'spacetime_selection.csv'
     )
     
+    ### Prepare sequence imporatance for AL ### 
+    df_list_seqimportance = []
+    path_to_seqimportance_file = (
+        saving_path 
+        + 'sequence_importance.csv'
+    )
+    
+    ### Prepare query by coordinate imporatance for AL ### 
+    df_list_querybycoordinate = df_list_main.copy()
+    path_to_querybycoordinate_file = (
+        saving_path 
+        + 'heuristic_querybycoordinate.csv'
+    )
+    
+    ### Prepare subsample imporatance for AL ###
+    df_list_subsample = df_list_main.copy()
+    path_to_subsample_file = (
+        saving_path 
+        + 'heuristic_subsampling.csv'
+    )
+    
+    ### Prepare points per cluster imporatance for AL ### 
+    df_list_pointspercluster = df_list_main.copy()
+    path_to_pointspercluster_file = (
+        saving_path 
+        + 'heuristic_pointspercluster.csv'
+    )
     
     ### Create entries for budgets vs accuracy results ###
     data = np.rint(
@@ -271,7 +270,7 @@ def save_act_lrn_results(
     
     df_list_spacetime.append(
           pd.DataFrame({col_name_initial_sensors: pd.Series(initial_sensors_list)})
-      )
+    )
     
     for iteration in range(n_iterations):
         picked_times_list = picked_times_index_hist[iteration]
@@ -399,6 +398,7 @@ def save_act_lrn_results(
                     pd.DataFrame({col_name_accuracy: pd.Series(accuracy)})
                 )
                 
+                
                 ### Save space time selection for ADL ###
                 picked_times_index_hist = AL_result['picked_times_index_hist']
                 picked_spaces_index_hist = AL_result['picked_spaces_index_hist']
@@ -442,6 +442,8 @@ def save_act_lrn_results(
                         df_list_spacetime.append(
                             pd.DataFrame({col_name_scores: pd.Series(picked_scores_list)})
                         )
+                        
+                        
             ### Save heuristics test results for query by coordinate ###
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 heuristics_result_list = AL_result['heuristics_querybycoordinate']
@@ -516,6 +518,7 @@ def save_act_lrn_results(
                             )}
                         )
                     )
+                
                 
             ### Save sequence importance for AL ### 
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
@@ -670,6 +673,22 @@ def save_act_lrn_results(
                         )
                     )
                     
+                    df_list_subsample.append(
+                        pd.DataFrame(
+                            {col_name_train: pd.Series(
+                                entry_train
+                            )}
+                        )
+                    )
+                    df_list_subsample.append(
+                        pd.DataFrame(
+                            {col_name_val: pd.Series(
+                                entry_val
+                            )}
+                        )
+                    )
+                    
+                    
             ### Save points per cluster importance for AL ### 
             elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
                 heuristics_list = AL_result['heuristics_pointspercluster']
@@ -783,7 +802,6 @@ def save_act_lrn_results(
     ### Save results for subsample test ###
     elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
         df_index = df_index_base.copy() 
-        df_index.pop()
         result_df = pd.concat(df_list_subsample, axis=1)
         for i in range(len(result_df) - len(df_index)):
             df_index.append(i)
@@ -793,7 +811,6 @@ def save_act_lrn_results(
     ### Save results for pointspercluster test ###
     elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':   
         df_index = df_index_base.copy() 
-        df_index.pop()
         result_df = pd.concat(df_list_pointspercluster, axis=1)
         for i in range(len(result_df) - len(df_index)):
             df_index.append(i)
@@ -838,23 +855,13 @@ def save_hyper_params(HYPER, raw_data):
     
     # active learning algorithm parameters
     df_list.append(
-        pd.DataFrame({'pred_type_act_lrn': pd.Series(
-            HYPER.PRED_TYPE_ACT_LRN
-        )})
-    )
-    df_list.append(
-        pd.DataFrame({'query_variants_act_lrn': pd.Series(
-            HYPER.QUERY_VARIANTS_ACT_LRN
-        )})
-    )
-    df_list.append(
-        pd.DataFrame({'query_variables_act_lrn': pd.Series(
-            HYPER.QUERY_VARIABLES_ACT_LRN
-        )})
-    )
-    df_list.append(
         pd.DataFrame({'extend_train_data_act_lrn': pd.Series(
             HYPER.EXTEND_TRAIN_DATA_ACT_LRN
+        )})
+    )
+    df_list.append(
+        pd.DataFrame({'red_cand_data_act_lrn': pd.Series(
+            HYPER.RED_CAND_DATA_ACT_LRN
         )})
     )
     df_list.append(
@@ -863,8 +870,18 @@ def save_hyper_params(HYPER, raw_data):
         )})
     )
     df_list.append(
-        pd.DataFrame({'red_cand_data_act_lrn': pd.Series(
-            HYPER.RED_CAND_DATA_ACT_LRN
+        pd.DataFrame({'pred_type_act_lrn': pd.Series(
+            HYPER.PRED_TYPE_ACT_LRN
+        )})
+    )
+    df_list.append(
+        pd.DataFrame({'query_variables_act_lrn': pd.Series(
+            HYPER.QUERY_VARIABLES_ACT_LRN
+        )})
+    )
+    df_list.append(
+        pd.DataFrame({'query_variants_act_lrn': pd.Series(
+            HYPER.QUERY_VARIANTS_ACT_LRN
         )})
     )
     df_list.append(
@@ -905,6 +922,11 @@ def save_hyper_params(HYPER, raw_data):
     df_list.append(
         pd.DataFrame({'cluster_method_act_lrn': pd.Series(
             HYPER.CLUSTER_METHOD_ACT_LRN
+        )})
+    )
+    df_list.append(
+        pd.DataFrame({'saved_samples_act_lrn': pd.Series(
+            HYPER.SAVED_SAMPLES_ACT_LRN
         )})
     )
 
