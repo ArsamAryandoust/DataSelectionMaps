@@ -270,7 +270,6 @@ def compute_similarity(
 
 def feature_embedding_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     train_data,
@@ -341,7 +340,7 @@ def feature_embedding_AL(
     if not silent:
         print(
             'prediction task:             {}'.format(
-                pred_type
+                HYPER.PRED_TYPE_ACT_LRN
             )
         )
         
@@ -408,9 +407,9 @@ def feature_embedding_AL(
     # network configuration information is lost and tf will not train encoders
     # alongside training the main prediction model.
     models = load_encoder_and_predictor_weights(
+        HYPER,
         raw_data, 
-        models, 
-        pred_type
+        models
     )
     
     (
@@ -1000,7 +999,7 @@ def feature_embedding_AL(
     )
 
     # Predict on candidate datapoints that are not in training data
-    title = '{} {} {}'.format(pred_type, AL_variable, method)
+    title = '{} {} {}'.format(HYPER.PRED_TYPE_ACT_LRN, AL_variable, method)
     
     test_loss = test_model(
         HYPER, 

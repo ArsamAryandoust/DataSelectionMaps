@@ -1486,12 +1486,17 @@ def split_train_val_test(HYPER, raw_data, dataset, silent=False):
             )
         )
 
+    if HYPER.PRED_TYPE_ACT_LRN=='spatial':
+        test_data = spatial_test_data
+    elif HYPER.PRED_TYPE_ACT_LRN=='temporal':
+        test_data = temporal_test_data
+    elif HYPER.PRED_TYPE_ACT_LRN=='spatio-temporal':
+        test_data = spatemp_test_data
+        
     return (
         training_data,
         validation_data,
-        spatial_test_data,
-        temporal_test_data,
-        spatemp_test_data,
+        test_data
     )
 
 

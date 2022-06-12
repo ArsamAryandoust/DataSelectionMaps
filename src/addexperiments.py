@@ -12,7 +12,6 @@ import activelearning
 
 def test_sequence_importance_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     training_data,
@@ -28,14 +27,13 @@ def test_sequence_importance_AL(
 
     if not silent:
         print('Testing query sequence importance')
-        print('prediction type:                      {}'.format(pred_type))
+        print('prediction type:                      {}'.format(HYPER.PRED_TYPE_ACT_LRN))
         print('query variable:                       {}'.format(AL_variable))
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(2)
 
     AL_result = activelearning.feature_embedding_AL(
         HYPER, 
-        pred_type, 
         models, 
         raw_data, 
         training_data, 
@@ -53,7 +51,6 @@ def test_sequence_importance_AL(
         
     random_AL_result = randomize_sequence_AL(
         HYPER,
-        pred_type,
         models,
         raw_data,
         training_data,
@@ -81,7 +78,6 @@ def test_sequence_importance_AL(
 
 def randomize_sequence_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     train_data,
@@ -104,9 +100,9 @@ def randomize_sequence_AL(
     # network configuration information is lost and tf will not train encoders
     # alongside training the main prediction model.
     models = load_encoder_and_predictor_weights(
+        HYPER,
         raw_data, 
-        models, 
-        pred_type
+        models
     )
 
     ### Start AL algorithm with random sequence selection ###
@@ -355,7 +351,7 @@ def randomize_sequence_AL(
     )
     
     # Predict on candidate datapoints that are not in training data
-    title = '{} {} {}'.format(pred_type, AL_variable, method)
+    title = '{} {} {}'.format(HYPER.PRED_TYPE_ACT_LRN, AL_variable, method)
     
     test_loss = test_model(
         HYPER, 
@@ -378,7 +374,6 @@ def randomize_sequence_AL(
 
 def test_subsample_importance_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     training_data,
@@ -396,7 +391,7 @@ def test_subsample_importance_AL(
 
     if not silent:
         print('Testing subsample importance')
-        print('prediction type:                      {}'.format(pred_type))
+        print('prediction type:                      {}'.format(HYPER.PRED_TYPE_ACT_LRN))
         print('query variable:                       {}'.format(AL_variable))
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
@@ -410,7 +405,6 @@ def test_subsample_importance_AL(
         
         results = activelearning.feature_embedding_AL(
             HYPER, 
-            pred_type, 
             models, 
             raw_data, 
             training_data, 
@@ -436,7 +430,6 @@ def test_subsample_importance_AL(
 
 def test_pointspercluster_importance_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     training_data,
@@ -454,7 +447,7 @@ def test_pointspercluster_importance_AL(
 
     if not silent:
         print('Testing points per cluster importance')
-        print('prediction type:                      {}'.format(pred_type))
+        print('prediction type:                      {}'.format(HYPER.PRED_TYPE_ACT_LRN))
         print('query variable:                       {}'.format(AL_variable))
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.POINTS_PERCLUSTER_TEST_LIST))
@@ -468,7 +461,6 @@ def test_pointspercluster_importance_AL(
         
         results = activelearning.feature_embedding_AL(
             HYPER, 
-            pred_type, 
             models, 
             raw_data, 
             training_data, 
@@ -494,7 +486,6 @@ def test_pointspercluster_importance_AL(
     
 def test_querybycoordinate_importance_AL(
     HYPER,
-    pred_type,
     models,
     raw_data,
     training_data,
@@ -512,7 +503,7 @@ def test_querybycoordinate_importance_AL(
 
     if not silent:
         print('Testing query by coordinate importance')
-        print('prediction type:                      {}'.format(pred_type))
+        print('prediction type:                      {}'.format(HYPER.PRED_TYPE_ACT_LRN))
         print('query variable:                       {}'.format(AL_variable))
         print('query variant:                        {}'.format(method))
         progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
@@ -526,7 +517,6 @@ def test_querybycoordinate_importance_AL(
         
         results = activelearning.feature_embedding_AL(
             HYPER, 
-            pred_type, 
             models, 
             raw_data, 
             training_data, 

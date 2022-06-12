@@ -43,11 +43,7 @@ class HyperParameter:
 
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
-    PRED_LIST_ACT_LRN = [
-        #'temporal',
-        #'spatial',
-        'spatio-temporal'
-    ]
+    PRED_TYPE_ACT_LRN = 'spatio-temporal'
     
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'

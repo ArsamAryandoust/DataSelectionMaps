@@ -54,30 +54,14 @@ dataset = data.normalize_features(HYPER, raw_data, dataset, silent=True)
 (
     training_data, 
     validation_data, 
-    spatial_test_data, 
-    temporal_test_data, 
-    spatemp_test_data
+    testing_data
 ) = data.split_train_val_test(HYPER, raw_data, dataset)
 
 # 1.8 Standardize features
-spatemp_test_data = data.standardize_features(
+testing_data = data.standardize_features(
     HYPER, 
     raw_data, 
-    spatemp_test_data, 
-    training_data, 
-    silent=True
-)
-temporal_test_data = data.standardize_features(
-    HYPER, 
-    raw_data, 
-    temporal_test_data, 
-    training_data, 
-    silent=True
-)
-spatial_test_data = data.standardize_features(
-    HYPER, 
-    raw_data, 
-    spatial_test_data, 
+    testing_data, 
     training_data, 
     silent=True
 )
@@ -95,7 +79,6 @@ training_data = data.standardize_features(
     training_data, 
     silent=True
 )
-
 
 
 ### 2. Prediction model ###
@@ -125,21 +108,11 @@ val_pred = prediction.predict_with_RF(
     RF_regr, 
     validation_data
 )
-spatial_test_pred = prediction.predict_with_RF(
+test_pred = prediction.predict_with_RF(
     HYPER, 
     RF_regr, 
-    spatial_test_data
+    testing_data
 )
-temporal_test_pred = prediction.predict_with_RF(
-    HYPER, 
-    RF_regr, 
-    temporal_test_data
-)
-spatemp_test_pred = prediction.predict_with_RF(
-    HYPER, 
-    RF_regr, 
-    spatemp_test_data
-) 
     
 # Calculate the loss on each prediction
 mean_loss.reset_states()
@@ -159,34 +132,14 @@ val_l = mean_loss(
 ).numpy()
 
 mean_loss.reset_states()
-test_l_spatial = mean_loss(
+test_l = mean_loss(
     loss_function(
-        spatial_test_data.Y, 
-        spatial_test_pred
+        testing_data.Y, 
+        test_pred
     )
 ).numpy()
 
-mean_loss.reset_states()
-test_l_temporal = mean_loss(
-    loss_function(
-        temporal_test_data.Y, 
-        temporal_test_pred
-    )
-).numpy()
-
-mean_loss.reset_states()
-test_l_spatemp = mean_loss(
-    loss_function(
-        spatemp_test_data.Y, 
-        spatemp_test_pred
-    )
-).numpy()
-
-RF_result = {
-    'spatial': test_l_spatial, 
-    'temporal': test_l_temporal, 
-    'spatio-temporal': test_l_spatemp
-}
+RF_result = test_l
     
 # Tell us the out of bag validation score and prediction losses
 print(
@@ -204,22 +157,12 @@ print(
     )
 )
 print(
-    'Loss on spatial test data:         {}'.format(
-        test_l_spatial
-    )
-)
-print(
-    'Loss on temporal test data:        {}'.format(
-        test_l_temporal
-    )
-)
-print(
-    'Loss on spatio-temporal test data: {}'.format(
-        test_l_spatemp
+    'Loss on test data:         {}'.format(
+        test_l
     )
 )
 
-# delete the RF model as it occupies a large amount of memory
+# delete the RF model as it occupies memory
 del RF_regr
 _ = gc.collect()
 
@@ -266,162 +209,133 @@ prediction.save_encoder_and_predictor_weights(
 # initialize hyper parameters for AL
 HYPER.set_act_lrn_params()
 
-dataset_list = [
-    spatial_test_data, 
-    temporal_test_data, 
-    spatemp_test_data
-]
-
 
 ### 3.4 Batching algorithm ###
-
-# create empty lists to add results
-AL_result_dict = {}
-PL_result_dict = {}
-
-# iterate over all prediction types
-for pred_type in HYPER.PRED_LIST_ACT_LRN:
     
-    # choose corresponding test data of currently iterated pred_type
-    if pred_type=='spatial':
-        dataset = dataset_list[0]
-        
-    if pred_type=='temporal':
-        dataset = dataset_list[1]
-        
-    if pred_type=='spatio-temporal':
-        dataset = dataset_list[2]
-        
-    # create random result for benchmark once only for this pred_type
-    PL_result =  activelearning.feature_embedding_AL(
-        HYPER, 
-        pred_type, 
-        models, 
-        raw_data, 
-        training_data, 
-        dataset, 
-        loss_object, 
-        optimizer, 
-        mean_loss,
-        loss_function,
-        'PL', 
-        silent=False
-    )
-    
-    # create empty list for saving results of corresponding AL variable
-    var_result_dict = {}
-    
-    # iterate over all sort variables that are chosen to be considered
-    for query_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
-    
-        # empty list for savings results of correspnding AL variant
-        method_result_dict = {}
+# create random result for benchmark once only for this pred_type
+PL_result =  activelearning.feature_embedding_AL(
+    HYPER, 
+    models, 
+    raw_data, 
+    training_data, 
+    testing_data, 
+    loss_object, 
+    optimizer, 
+    mean_loss,
+    loss_function,
+    'PL', 
+    silent=False
+)
 
-        # iterate over all methods that are chosen to be considered
-        for method in HYPER.QUERY_VARIANTS_ACT_LRN:
+# create empty list for saving results of corresponding AL variable
+var_result_dict = {}
 
-            if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
-                AL_result = activelearning.feature_embedding_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    training_data, 
-                    dataset,
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function,
-                    method, 
-                    AL_variable=query_variable, 
-                    silent=False
-                )
-                
-            elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
-                AL_result = addexperiments.test_sequence_importance_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    training_data, 
-                    dataset, 
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function, 
-                    method, 
-                    AL_variable=query_variable,
-                    silent=False
-                )
-                
-            elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
-                AL_result = addexperiments.test_subsample_importance_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    training_data, 
-                    dataset, 
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function, 
-                    method, 
-                    AL_variable=query_variable,
-                    silent=False
-                )
-                
-            elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
-                AL_result = addexperiments.test_pointspercluster_importance_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    training_data, 
-                    dataset, 
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function, 
-                    method, 
-                    AL_variable=query_variable,
-                    silent=False
-                )
-                
-            elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
-                AL_result = addexperiments.test_querybycoordinate_importance_AL(
-                    HYPER, 
-                    pred_type, 
-                    models, 
-                    raw_data, 
-                    training_data, 
-                    dataset, 
-                    loss_object, 
-                    optimizer, 
-                    mean_loss,
-                    loss_function, 
-                    method, 
-                    AL_variable=query_variable,
-                    silent=False
-                )
-                
-            # add results to method_result_list
-            method_result_dict[method] = AL_result
-         
-        # add results to var_result_list
-        var_result_dict[query_variable] = method_result_dict
-    
-    # add results to total result_list and random_result_list
-    AL_result_dict[pred_type] = var_result_dict
-    PL_result_dict[pred_type] = PL_result
+# iterate over all sort variables that are chosen to be considered
+for query_variable in HYPER.QUERY_VARIABLES_ACT_LRN:
 
+    # empty list for savings results of correspnding AL variant
+    method_result_dict = {}
+
+    # iterate over all methods that are chosen to be considered
+    for method in HYPER.QUERY_VARIANTS_ACT_LRN:
+
+        if HYPER.TEST_EXPERIMENT_CHOICE == 'main_experiments':
+            AL_result = activelearning.feature_embedding_AL(
+                HYPER, 
+                models, 
+                raw_data, 
+                training_data, 
+                testing_data,
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function,
+                method, 
+                AL_variable=query_variable, 
+                silent=False
+            )
+            
+        elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
+            AL_result = addexperiments.test_sequence_importance_AL(
+                HYPER, 
+                models, 
+                raw_data, 
+                training_data, 
+                testing_data, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                method, 
+                AL_variable=query_variable,
+                silent=False
+            )
+            
+        elif HYPER.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
+            AL_result = addexperiments.test_subsample_importance_AL(
+                HYPER, 
+                models, 
+                raw_data, 
+                training_data, 
+                testing_data, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                method, 
+                AL_variable=query_variable,
+                silent=False
+            )
+            
+        elif HYPER.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
+            AL_result = addexperiments.test_pointspercluster_importance_AL(
+                HYPER, 
+                models, 
+                raw_data, 
+                training_data, 
+                testing_data, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                method, 
+                AL_variable=query_variable,
+                silent=False
+            )
+            
+        elif HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
+            AL_result = addexperiments.test_querybycoordinate_importance_AL(
+                HYPER, 
+                models, 
+                raw_data, 
+                training_data, 
+                testing_data, 
+                loss_object, 
+                optimizer, 
+                mean_loss,
+                loss_function, 
+                method, 
+                AL_variable=query_variable,
+                silent=False
+            )
+            
+        # add results to method_result_list
+        method_result_dict[method] = AL_result
+     
+    # add results to var_result_list
+    var_result_dict[query_variable] = method_result_dict
+
+
+results_dict = {
+    'RF_result' : RF_result,
+    'PL_result' : PL_result,
+    'AL_result' : var_result_dict
+}
 
 # save results
 saveresults.saveallresults(
     HYPER,
     raw_data,
-    RF_result, 
-    AL_result_dict, 
-    PL_result_dict
+    results_dict
 )
 
