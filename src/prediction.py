@@ -210,7 +210,6 @@ def load_encoder_and_predictor_weights(HYPER, raw_data, models):
         
     return models
     
-
 def plot_true_vs_prediction(figtitle, test_data_Y, predictions):
 
     """ Visualizes predictions vs. true values. """

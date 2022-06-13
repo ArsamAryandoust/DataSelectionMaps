@@ -108,11 +108,11 @@ def randomize_sequence_AL(
     ### Start AL algorithm with random sequence selection ###
 
     # initialize some values
-    data_budget_total = math.floor(
+    data_budget_total = round(
         HYPER.DATA_BUDGET_ACT_LRN * candidate_dataset.n_datapoints
     )
     # compute data budget available in each query iteration
-    data_budget_per_iter = math.floor(
+    data_budget_per_iter = round(
         data_budget_total / HYPER.N_ITER_ACT_LRN
     )
     picked_cand_index_set = set()

@@ -532,6 +532,7 @@ def save_act_lrn_results(
                 AL_meta_entry = np.array(
                     [
                         AL_test_loss_seqimportance,
+                        PL_result['test_loss'],
                         RF_loss
                     ]
                 )
@@ -561,6 +562,7 @@ def save_act_lrn_results(
                 random_meta_entry = np.array(
                     [
                         random_test_loss_seqimportance,
+                        PL_result['test_loss'],
                         RF_loss
                     ]
                 )
@@ -788,7 +790,7 @@ def save_act_lrn_results(
     
     ### Save sequence importance results ###
     elif HYPER.TEST_EXPERIMENT_CHOICE == 'sequence_importance':
-        df_index = ['test_loss', 'RF_loss']
+        df_index = ['test_loss', 'PL_loss', 'RF_loss']
         result_df = pd.concat(df_list_seqimportance, axis=1)
         for i in range(len(result_df) - len(df_index)):
             df_index.append(i)

@@ -21,7 +21,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
+    TEST_EXPERIMENT_CHOICE = 'main_experiments'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = True
@@ -56,9 +56,9 @@ class HyperParameter:
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
     # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
-        #'rnd d_c', 
+        'rnd d_c', 
         #'min d_c', 
-        'max d_c', 
+        #'max d_c', 
         'avg d_c'
     ]
     
@@ -469,32 +469,27 @@ class HyperParameter:
             self.TEST_EXPERIMENT_CHOICE != 'main_experiments' and 
             self.TEST_EXPERIMENT_CHOICE != 'sequence_importance'
         ):
-            self.CAND_SUBSAMPLE_TEST_LIST = [
-                0.3,
-                0.5,
-                0.7,
-                1
-            ]
-            self.POINTS_PERCLUSTER_TEST_LIST = [
-                0,
-                0.3,
-                0.5,
-                1
-            ]
-        
-        if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
             print(
-                'Caution!! You decided to test query by coordinates through '
-                'setting TEST_QUERYBYCOORDINATE_IMPORTANCE=True. This will '
-                'set the following hyper paramters before performing ADL: \n',
-                'QUERY_VARIABLES_ACT_LRN = ["X_t", "X_s1"] \n',
-                'TEST_HEURISTIC_IMPORTANCE = ["max d_c"] \n',
-                'POINTS_PER_CLUSTER_ACT_LRN = 0 \n',
+                'Caution!! You decided to do a heuristic importance test. This '
+                'will set the following hyper paramters before performing ADL:\n'
+                'QUERY_VARIANTS_ACT_LRN = ["max d_c"]'
             )
-            
-            self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
             self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
-            self.POINTS_PER_CLUSTER_ACT_LRN = 0
+            
+            if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
+                print('POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]')
+                self.POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
+            else:
+                print('CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]')
+                self.CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
+        
+            if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
+                print(
+                    'QUERY_VARIABLES_ACT_LRN = ["X_t", "X_s1"]\n'
+                    'POINTS_PER_CLUSTER_ACT_LRN = 0'
+                )
+                self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
+                self.POINTS_PER_CLUSTER_ACT_LRN = 0
             
             
     def set_act_lrn_params(self):

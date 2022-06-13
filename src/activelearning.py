@@ -297,12 +297,12 @@ def feature_embedding_AL(
     ### Compute some initial values ###
 
     # compute total data budget
-    data_budget_total = math.floor(
+    data_budget_total = round(
         HYPER.DATA_BUDGET_ACT_LRN * candidate_dataset.n_datapoints
     )
     
     # compute data budget available in each query iteration
-    data_budget_per_iter = math.floor(
+    data_budget_per_iter = round(
         data_budget_total / HYPER.N_ITER_ACT_LRN
     )
 
@@ -451,7 +451,7 @@ def feature_embedding_AL(
         t_start = timeit.default_timer()
         
         # calculate candidate subsample size to compare vs batch query size
-        subsample_size = math.floor(
+        subsample_size = round(
             data_budget_per_iter
             + HYPER.CAND_SUBSAMPLE_ACT_LRN * (
                 len(available_index_set_update) 
@@ -470,7 +470,7 @@ def feature_embedding_AL(
                 data_budget_per_iter
             )
             
-        elif subsample_size == data_budget_per_iter:
+        elif subsample_size <= data_budget_per_iter:
             ### AL exception: equal to performing passive learning ###
             
             if not silent:
@@ -856,7 +856,7 @@ def feature_embedding_AL(
         cand_data_usage = data_counter / data_budget_total
 
         # time in seconds that is used in this iteration
-        iter_time = math.ceil(t_end - t_start)
+        iter_time = round(t_end - t_start)
         
         # if there were any new sensors to add, get share that was added
         if n_sensors_new != 0:
@@ -942,7 +942,7 @@ def feature_embedding_AL(
         print('---' * 20)
 
     # time in seconds that is eventually used
-    t_total = math.ceil(t_end - t_start_0)
+    t_total = round(t_end - t_start_0)
 
 
     ### Create test dataset and predict ###
