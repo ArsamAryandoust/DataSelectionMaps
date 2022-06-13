@@ -60,7 +60,7 @@ def vis_train_and_val(
 
         legend_name = ('PL: {}s- {:.0%} budget'
         '- {:.0%} sensors- {:.0%} times- {:.2} loss').format(
-            PL_results['iter_time_hist'][-1],
+            sum(PL_result['iter_time_hist']) / len(PL_result['iter_time_hist']),
             PL_results['budget_usage_hist'][-1],
             PL_results['sensor_usage_hist'][-1],
             PL_results['streamtime_usage_hist'][-1],
@@ -93,7 +93,7 @@ def vis_train_and_val(
             legend_name = ('AL {}: {}s- {:.0%} budget- {:.0%} '
             'sensors- {:.0%} times- {:.2} loss').format(
                 method,
-                AL_result['iter_time_hist'][-1],
+                sum(AL_result['iter_time_hist'])/len(AL_result['iter_time_hist']),
                 AL_result['budget_usage_hist'][-1],
                 AL_result['sensor_usage_hist'][-1],
                 AL_result['streamtime_usage_hist'][-1],
