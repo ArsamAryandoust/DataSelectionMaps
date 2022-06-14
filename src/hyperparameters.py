@@ -47,8 +47,8 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
-        'X_st', 
-        'X_(t,s)', 
+        #'X_st', 
+        #'X_(t,s)', 
         'Y_hat_(t,s)', 
         'Y_(t,s)'
     ]
@@ -57,8 +57,8 @@ class HyperParameter:
     # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
         'rnd d_c', 
-        'min d_c', 
-        'max d_c', 
+        #'min d_c', 
+        #'max d_c', 
         'avg d_c'
     ]
     
@@ -133,7 +133,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.001 
     # corresponds to approximately 35 points per profile
-    POINTS_PER_PROFILE = 0.005
+    POINTS_PER_PROFILE = 0.001
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.

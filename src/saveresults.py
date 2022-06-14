@@ -151,8 +151,8 @@ def save_act_lrn_results(
             streamtime_usage,
             test_loss,
             RF_loss,
-            '-',
-            '-'
+            None,
+            None
         ]
     )
     entry_train = np.concatenate((meta_entry, train_hist))

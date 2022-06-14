@@ -95,25 +95,10 @@ def show_numerical_results(HYPER_VIS):
                         results_df = pd.read_csv(path_to_results)
                         
                         results_transformed = (
-                            results_df[1:6].set_index('Unnamed: 0').transpose()
+                            results_df[:6].set_index('Unnamed: 0').transpose()
                         )
                         results_transformed = (
                             results_transformed.drop(['streamtime_usage'], axis=1)
-                        )
-                        results_transformed['test_loss'] = (
-                            results_transformed['test_loss'].values.astype(float)
-                        )
-                        results_transformed['RF_loss'] = (
-                            results_transformed['RF_loss'].values.astype(float)
-                        )
-                        results_transformed['test_loss'] = (
-                            results_transformed['test_loss'].values.astype(float)
-                        )
-                        results_transformed['sensor_usage'] = (
-                            results_transformed['sensor_usage'].values.astype(float)
-                        )
-                        results_transformed['budget_usage'] = (
-                            results_transformed['budget_usage'].values.astype(float)
                         )
                         results_transformed['accuracy'] = (
                             100 * (1 - np.minimum(1, results_transformed['test_loss'] / (
@@ -126,5 +111,11 @@ def show_numerical_results(HYPER_VIS):
                         results_transformed['budget_usage'] = (
                             (100 * results_transformed['budget_usage']).round().astype(int)
                         )
+                        results_transformed['t_iter_avg'] = (
+                            results_transformed['t_iter_avg']/results_transformed['t_iter_avg'][0]
+                        ).round(1)
+                        results_transformed.rename(columns={"t_iter_avg":"comp_fac"}, inplace=True)
+                        
+                        print(profile_type)
                         print(exp_type)
                         display(results_transformed)
