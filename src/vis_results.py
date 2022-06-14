@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 class HyperParameterVisualizing:
 
@@ -13,9 +15,18 @@ class HyperParameterVisualizing:
         'i.', 'j.', 'k.', 'l.', 'm.', 'n.', 'o.', 'p.',
         'q.', 'r.', 's.', 't.', 'u.', 'v.', 'w.', 'x.'
     ]
-    WIDTH_FACTOR = 8
-    FONTSIZE = 20
-    
+    WIDTH_FACTOR = 10
+    FONTSIZE = 18
+    CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
+    POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
+    QUERYBYCOORDINATE_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
+    HEURISTIC_QUERY_VARIABLES_ACT_LRN = ['X_st', 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)']
+    HEURISTIC_QUERY_VARIANTS_ACT_LRN = ['max d_c']
+    HEURISTICS_COLOR_LIST = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
+        '#8c564b',  '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
+    ]
+
     
 def test_hyper(HYPER_VIS):
 
@@ -119,3 +130,550 @@ def show_numerical_results(HYPER_VIS):
                         print(profile_type)
                         print(exp_type)
                         display(results_transformed)
+                        
+                        
+def plot_train_val_hist(HYPER_VIS):
+    
+    """ Plots the main experimental results
+    """
+    mpl.rcParams.update({'font.size': HYPER_VIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_VIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_VIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                if 'values' in result_type_list:
+                    path_to_values = path_to_exp + 'values/'
+                    file_type_list = os.listdir(path_to_values)
+                    
+                    if 'results.csv' in file_type_list:
+                        path_to_results = path_to_values + 'results.csv'
+                        results_df = pd.read_csv(path_to_results)
+                        
+                        path_to_hyper = path_to_values + 'hyper.csv'
+                        hyper_df = pd.read_csv(path_to_hyper)
+                        
+                        path_to_figures = path_to_exp + 'figures/'
+                        if not os.path.exists(path_to_figures):
+                            os.mkdir(path_to_figures)
+                        
+                        col_name_train = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'train'
+                        )
+                        col_name_val = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'val'
+                        )
+                        
+                        PL_t_iter_avg = results_df[col_name_train][0]
+                        budget_usage = results_df[col_name_train][1]
+                        sensor_usage = results_df[col_name_train][2]
+                        PL_loss = results_df[col_name_train][4]
+                        RF_loss = results_df[col_name_train][5]
+                        PL_accuracy = 1 - min(1, PL_loss /RF_loss)
+                        PL_train = results_df[col_name_train][8:].dropna().values
+                        PL_val = results_df[col_name_val][8:].dropna().values
+                        
+                        legend_RF = 'RF baseline'
+                        legend_PL_train = 'PDL baseline: 1x comp'
+                        legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                            budget_usage, 
+                            sensor_usage,
+                            PL_accuracy
+                        )
+                        
+                        query_variables_act_lrn = hyper_df['query_variables_act_lrn'].dropna()
+                        query_variants_act_lrn = hyper_df['query_variants_act_lrn'].dropna()
+                        
+                        fig, ax = plt.subplots(
+                            len(query_variables_act_lrn), 
+                            2, 
+                            figsize=(
+                                20, 
+                                len(query_variables_act_lrn) * HYPER_VIS.WIDTH_FACTOR
+                            )
+                        )
+                        
+                        
+                        title_counter = 0
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                            
+                            ax[index_var, 0].plot(
+                                PL_train, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL_train
+                            )
+                            ax[index_var, 1].plot(
+                                PL_val, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL_val
+                            )
+                        
+                        
+                            if index_var == 0:
+                                cols = [
+                                    'Training losses \n {}'.format(AL_variable), 
+                                    'Validation losses \n {}'.format(AL_variable)
+                                ]
+                                for axes, col in zip(ax[0], cols):
+                                    axes.set_title(col)
+                            else:
+                                ax[index_var, 0].set_title(AL_variable)
+                                ax[index_var, 1].set_title(AL_variable)
+                        
+                        
+                            for index_method, AL_variant in enumerate(query_variants_act_lrn):
+                
+                                col_name_train = (
+                                    pred_type 
+                                    + ' ' 
+                                    + AL_variable 
+                                    + ' ' 
+                                    + AL_variant 
+                                    + ' train'
+                                )
+                                col_name_val = (
+                                    pred_type 
+                                    + ' ' 
+                                    + AL_variable 
+                                    + ' ' 
+                                    + AL_variant 
+                                    + ' val'
+                                )
+
+                                # get training losses for mode 1 with validation updates
+                                AL_t_iter_avg = results_df[col_name_train][0]
+                                budget_usage = results_df[col_name_train][1]
+                                sensor_usage = results_df[col_name_train][2]
+                                AL_loss = results_df[col_name_train][4]
+                                RF_loss = results_df[col_name_train][5]
+                                AL_accuracy = 1 - min(1, AL_loss/RF_loss)
+                                AL_train = results_df[col_name_train][8:].dropna().values
+                                AL_val = results_df[col_name_val][8:].dropna().values
+
+                                # create the legends
+                                legend_train = 'ADL {}: {}x comp'.format(
+                                    AL_variant, 
+                                    round(AL_t_iter_avg / PL_t_iter_avg, 1)
+                                )
+                                legend_val = 'ADL {}:  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                                    AL_variant, 
+                                    budget_usage, 
+                                    sensor_usage,
+                                    AL_accuracy
+                                )
+
+                                # plot iterated training losses
+                                ax[index_var, 0].plot(
+                                    AL_train, 
+                                    label=legend_train
+                                )
+                                ax[index_var, 1].plot(
+                                    AL_val, 
+                                    label=legend_val
+                                )
+
+                            # set legend
+                            ax[index_var, 0].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 2
+                            )
+                            ax[index_var, 1].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 2
+                            )
+
+                            # set y-axis labels
+                            ax[index_var, 0].set_ylabel(
+                                'L2 loss [kW²]', 
+                            )
+
+
+                        # set x-axis
+                        ax[index_var, 0].set_xlabel(
+                            'epoch', 
+                        )
+                        ax[index_var, 1].set_xlabel(
+                            'epoch', 
+                        )
+                        
+                        
+                        # set layout tight
+                        fig.tight_layout()
+                        
+                        # save figure
+                        saving_path = path_to_figures + 'main_experiments.pdf'
+                        fig.savefig(saving_path)
+
+                       
+def plot_subsampling_heuristics(HYPER_VIS):
+    
+    """ Plots experimental results for different degrees of subsampling
+    candidate data points.
+    """
+    
+    mpl.rcParams.update({'font.size': HYPER_VIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_VIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_VIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                if 'values' in result_type_list:
+                    path_to_values = path_to_exp + 'values/'
+                    file_type_list = os.listdir(path_to_values)
+                    if 'heuristic_subsampling.csv' in file_type_list:
+                        path_to_subsampling = path_to_values + 'heuristic_subsampling.csv'
+                        subsampling_df = pd.read_csv(path_to_subsampling)
+                        
+                        path_to_figures = path_to_exp + 'figures/'
+                        if not os.path.exists(path_to_figures):
+                            os.mkdir(path_to_figures)
+                            
+                        col_name_train = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'train'
+                        )
+                        col_name_val = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'val'
+                        )
+                        
+                        PL_t_iter_avg = subsampling_df[col_name_train][0]
+                        budget_usage = subsampling_df[col_name_train][1]
+                        sensor_usage = subsampling_df[col_name_train][2]
+                        PL_loss = subsampling_df[col_name_train][4]
+                        RF_loss = subsampling_df[col_name_train][5]
+                        PL_accuracy = 1 - min(1, PL_loss /RF_loss)
+                        PL_train = subsampling_df[col_name_train][8:].dropna().values
+                        PL_val = subsampling_df[col_name_val][8:].dropna().values
+                        
+                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                            budget_usage, 
+                            sensor_usage,
+                            PL_accuracy
+                        )
+                        
+                        fig, ax = plt.subplots(
+                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            2, 
+                            figsize=(
+                                20, 
+                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                            )
+                        )
+                        
+                        for index_var in range(len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN)):
+                            ax[index_var, 0].plot(
+                                PL_train, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                            ax[index_var, 1].plot(
+                                PL_val, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                        
+                        df_columns_list = subsampling_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            column_val = df_columns_list.values[i+1]
+                                
+                            AL_t_iter_avg = subsampling_df[column_train][0]
+                            budget_usage = subsampling_df[column_train][1]
+                            sensor_usage = subsampling_df[column_train][2]
+                            AL_loss = subsampling_df[column_train][4]
+                            AL_accuracy = 1 - min(1, AL_loss/RF_loss)
+                            AL_subsample_rate = subsampling_df[column_train][6]
+                            AL_train = subsampling_df[column_train][8:].dropna().values
+                            AL_val = subsampling_df[column_val][8:].dropna().values
+                            
+                            legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                                AL_subsample_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                budget_usage, 
+                                sensor_usage,
+                                AL_accuracy
+                            )
+                            
+                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                                if item in column_train:
+                                    AL_variable = item
+                                    break
+                                    
+                            for index_method, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIANTS_ACT_LRN):
+                                if item in column_train:
+                                    AL_variant = item
+                                    break
+                            
+                            for index_heur, item in enumerate(HYPER_VIS.CAND_SUBSAMPLE_TEST_LIST):
+                                if item == AL_subsample_rate:
+                                    plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
+                                    break
+                            
+                            ax[index_var, 0].plot(
+                                AL_train, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            ax[index_var, 1].plot(
+                                AL_val, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            
+                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                            
+                            if index_var == 0:
+                                cols = [
+                                    'Training losses \n {}'.format(AL_variable), 
+                                    'Validation losses \n {}'.format(AL_variable)
+                                ]
+                                for axes, col in zip(ax[0], cols):
+                                    axes.set_title(col)
+                            else:
+                                ax[index_var, 0].set_title(AL_variable)
+                                ax[index_var, 1].set_title(AL_variable)
+                            
+                            # set legend
+                            ax[index_var, 0].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            ax[index_var, 1].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            
+                            
+                            # set y-axis labels
+                            ax[index_var, 0].set_ylabel(
+                                'L2 loss [kW²]', 
+                            )
+
+
+                        # set x-axis
+                        ax[index_var, 0].set_xlabel(
+                            'epoch', 
+                        )
+                        ax[index_var, 1].set_xlabel(
+                            'epoch', 
+                        )
+                        
+                        # set layout tight
+                        fig.tight_layout()
+                        
+                        # save figure
+                        saving_path = path_to_figures + 'subsample_importance.pdf'
+                        fig.savefig(saving_path)
+                        
+
+def plot_pointspercluster_heuristics(HYPER_VIS):
+    
+    """ Plots experimental results for different degrees of queried points
+    per cluster.
+    """
+    
+    mpl.rcParams.update({'font.size': HYPER_VIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_VIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_VIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                if 'values' in result_type_list:
+                    path_to_values = path_to_exp + 'values/'
+                    file_type_list = os.listdir(path_to_values)
+                    if 'heuristic_pointspercluster.csv' in file_type_list:
+                        path_to_pointspercluster = path_to_values + 'heuristic_pointspercluster.csv'
+                        pointspercluster_df = pd.read_csv(path_to_pointspercluster)
+                        
+                        path_to_figures = path_to_exp + 'figures/'
+                        if not os.path.exists(path_to_figures):
+                            os.mkdir(path_to_figures)
+                            
+                        col_name_train = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'train'
+                        )
+                        col_name_val = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'val'
+                        )
+                        
+                        PL_t_iter_avg = pointspercluster_df[col_name_train][0]
+                        budget_usage = pointspercluster_df[col_name_train][1]
+                        sensor_usage = pointspercluster_df[col_name_train][2]
+                        PL_loss = pointspercluster_df[col_name_train][4]
+                        RF_loss = pointspercluster_df[col_name_train][5]
+                        PL_accuracy = 1 - min(1, PL_loss /RF_loss)
+                        PL_train = pointspercluster_df[col_name_train][8:].dropna().values
+                        PL_val = pointspercluster_df[col_name_val][8:].dropna().values
+                        
+                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                            budget_usage, 
+                            sensor_usage,
+                            PL_accuracy
+                        )
+                        
+                        fig, ax = plt.subplots(
+                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            2, 
+                            figsize=(
+                                20, 
+                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                            )
+                        )
+                        
+                        for index_var in range(len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN)):
+                            ax[index_var, 0].plot(
+                                PL_train, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                            ax[index_var, 1].plot(
+                                PL_val, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                        
+                        df_columns_list = pointspercluster_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            column_val = df_columns_list.values[i+1]
+                                
+                            AL_t_iter_avg = pointspercluster_df[column_train][0]
+                            budget_usage = pointspercluster_df[column_train][1]
+                            sensor_usage = pointspercluster_df[column_train][2]
+                            AL_loss = pointspercluster_df[column_train][4]
+                            AL_accuracy = 1 - min(1, AL_loss/RF_loss)
+                            AL_cluster_rate = pointspercluster_df[column_train][7]
+                            AL_train = pointspercluster_df[column_train][8:].dropna().values
+                            AL_val = pointspercluster_df[column_val][8:].dropna().values
+                            
+                            legend_AL = 'ADL: {:.0%} cluster {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                                AL_cluster_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                budget_usage, 
+                                sensor_usage,
+                                AL_accuracy
+                            )
+                            
+                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                                if item in column_train:
+                                    AL_variable = item
+                                    break
+                                    
+                            for index_method, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIANTS_ACT_LRN):
+                                if item in column_train:
+                                    AL_variant = item
+                                    break
+                            
+                            for index_heur, item in enumerate(HYPER_VIS.POINTS_PERCLUSTER_TEST_LIST):
+                                if item == AL_cluster_rate:
+                                    plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
+                                    break
+                            
+                            ax[index_var, 0].plot(
+                                AL_train, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            ax[index_var, 1].plot(
+                                AL_val, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            
+                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                            
+                            if index_var == 0:
+                                cols = [
+                                    'Training losses \n {}'.format(AL_variable), 
+                                    'Validation losses \n {}'.format(AL_variable)
+                                ]
+                                for axes, col in zip(ax[0], cols):
+                                    axes.set_title(col)
+                            else:
+                                ax[index_var, 0].set_title(AL_variable)
+                                ax[index_var, 1].set_title(AL_variable)
+                            
+                            # set legend
+                            ax[index_var, 0].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            ax[index_var, 1].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            
+                            
+                            # set y-axis labels
+                            ax[index_var, 0].set_ylabel(
+                                'L2 loss [kW²]', 
+                            )
+
+
+                        # set x-axis
+                        ax[index_var, 0].set_xlabel(
+                            'epoch', 
+                        )
+                        ax[index_var, 1].set_xlabel(
+                            'epoch', 
+                        )
+                        
+                        # set layout tight
+                        fig.tight_layout()
+                        
+                        # save figure
+                        saving_path = path_to_figures + 'pointspercluster_importance.pdf'
+                        fig.savefig(saving_path)

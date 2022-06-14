@@ -451,7 +451,7 @@ def test_pointspercluster_importance_AL(
             
     heuristic_results_list = []
     for heuristic_value in HYPER.POINTS_PERCLUSTER_TEST_LIST:
-        HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
+        HYPER.POINTS_PER_CLUSTER_ACT_LRN = heuristic_value
         
         results = activelearning.feature_embedding_AL(
             HYPER, 
