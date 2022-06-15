@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+from matplotlib.lines import Line2D
 
 class HyperParameterVisualizing:
 
@@ -26,7 +27,6 @@ class HyperParameterVisualizing:
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
         '#8c564b',  '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
     ]
-
     
 def test_hyper(HYPER_VIS):
 
@@ -346,6 +346,7 @@ def plot_subsampling_heuristics(HYPER_VIS):
                 if 'values' in result_type_list:
                     path_to_values = path_to_exp + 'values/'
                     file_type_list = os.listdir(path_to_values)
+                    
                     if 'heuristic_subsampling.csv' in file_type_list:
                         path_to_subsampling = path_to_values + 'heuristic_subsampling.csv'
                         subsampling_df = pd.read_csv(path_to_subsampling)
@@ -432,11 +433,6 @@ def plot_subsampling_heuristics(HYPER_VIS):
                                     AL_variable = item
                                     break
                                     
-                            for index_method, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIANTS_ACT_LRN):
-                                if item in column_train:
-                                    AL_variant = item
-                                    break
-                            
                             for index_heur, item in enumerate(HYPER_VIS.CAND_SUBSAMPLE_TEST_LIST):
                                 if item == AL_subsample_rate:
                                     plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
@@ -524,6 +520,7 @@ def plot_pointspercluster_heuristics(HYPER_VIS):
                 if 'values' in result_type_list:
                     path_to_values = path_to_exp + 'values/'
                     file_type_list = os.listdir(path_to_values)
+                    
                     if 'heuristic_pointspercluster.csv' in file_type_list:
                         path_to_pointspercluster = path_to_values + 'heuristic_pointspercluster.csv'
                         pointspercluster_df = pd.read_csv(path_to_pointspercluster)
@@ -610,10 +607,6 @@ def plot_pointspercluster_heuristics(HYPER_VIS):
                                     AL_variable = item
                                     break
                                     
-                            for index_method, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIANTS_ACT_LRN):
-                                if item in column_train:
-                                    AL_variant = item
-                                    break
                             
                             for index_heur, item in enumerate(HYPER_VIS.POINTS_PERCLUSTER_TEST_LIST):
                                 if item == AL_cluster_rate:
@@ -676,4 +669,310 @@ def plot_pointspercluster_heuristics(HYPER_VIS):
                         
                         # save figure
                         saving_path = path_to_figures + 'pointspercluster_importance.pdf'
+                        fig.savefig(saving_path)
+
+                     
+def plot_querybycoordinate_heuristics(HYPER_VIS):
+    
+    """ Plots experimental results for querying data points by
+    embedded coordinates in time and space.
+    """
+    
+    mpl.rcParams.update({'font.size': HYPER_VIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_VIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_VIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                if 'values' in result_type_list:
+                    path_to_values = path_to_exp + 'values/'
+                    file_type_list = os.listdir(path_to_values)
+                    
+                    if 'heuristic_querybycoordinate.csv' in file_type_list:
+                        path_to_querybycoordinate = path_to_values + 'heuristic_querybycoordinate.csv'
+                        querybycoordinate_df = pd.read_csv(path_to_querybycoordinate)
+                        
+                        path_to_figures = path_to_exp + 'figures/'
+                        if not os.path.exists(path_to_figures):
+                            os.mkdir(path_to_figures)
+                            
+                        col_name_train = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'train'
+                        )
+                        col_name_val = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'val'
+                        )
+                        
+                        PL_t_iter_avg = querybycoordinate_df[col_name_train][0]
+                        budget_usage = querybycoordinate_df[col_name_train][1]
+                        sensor_usage = querybycoordinate_df[col_name_train][2]
+                        PL_loss = querybycoordinate_df[col_name_train][4]
+                        RF_loss = querybycoordinate_df[col_name_train][5]
+                        PL_accuracy = 1 - min(1, PL_loss /RF_loss)
+                        PL_train = querybycoordinate_df[col_name_train][8:].dropna().values
+                        PL_val = querybycoordinate_df[col_name_val][8:].dropna().values
+                        
+                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                            budget_usage, 
+                            sensor_usage,
+                            PL_accuracy
+                        )
+                        
+                        fig, ax = plt.subplots(
+                            len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN), 
+                            2, 
+                            figsize=(
+                                20, 
+                                len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                            )
+                        )
+                        
+                        for index_var in range(len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN)):
+                            ax[index_var, 0].plot(
+                                PL_train, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                            ax[index_var, 1].plot(
+                                PL_val, 
+                                color='b', 
+                                linestyle='--', 
+                                label=legend_PL
+                            )
+                            
+                        df_columns_list = querybycoordinate_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            column_val = df_columns_list.values[i+1]
+                                
+                            AL_t_iter_avg = querybycoordinate_df[column_train][0]
+                            budget_usage = querybycoordinate_df[column_train][1]
+                            sensor_usage = querybycoordinate_df[column_train][2]
+                            AL_loss = querybycoordinate_df[column_train][4]
+                            AL_accuracy = 1 - min(1, AL_loss/RF_loss)
+                            AL_subsample_rate = querybycoordinate_df[column_train][6]
+                            AL_train = querybycoordinate_df[column_train][8:].dropna().values
+                            AL_val = querybycoordinate_df[column_val][8:].dropna().values
+                            
+                            legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                                AL_subsample_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                budget_usage, 
+                                sensor_usage,
+                                AL_accuracy
+                            )
+                            
+                            for index_var, item in enumerate(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN):
+                                if item in column_train:
+                                    AL_variable = item
+                                    break
+                                    
+                            
+                            for index_heur, item in enumerate(HYPER_VIS.CAND_SUBSAMPLE_TEST_LIST):
+                                if item == AL_subsample_rate:
+                                    plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
+                                    break
+                            
+                            ax[index_var, 0].plot(
+                                AL_train, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            ax[index_var, 1].plot(
+                                AL_val, 
+                                color=plt_color,
+                                label=legend_AL
+                            )
+                            
+                        for index_var, AL_variable in enumerate(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN):
+                            
+                            if index_var == 0:
+                                cols = [
+                                    'Training losses \n {}'.format(AL_variable), 
+                                    'Validation losses \n {}'.format(AL_variable)
+                                ]
+                                for axes, col in zip(ax[0], cols):
+                                    axes.set_title(col)
+                            else:
+                                ax[index_var, 0].set_title(AL_variable)
+                                ax[index_var, 1].set_title(AL_variable)
+                            
+                            # set legend
+                            ax[index_var, 0].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            ax[index_var, 1].legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.FONTSIZE - 4
+                            )
+                            
+                            
+                            # set y-axis labels
+                            ax[index_var, 0].set_ylabel(
+                                'L2 loss [kW²]', 
+                            )
+
+
+                        # set x-axis
+                        ax[index_var, 0].set_xlabel(
+                            'epoch', 
+                        )
+                        ax[index_var, 1].set_xlabel(
+                            'epoch', 
+                        )
+                        
+                        # set layout tight
+                        fig.tight_layout()
+                        
+                        # save figure
+                        saving_path = path_to_figures + 'querybycoordinate_importance.pdf'
+                        fig.savefig(saving_path)
+                        
+                        
+                        
+def plot_sequence_importance(HYPER_VIS):
+    
+    """ Plots experimental results for querying data points by
+    random ADL sequence.
+    """
+    
+    # create list of custom lines for custom legend
+    custom_lines = [
+        Line2D([0], [0], color='b', linestyle="--"),
+        Line2D([0], [0], color='b')
+    ]
+    mpl.rcParams.update({'font.size': HYPER_VIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_VIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_VIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                if 'values' in result_type_list:
+                    path_to_values = path_to_exp + 'values/'
+                    file_type_list = os.listdir(path_to_values)
+                    
+                    if 'sequence_importance.csv' in file_type_list:
+                        path_to_seqimportance = path_to_values + 'sequence_importance.csv'
+                        seqimportance_df = pd.read_csv(path_to_seqimportance)
+                        
+                        path_to_figures = path_to_exp + 'figures/'
+                        if not os.path.exists(path_to_figures):
+                            os.mkdir(path_to_figures)
+                            
+                            
+                        fig, ax = plt.subplots(
+                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            2, 
+                            figsize=(
+                                20, 
+                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                            )
+                        )
+                        
+                        df_columns_list = seqimportance_df.columns
+                        for i in range(1, len(df_columns_list)-1, 4):
+                            
+                            column_train = df_columns_list.values[i]
+                            column_val = df_columns_list.values[i+1]
+                            column_train_random = df_columns_list.values[i+2]
+                            column_val_random = df_columns_list.values[i+3]
+                            
+                            AL_train = seqimportance_df[column_train][2:].dropna().values
+                            AL_val = seqimportance_df[column_val][2:].dropna().values
+                            AL_train_random = seqimportance_df[column_train_random][2:].dropna().values
+                            AL_val_random = seqimportance_df[column_val_random][2:].dropna().values
+                            
+                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                                if item in column_train:
+                                    AL_variable = item
+                                    break
+                                    
+                            ax[index_var, 0].plot(
+                                AL_train
+                            )
+                            ax[index_var, 0].plot(
+                                AL_train_random,
+                                linestyle="--"
+                            )
+                            ax[index_var, 1].plot(
+                                AL_val
+                            )
+                            ax[index_var, 1].plot(
+                                AL_val_random,
+                                linestyle="--"
+                            )
+                            
+                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+
+                            if index_var == 0:
+                                cols = [
+                                    'Training losses \n {}'.format(AL_variable), 
+                                    'Validation losses \n {}'.format(AL_variable)
+                                ]
+                                for axes, col in zip(ax[0], cols):
+                                    axes.set_title(col)
+                            else:
+                                ax[index_var, 0].set_title(AL_variable)
+                                ax[index_var, 1].set_title(AL_variable)
+
+                            # set legend
+                            ax[index_var, 0].legend(
+                                custom_lines, 
+                                ['random sequence', 'original sequence'], 
+                                loc="best", 
+                                frameon=False
+                            )
+                            ax[index_var, 1].legend(
+                                custom_lines, 
+                                ['random sequence', 'original sequence'], 
+                                loc="best", 
+                                frameon=False
+                            )
+
+
+                            # set y-axis labels
+                            ax[index_var, 0].set_ylabel(
+                                'L2 loss [kW²]', 
+                            )
+
+
+                        # set x-axis
+                        ax[index_var, 0].set_xlabel(
+                            'epoch', 
+                        )
+                        ax[index_var, 1].set_xlabel(
+                            'epoch', 
+                        )
+
+                        # set layout tight
+                        fig.tight_layout()
+
+                        # save figure
+                        saving_path = path_to_figures + 'sequence_importance.pdf'
                         fig.savefig(saving_path)
