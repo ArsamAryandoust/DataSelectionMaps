@@ -11,6 +11,7 @@ class HyperParameterVisualizing:
     """
     
     PATH_TO_RESULTS = '../results/'
+    PATH_TO_IMAGES = '../images/manuscript/'
     SUB_TITLE_LIST = [
         'a.', 'b.', 'c.', 'd.', 'e.', 'f.', 'g.', 'h.',
         'i.', 'j.', 'k.', 'l.', 'm.', 'n.', 'o.', 'p.',
@@ -27,6 +28,35 @@ class HyperParameterVisualizing:
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
         '#8c564b',  '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
     ]
+    
+    
+    RESULT_SUMMARY = {
+        'n_rows' : 4,
+        'n_cols' : 2,
+        'plot_list' : [
+            {
+                'row': 0,
+                'col': 0,
+                'profile_type': 'profiles_100',
+                'pred_type' : 'spatio-temporal',
+                'exp_type' : 'delta0_valup1',
+                'exp_choice' : 'subsample_importance',
+                'plot_type': 'val',
+                'AL_variable': 'X_(t,s)'
+            },
+            {
+                'row': 0,
+                'col': 1,
+                'profile_type': 'profiles_100',
+                'pred_type' : 'spatio-temporal',
+                'exp_type' : 'delta1_valup1',
+                'exp_choice' : 'subsample_importance',
+                'plot_type': 'val',
+                'AL_variable': 'X_(t,s)'
+            }
+        ],
+
+    }
     
 def test_hyper(HYPER_VIS):
 
@@ -187,7 +217,6 @@ def plot_train_val_hist(HYPER_VIS):
                         PL_train = results_df[col_name_train][8:].dropna().values
                         PL_val = results_df[col_name_val][8:].dropna().values
                         
-                        legend_RF = 'RF baseline'
                         legend_PL_train = 'PDL baseline: 1x comp'
                         legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
@@ -607,7 +636,6 @@ def plot_pointspercluster_heuristics(HYPER_VIS):
                                     AL_variable = item
                                     break
                                     
-                            
                             for index_heur, item in enumerate(HYPER_VIS.POINTS_PERCLUSTER_TEST_LIST):
                                 if item == AL_cluster_rate:
                                     plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
