@@ -70,11 +70,13 @@ class HyperParameter:
     DATA_BUDGET_ACT_LRN = 0.5
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates one cluster
-    # only for querying candidates. A value of 1 creates one cluster for each point
+    # only for querying candidates. A value of 1 creates a number of clusters equal
+    # to the number of queried data points in each batch iteration
     POINTS_PER_CLUSTER_ACT_LRN = 1
     
     # Heuristics. Choose a value between 0 and 1. A value of 0 creates a candidate
-    # subsample that is equal to 
+    # subsample that is equal to the number of queried data points in each batch
+    # iteration which is equal to passive learning. A value of 1 does no subsampling
     CAND_SUBSAMPLE_ACT_LRN = 1
     
     # Decide how many epochs you want to train your model during active learning

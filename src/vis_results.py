@@ -20,6 +20,7 @@ class HyperParameterVisualizing:
     ]
     WIDTH_FACTOR = 10
     FONTSIZE = 20
+    LEGEND_FONTSIZE = FONTSIZE - 6
     CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
     POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
     QUERYBYCOORDINATE_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
@@ -487,12 +488,12 @@ def plot_train_val_hist(
                             ax[index_var, 0].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 2
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             ax[index_var, 1].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 2
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
 
                             # set y-axis labels
@@ -664,12 +665,12 @@ def plot_subsampling_heuristics(
                             ax[index_var, 0].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             ax[index_var, 1].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             
                             
@@ -841,12 +842,12 @@ def plot_pointspercluster_heuristics(
                             ax[index_var, 0].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             ax[index_var, 1].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             
                             
@@ -1019,12 +1020,12 @@ def plot_querybycoordinate_heuristics(
                             ax[index_var, 0].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             ax[index_var, 1].legend(
                                 loc='best', 
                                 frameon=False,
-                                fontsize=HYPER_VIS.FONTSIZE - 4
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
                             
                             
@@ -1109,10 +1110,10 @@ def plot_sequence_importance(
                             column_train_random = df_columns_list.values[i+2]
                             column_val_random = df_columns_list.values[i+3]
                             
-                            AL_train = seqimportance_df[column_train][2:].dropna().values
-                            AL_val = seqimportance_df[column_val][2:].dropna().values
-                            AL_train_random = seqimportance_df[column_train_random][2:].dropna().values
-                            AL_val_random = seqimportance_df[column_val_random][2:].dropna().values
+                            AL_train = seqimportance_df[column_train][3:].dropna().values
+                            AL_val = seqimportance_df[column_val][3:].dropna().values
+                            AL_train_random = seqimportance_df[column_train_random][3:].dropna().values
+                            AL_val_random = seqimportance_df[column_val_random][3:].dropna().values
                             
                             for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
                                 if item in column_train:
@@ -1512,10 +1513,10 @@ def plot_results_summary(
                 column_train_random = df_columns_list.values[i+2]
                 column_val_random = df_columns_list.values[i+3]
 
-                AL_train = results_df[column_train][2:].dropna().values
-                AL_val = results_df[column_val][2:].dropna().values
-                AL_train_random = results_df[column_train_random][2:].dropna().values
-                AL_val_random = results_df[column_val_random][2:].dropna().values
+                AL_train = results_df[column_train][3:].dropna().values
+                AL_val = results_df[column_val][3:].dropna().values
+                AL_train_random = results_df[column_train_random][3:].dropna().values
+                AL_val_random = results_df[column_val_random][3:].dropna().values
                 
                 for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
@@ -1552,7 +1553,7 @@ def plot_results_summary(
             ax[plot_item['row'], plot_item['col']].legend(
                 loc='best', 
                 frameon=False,
-                fontsize=HYPER_VIS.FONTSIZE - 6
+                fontsize=HYPER_VIS.LEGEND_FONTSIZE
             )
         
         # yet subplot axis limits

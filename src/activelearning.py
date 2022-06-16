@@ -40,10 +40,9 @@ def encode_features(
     ### Create random subsample before encoding if wanted ###
 
     # create an index array in the length of the passed dataset
-    n_datapoints = subsample_size
     index_array = random.sample(
         available_index_set_update, 
-        n_datapoints
+        subsample_size
     )
 
     # create copy of dataset
@@ -71,10 +70,10 @@ def encode_features(
 
         else:
             ### Encode X_s1 ###
-            encoding = np.zeros((n_datapoints, HYPER.ENCODING_NODES_X_s))
+            encoding = np.zeros((subsample_size, HYPER.ENCODING_NODES_X_s))
             
             # iterate over all datapoints
-            for i in range(n_datapoints):
+            for i in range(subsample_size):
                 building_id = X_s[i][0]
                 
                 # prepare imagery data
@@ -94,10 +93,10 @@ def encode_features(
         else:
 
             ### Encode X_joint ###
-            encoding = np.zeros((n_datapoints, HYPER.ENCODING_NODES_X_joint))
+            encoding = np.zeros((subsample_size, HYPER.ENCODING_NODES_X_joint))
 
             # iterate over all datapoints
-            for i in range(n_datapoints):
+            for i in range(subsample_size):
 
                 # Get training data of currently iterated batch
                 x_t = X_t[i]
@@ -130,10 +129,10 @@ def encode_features(
         else:
 
             ### Predict Y ###
-            encoding = np.zeros((n_datapoints, HYPER.PREDICTION_WINDOW))
+            encoding = np.zeros((subsample_size, HYPER.PREDICTION_WINDOW))
 
             # iterate over all datapoints
-            for i in range(n_datapoints):
+            for i in range(subsample_size):
 
                 # Get training data of currently iterated batch 
                 x_t = X_t[i]
