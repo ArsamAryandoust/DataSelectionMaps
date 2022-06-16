@@ -19,7 +19,7 @@ class HyperParameterVisualizing:
         'q.', 'r.', 's.', 't.', 'u.', 'v.', 'w.', 'x.'
     ]
     WIDTH_FACTOR = 10
-    FONTSIZE = 18
+    FONTSIZE = 20
     CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
     POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
     QUERYBYCOORDINATE_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
@@ -1211,7 +1211,16 @@ def plot_results_summary(
         )
     )
     
+    plot_counter = 0
     for plot_item in meta_dict['plot_list']:
+        
+        # set subplot titles
+        ax[plot_item['row'], plot_item['col']].set_title(
+            HYPER_VIS.SUB_TITLE_LIST[plot_counter]
+        )
+        
+        # increment plot counter for subtitle list increment
+        plot_counter += 1
         
         if plot_item['exp_choice'] == 'main_experiments':
             file_name = 'results.csv'
@@ -1351,12 +1360,6 @@ def plot_results_summary(
                             label=AL_legend
                         )
                             
-            # set legend
-            ax[plot_item['row'], plot_item['col']].legend(
-                loc='best', 
-                frameon=False,
-                fontsize=HYPER_VIS.FONTSIZE - 4
-            )
             
         elif plot_item['exp_choice'] == 'subsample_importance':
             
@@ -1404,12 +1407,6 @@ def plot_results_summary(
                         label=legend_AL
                     )
                  
-            # set legend
-            ax[plot_item['row'], plot_item['col']].legend(
-                loc='best', 
-                frameon=False,
-                fontsize=HYPER_VIS.FONTSIZE - 4
-            )
             
         elif plot_item['exp_choice'] == 'pointspercluster_importance':
             
@@ -1457,12 +1454,6 @@ def plot_results_summary(
                         label=legend_AL
                     )
         
-            # set legend
-            ax[plot_item['row'], plot_item['col']].legend(
-                loc='best', 
-                frameon=False,
-                fontsize=HYPER_VIS.FONTSIZE - 4
-            )
         
         elif plot_item['exp_choice'] == 'querybycoordinate_importance':
             
@@ -1510,12 +1501,6 @@ def plot_results_summary(
                         label=legend_AL
                     )
                     
-            # set legend
-            ax[plot_item['row'], plot_item['col']].legend(
-                loc='best', 
-                frameon=False,
-                fontsize=HYPER_VIS.FONTSIZE - 4
-            )
                     
         elif plot_item['exp_choice'] == 'sequence_importance':
             
@@ -1554,23 +1539,33 @@ def plot_results_summary(
                         linestyle='--'
                     )
                     
+        
+        # set subplot legend
+        if plot_item['exp_choice'] == 'sequence_importance':
             ax[plot_item['row'], plot_item['col']].legend(
-                custom_lines, 
-                ['random sequence', 'original sequence'], 
-                loc="best", 
-                frameon=False
+                  custom_lines, 
+                  ['random sequence', 'original sequence'], 
+                  loc="best", 
+                  frameon=False
+            )
+        else:
+            ax[plot_item['row'], plot_item['col']].legend(
+                loc='best', 
+                frameon=False,
+                fontsize=HYPER_VIS.FONTSIZE - 6
             )
         
-        # yet axis limits
+        # yet subplot axis limits
         ax[plot_item['row'], plot_item['col']].set_ylim(plot_item['y_lims'])
     
+    
+    # set figure y-axis label
     for row in range(meta_dict['n_rows']):
-        # set y-axis labels
         ax[row, 0].set_ylabel(
             'L2 loss [kW²]', 
         )
     
-    # set x-axis
+    # set figure x-axis label
     ax[-1, 0].set_xlabel(
         'epoch', 
     )
