@@ -10,6 +10,7 @@ class HyperParameterVisualizing:
     """ Keeps hyper parameters together for visualizing results
     """
     
+    SAVE_RESULTS = True
     PATH_TO_RESULTS = '../results/'
     PATH_TO_IMAGES = '../images/manuscript/'
     SUB_TITLE_LIST = [
@@ -325,7 +326,9 @@ def show_numerical_results(HYPER_VIS):
                         display(results_transformed)
                         
                         
-def plot_train_val_hist(HYPER_VIS):
+def plot_train_val_hist(
+    HYPER_VIS
+):
     
     """ Plots the main experimental results
     """
@@ -511,11 +514,14 @@ def plot_train_val_hist(HYPER_VIS):
                         fig.tight_layout()
                         
                         # save figure
-                        saving_path = path_to_figures + 'main_experiments.pdf'
-                        fig.savefig(saving_path)
+                        if HYPER_VIS.SAVE_RESULTS:
+                            saving_path = path_to_figures + 'main_experiments.pdf'
+                            fig.savefig(saving_path)
 
                        
-def plot_subsampling_heuristics(HYPER_VIS):
+def plot_subsampling_heuristics(
+    HYPER_VIS
+):
     
     """ Plots experimental results for different degrees of subsampling
     candidate data points.
@@ -685,11 +691,14 @@ def plot_subsampling_heuristics(HYPER_VIS):
                         fig.tight_layout()
                         
                         # save figure
-                        saving_path = path_to_figures + 'subsample_importance.pdf'
-                        fig.savefig(saving_path)
+                        if HYPER_VIS.SAVE_RESULTS:
+                            saving_path = path_to_figures + 'subsample_importance.pdf'
+                            fig.savefig(saving_path)
                         
 
-def plot_pointspercluster_heuristics(HYPER_VIS):
+def plot_pointspercluster_heuristics(
+    HYPER_VIS
+):
     
     """ Plots experimental results for different degrees of queried points
     per cluster.
@@ -859,11 +868,14 @@ def plot_pointspercluster_heuristics(HYPER_VIS):
                         fig.tight_layout()
                         
                         # save figure
-                        saving_path = path_to_figures + 'pointspercluster_importance.pdf'
-                        fig.savefig(saving_path)
+                        if HYPER_VIS.SAVE_RESULTS:
+                            saving_path = path_to_figures + 'pointspercluster_importance.pdf'
+                            fig.savefig(saving_path)
 
                      
-def plot_querybycoordinate_heuristics(HYPER_VIS):
+def plot_querybycoordinate_heuristics(
+    HYPER_VIS
+):
     
     """ Plots experimental results for querying data points by
     embedded coordinates in time and space.
@@ -1034,12 +1046,15 @@ def plot_querybycoordinate_heuristics(HYPER_VIS):
                         fig.tight_layout()
                         
                         # save figure
-                        saving_path = path_to_figures + 'querybycoordinate_importance.pdf'
-                        fig.savefig(saving_path)
+                        if HYPER_VIS.SAVE_RESULTS:
+                            saving_path = path_to_figures + 'querybycoordinate_importance.pdf'
+                            fig.savefig(saving_path)
                         
                         
                         
-def plot_sequence_importance(HYPER_VIS):
+def plot_sequence_importance(
+    HYPER_VIS
+):
     
     """ Plots experimental results for querying data points by
     random ADL sequence.
@@ -1165,8 +1180,9 @@ def plot_sequence_importance(HYPER_VIS):
                         fig.tight_layout()
 
                         # save figure
-                        saving_path = path_to_figures + 'sequence_importance.pdf'
-                        fig.savefig(saving_path)
+                        if HYPER_VIS.SAVE_RESULTS:
+                            saving_path = path_to_figures + 'sequence_importance.pdf'
+                            fig.savefig(saving_path)
                         
 def plot_results_summary(
     HYPER_VIS,
@@ -1250,8 +1266,7 @@ def plot_results_summary(
             PL_train = results_df[col_name_train][8:].dropna().values
             PL_val = results_df[col_name_val][8:].dropna().values
 
-            legend_PL_train = 'PDL baseline: 1x comp'
-            legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+            legend_PL = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                 budget_usage, 
                 sensor_usage,
                 PL_accuracy
@@ -1259,16 +1274,14 @@ def plot_results_summary(
 
             if plot_item['plot_type'] == 'train':
                 PL_plot = PL_train
-                PL_legend = legend_PL_train
             elif plot_item['plot_type'] == 'val':
                 PL_plot = PL_val
-                PL_legend = legend_PL_val
 
             ax[plot_item['row'], plot_item['col']].plot(
                 PL_plot, 
                 color='b', 
                 linestyle='--', 
-                label=PL_legend
+                label=legend_PL
             )
                 
             query_variables_act_lrn = hyper_df['query_variables_act_lrn'].dropna()
@@ -1679,5 +1692,8 @@ def plot_results_summary(
     fig.tight_layout()
     if not os.path.exists(HYPER_VIS.PATH_TO_IMAGES):
         os.mkdir(HYPER_VIS.PATH_TO_IMAGES)
-    saving_path = HYPER_VIS.PATH_TO_IMAGES + result_type + '.pdf'
-    fig.savefig(saving_path)
+    
+    # save 
+    if HYPER_VIS.SAVE_RESULTS:
+        saving_path = HYPER_VIS.PATH_TO_IMAGES + result_type + '.pdf'
+        fig.savefig(saving_path)

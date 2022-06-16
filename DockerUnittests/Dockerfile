@@ -15,5 +15,6 @@ RUN pip install pydot
 
 WORKDIR /DataSelectionMaps/tests
 
-CMD python test_prediction.py
-CMD python test_activelearning.py
+#CMD python test_prediction.py
+#CMD python test_activelearning.py
+CMD python test_vis_results.py
