@@ -1561,7 +1561,6 @@ def plot_results_summary(
                 frameon=False
             )
         
-        
         # yet axis limits
         ax[plot_item['row'], plot_item['col']].set_ylim(plot_item['y_lims'])
     
