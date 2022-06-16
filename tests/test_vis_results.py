@@ -57,33 +57,40 @@ class TestPrediction(unittest.TestCase):
         
     def test_plot_train_val_hist(self):
 
-        """ Tests if hyper paramters match.
+        """
         """
         vis_results.plot_train_val_hist(self.HYPER_VIS) 
         
     def test_plot_subsampling_heuristics(self):
 
-        """ Tests if hyper paramters match.
+        """
         """
         vis_results.plot_subsampling_heuristics(self.HYPER_VIS)  
     
     def test_plot_pointspercluster_heuristics(self):
 
-        """ Tests if hyper paramters match.
+        """
         """
         vis_results.plot_pointspercluster_heuristics(self.HYPER_VIS)  
         
     def test_plot_querybycoordinate_heuristics(self):
 
-        """ Tests if hyper paramters match.
+        """
         """
         vis_results.plot_querybycoordinate_heuristics(self.HYPER_VIS) 
         
     def test_plot_sequence_importance(self):
 
-        """ Tests if hyper paramters match.
+        """
         """
         vis_results.plot_sequence_importance(self.HYPER_VIS) 
+        
+    def test_plot_results_summary(self):
+
+        """
+        """
+        vis_results.plot_results_summary(self.HYPER_VIS) 
+        vis_results.plot_results_summary(self.HYPER_VIS, 'heuristic_summary') 
         
 # write this to use 'python test_data.py' instead of 'python -m unittest test_data.py'
 if __name__ == '__main__':

@@ -1234,16 +1234,7 @@ def plot_results_summary(
         
         results_df = pd.read_csv(path_to_file)
         
-        if plot_item['exp_choice'] == 'main_experiments':
-            path_to_hyper = (
-                HYPER_VIS.PATH_TO_RESULTS 
-                + plot_item['profile_type'] + '/'
-                + plot_item['pred_type'] + '/'
-                + plot_item['exp_type'] + '/values/'
-                + 'hyper.csv'
-            )
-            hyper_df = pd.read_csv(path_to_hyper)
-            
+        if plot_item['exp_choice'] != 'sequence_importance':
             col_name_train = (
                 plot_item['pred_type'] 
                 + ' None ' 
@@ -1266,23 +1257,40 @@ def plot_results_summary(
             PL_train = results_df[col_name_train][8:].dropna().values
             PL_val = results_df[col_name_val][8:].dropna().values
 
-            legend_PL = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+            legend_PL_train = 'PDL baseline: 1x comp'
+            legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                 budget_usage, 
                 sensor_usage,
                 PL_accuracy
             )
-
+            
             if plot_item['plot_type'] == 'train':
                 PL_plot = PL_train
+                PL_legend = legend_PL_train
             elif plot_item['plot_type'] == 'val':
                 PL_plot = PL_val
-
+                PL_legend = legend_PL_val
+                
+            if plot_item['exp_choice'] != 'main_experiments':
+                PL_legend = legend_PL_val
+        
             ax[plot_item['row'], plot_item['col']].plot(
                 PL_plot, 
                 color='b', 
                 linestyle='--', 
-                label=legend_PL
+                label=PL_legend
             )
+            
+        if plot_item['exp_choice'] == 'main_experiments':                
+
+            path_to_hyper = (
+                HYPER_VIS.PATH_TO_RESULTS 
+                + plot_item['profile_type'] + '/'
+                + plot_item['pred_type'] + '/'
+                + plot_item['exp_type'] + '/values/'
+                + 'hyper.csv'
+            )
+            hyper_df = pd.read_csv(path_to_hyper)
                 
             query_variables_act_lrn = hyper_df['query_variables_act_lrn'].dropna()
             query_variants_act_lrn = hyper_df['query_variants_act_lrn'].dropna()
@@ -1351,45 +1359,6 @@ def plot_results_summary(
             )
             
         elif plot_item['exp_choice'] == 'subsample_importance':
-            col_name_train = (
-                plot_item['pred_type']
-                + ' None ' 
-                + 'PL ' 
-                + 'train'
-            )
-            col_name_val = (
-                plot_item['pred_type'] 
-                + ' None ' 
-                + 'PL ' 
-                + 'val'
-            )
-
-            PL_t_iter_avg = results_df[col_name_train][0]
-            budget_usage = results_df[col_name_train][1]
-            sensor_usage = results_df[col_name_train][2]
-            PL_loss = results_df[col_name_train][4]
-            RF_loss = results_df[col_name_train][5]
-            PL_accuracy = 1 - min(1, PL_loss /RF_loss)
-            PL_train = results_df[col_name_train][8:].dropna().values
-            PL_val = results_df[col_name_val][8:].dropna().values
-
-            legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                budget_usage, 
-                sensor_usage,
-                PL_accuracy
-            )
-            
-            if plot_item['plot_type'] == 'train':
-                PL_plot = PL_train
-            elif plot_item['plot_type'] == 'val':
-                PL_plot = PL_val
-                
-            ax[plot_item['row'], plot_item['col']].plot(
-                PL_plot, 
-                color='b', 
-                linestyle='--', 
-                label=legend_PL
-            )
             
             df_columns_list = results_df.columns
             for i in range(3, len(df_columns_list)-1, 2):
@@ -1443,45 +1412,6 @@ def plot_results_summary(
             )
             
         elif plot_item['exp_choice'] == 'pointspercluster_importance':
-            col_name_train = (
-                plot_item['pred_type']
-                + ' None ' 
-                + 'PL ' 
-                + 'train'
-            )
-            col_name_val = (
-                plot_item['pred_type'] 
-                + ' None ' 
-                + 'PL ' 
-                + 'val'
-            )
-            
-            PL_t_iter_avg = results_df[col_name_train][0]
-            budget_usage = results_df[col_name_train][1]
-            sensor_usage = results_df[col_name_train][2]
-            PL_loss = results_df[col_name_train][4]
-            RF_loss = results_df[col_name_train][5]
-            PL_accuracy = 1 - min(1, PL_loss /RF_loss)
-            PL_train = results_df[col_name_train][8:].dropna().values
-            PL_val = results_df[col_name_val][8:].dropna().values
-
-            legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                budget_usage, 
-                sensor_usage,
-                PL_accuracy
-            )
-            
-            if plot_item['plot_type'] == 'train':
-                PL_plot = PL_train
-            elif plot_item['plot_type'] == 'val':
-                PL_plot = PL_val
-                
-            ax[plot_item['row'], plot_item['col']].plot(
-                PL_plot, 
-                color='b', 
-                linestyle='--', 
-                label=legend_PL
-            )
             
             df_columns_list = results_df.columns
             for i in range(3, len(df_columns_list)-1, 2):
@@ -1535,45 +1465,6 @@ def plot_results_summary(
             )
         
         elif plot_item['exp_choice'] == 'querybycoordinate_importance':
-            col_name_train = (
-                plot_item['pred_type']
-                + ' None ' 
-                + 'PL ' 
-                + 'train'
-            )
-            col_name_val = (
-                plot_item['pred_type'] 
-                + ' None ' 
-                + 'PL ' 
-                + 'val'
-            )
-            
-            PL_t_iter_avg = results_df[col_name_train][0]
-            budget_usage = results_df[col_name_train][1]
-            sensor_usage = results_df[col_name_train][2]
-            PL_loss = results_df[col_name_train][4]
-            RF_loss = results_df[col_name_train][5]
-            PL_accuracy = 1 - min(1, PL_loss /RF_loss)
-            PL_train = results_df[col_name_train][8:].dropna().values
-            PL_val = results_df[col_name_val][8:].dropna().values
-
-            legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                budget_usage, 
-                sensor_usage,
-                PL_accuracy
-            )
-            
-            if plot_item['plot_type'] == 'train':
-                PL_plot = PL_train
-            elif plot_item['plot_type'] == 'val':
-                PL_plot = PL_val
-                
-            ax[plot_item['row'], plot_item['col']].plot(
-                PL_plot, 
-                color='b', 
-                linestyle='--', 
-                label=legend_PL
-            )
             
             df_columns_list = results_df.columns
             for i in range(3, len(df_columns_list)-1, 2):
