@@ -18,9 +18,9 @@ class HyperParameterVisualizing:
         'i.', 'j.', 'k.', 'l.', 'm.', 'n.', 'o.', 'p.',
         'q.', 'r.', 's.', 't.', 'u.', 'v.', 'w.', 'x.'
     ]
-    WIDTH_FACTOR = 10
-    FONTSIZE = 20
-    LEGEND_FONTSIZE = FONTSIZE - 6
+    WIDTH_FACTOR = 8
+    FONTSIZE = 22
+    LEGEND_FONTSIZE = FONTSIZE - 8
     CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
     POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
     QUERYBYCOORDINATE_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
@@ -45,7 +45,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 0,
@@ -56,7 +56,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 1,
@@ -67,7 +67,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 1,
@@ -78,7 +78,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 2,
@@ -89,7 +89,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': [0, 3]
             },
             {
                 'row': 2,
@@ -100,7 +100,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 3,
@@ -111,7 +111,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 3,
@@ -122,7 +122,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             }
         ],
 
@@ -141,7 +141,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None #[0, 5]
             },
             {
                 'row': 0,
@@ -152,7 +152,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': [0, 1.4]
             },
             {
                 'row': 1,
@@ -163,7 +163,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 1,
@@ -174,7 +174,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 6]
+                'y_lims': None#[0, 6]
             },
             {
                 'row': 2,
@@ -185,7 +185,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'querybycoordinate_importance',
                 'plot_type': 'val',
                 'AL_variable': 'X_s1',
-                'y_lims': [0, 6]
+                'y_lims': [0.4, 1.9]
             },
             {
                 'row': 2,
@@ -207,7 +207,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 1.6]
+                'y_lims': [0, 1]
             },
             {
                 'row': 3,
@@ -218,7 +218,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 1.6]
+                'y_lims': [0, 1]
             }
         ],
     }
@@ -384,8 +384,8 @@ def plot_train_val_hist(
                         PL_train = results_df[col_name_train][8:].dropna().values
                         PL_val = results_df[col_name_val][8:].dropna().values
                         
-                        legend_PL_train = 'PDL baseline: 1x comp'
-                        legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                        legend_PL_train = 'PDL baseline:  1x comp'
+                        legend_PL_val = 'PDL baseline:  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -463,7 +463,7 @@ def plot_train_val_hist(
                                 AL_val = results_df[col_name_val][8:].dropna().values
 
                                 # create the legends
-                                legend_train = 'ADL {}: {}x comp'.format(
+                                legend_train = 'ADL {}:  {}x comp'.format(
                                     AL_variant, 
                                     round(AL_t_iter_avg / PL_t_iter_avg, 1)
                                 )
@@ -510,6 +510,10 @@ def plot_train_val_hist(
                             'epoch', 
                         )
                         
+                        
+                        # print results
+                        print(profile_type)
+                        print(exp_type)
                         
                         # set layout tight
                         fig.tight_layout()
@@ -576,7 +580,7 @@ def plot_subsampling_heuristics(
                         PL_train = subsampling_df[col_name_train][8:].dropna().values
                         PL_val = subsampling_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -619,9 +623,9 @@ def plot_subsampling_heuristics(
                             AL_train = subsampling_df[column_train][8:].dropna().values
                             AL_val = subsampling_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                                AL_subsample_rate,
+                            legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                                 round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                AL_subsample_rate,
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -687,6 +691,10 @@ def plot_subsampling_heuristics(
                         ax[index_var, 1].set_xlabel(
                             'epoch', 
                         )
+                        
+                        # print results
+                        print(profile_type)
+                        print(exp_type)
                         
                         # set layout tight
                         fig.tight_layout()
@@ -753,7 +761,7 @@ def plot_pointspercluster_heuristics(
                         PL_train = pointspercluster_df[col_name_train][8:].dropna().values
                         PL_val = pointspercluster_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -796,9 +804,9 @@ def plot_pointspercluster_heuristics(
                             AL_train = pointspercluster_df[column_train][8:].dropna().values
                             AL_val = pointspercluster_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL: {:.0%} cluster {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                                AL_cluster_rate,
+                            legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                                 round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                AL_cluster_rate,
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -865,6 +873,10 @@ def plot_pointspercluster_heuristics(
                             'epoch', 
                         )
                         
+                        # print results
+                        print(profile_type)
+                        print(exp_type)
+                        
                         # set layout tight
                         fig.tight_layout()
                         
@@ -930,7 +942,7 @@ def plot_querybycoordinate_heuristics(
                         PL_train = querybycoordinate_df[col_name_train][8:].dropna().values
                         PL_val = querybycoordinate_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline 1x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
+                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -973,9 +985,9 @@ def plot_querybycoordinate_heuristics(
                             AL_train = querybycoordinate_df[column_train][8:].dropna().values
                             AL_val = querybycoordinate_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                                AL_subsample_rate,
+                            legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors {:.0%} accuracy'.format(
                                 round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                                AL_subsample_rate,
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -1042,6 +1054,10 @@ def plot_querybycoordinate_heuristics(
                         ax[index_var, 1].set_xlabel(
                             'epoch', 
                         )
+                        
+                        # print results
+                        print(profile_type)
+                        print(exp_type)
                         
                         # set layout tight
                         fig.tight_layout()
@@ -1176,6 +1192,10 @@ def plot_sequence_importance(
                         ax[index_var, 1].set_xlabel(
                             'epoch', 
                         )
+                        
+                        # print results
+                        print(profile_type)
+                        print(exp_type)
 
                         # set layout tight
                         fig.tight_layout()
@@ -1267,12 +1287,20 @@ def plot_results_summary(
             PL_train = results_df[col_name_train][8:].dropna().values
             PL_val = results_df[col_name_val][8:].dropna().values
 
-            legend_PL_train = 'PDL baseline: 1x comp'
-            legend_PL_val = 'PDL baseline: {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                budget_usage, 
-                sensor_usage,
-                PL_accuracy
-            )
+            legend_PL_train = 'PDL baseline:  1x comp'
+            
+            if result_type=='result_summary':
+                legend_PL_val = 'PDL baseline:  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                    budget_usage, 
+                    sensor_usage,
+                    PL_accuracy
+                )
+            elif result_type=='heuristic_summary':
+                legend_PL_val = 'PDL baseline:  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                    budget_usage, 
+                    sensor_usage,
+                    PL_accuracy
+                )
             
             if plot_item['plot_type'] == 'train':
                 PL_plot = PL_train
@@ -1338,7 +1366,7 @@ def plot_results_summary(
                         AL_val = results_df[col_name_val][8:].dropna().values
 
                         # create the legends
-                        legend_train = 'ADL {}: {}x comp'.format(
+                        legend_train = 'ADL {}:  {}x comp'.format(
                             AL_variant, 
                             round(AL_t_iter_avg / PL_t_iter_avg, 1)
                         )
@@ -1383,9 +1411,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                    AL_subsample_rate,
+                legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                    AL_subsample_rate,
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
@@ -1430,9 +1458,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL: {:.0%} cluster {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                    AL_cluster_rate,
+                legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                    AL_cluster_rate,
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
@@ -1444,7 +1472,7 @@ def plot_results_summary(
                         break
 
                 for index_heur, item in enumerate(HYPER_VIS.POINTS_PERCLUSTER_TEST_LIST):
-                    if item == AL_subsample_rate:
+                    if item == AL_cluster_rate:
                         plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
                         break
                 
@@ -1477,9 +1505,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL: {:.0%} cand {}x comp {:.0%} data {:.0%} sensors {:.0%} accuracy'.format(
-                    AL_subsample_rate,
+                legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                    AL_subsample_rate,
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy

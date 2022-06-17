@@ -1012,7 +1012,6 @@ def feature_embedding_AL(
 
 
     ### Shorten test dataset to random subsample for saving ###
-    
     if HYPER.SAVED_SAMPLES_ACT_LRN >= test_data.n_datapoints:
         rnd_array = np.arange(test_data.n_datapoints)
     else:
