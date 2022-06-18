@@ -45,7 +45,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 0,
@@ -56,7 +56,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 1,
@@ -67,7 +67,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 1,
@@ -78,7 +78,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 2,
@@ -100,7 +100,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 3,
@@ -111,7 +111,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 3,
@@ -122,7 +122,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             }
         ],
 
@@ -141,7 +141,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None #[0, 5]
+                'y_lims': None 
             },
             {
                 'row': 0,
@@ -163,7 +163,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 1,
@@ -174,7 +174,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None#[0, 6]
+                'y_lims': None
             },
             {
                 'row': 2,
