@@ -12,8 +12,14 @@ def saveallresults(
 
     """ Calls all other functions to save generated results """
     
-    # remove temporary saved encoder weights
+    # remove temporary saved encoder weights for ran experiment choice
     shutil.rmtree(raw_data.path_to_tmp_encoder_weights)
+    
+    # if no other experiments are running, remove this folder enirely
+    parent_path = raw_data.path_to_tmp_encoder_weights[:-len(HYPER.TEST_EXPERIMENT_CHOICE + '/')]
+    if not os.listdir(parent_path):
+        shutil.rmtree(parent_path)
+        
     
     if HYPER.SAVE_RESULTS:
         # save active learning results

@@ -21,10 +21,10 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
+    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_RESULTS = True
+    SAVE_RESULTS = False
     
     
     ### 1. Active Learning algorithm ###
@@ -38,7 +38,7 @@ class HyperParameter:
     RED_CAND_DATA_ACT_LRN = True
     
     # Decide whether to delete queried candidates from validation data.
-    UPD_VAL_DATA_ACT_LRN = True
+    UPD_VAL_DATA_ACT_LRN = False
 
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
