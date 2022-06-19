@@ -18,27 +18,26 @@ class HyperParameter:
     # Keep a value of False if you have access to public data only.
     PRIVATE_DATA_ACCESS = True
     
+    # Decide whether to save results, hyper paramters, models and sample data.
+    SAVE_RESULTS = True
+    
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
-    
-    # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_RESULTS = False
-    
+    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
     
     ### 1. Active Learning algorithm ###
+    
+    # Decide whether to remove queried candidates from candidate data pool.
+    RED_CAND_DATA_ACT_LRN = False
+    
+    # Decide whether to delete queried candidates from validation data.
+    UPD_VAL_DATA_ACT_LRN = True
     
     # Decide whether to extend initial training data with queried
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
     EXTEND_TRAIN_DATA_ACT_LRN = False
-
-    # Decide whether to remove queried candidates from candidate data pool.
-    RED_CAND_DATA_ACT_LRN = True
-    
-    # Decide whether to delete queried candidates from validation data.
-    UPD_VAL_DATA_ACT_LRN = False
 
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
@@ -47,18 +46,18 @@ class HyperParameter:
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
     QUERY_VARIABLES_ACT_LRN = [
-        #'X_st', 
-        #'X_(t,s)', 
+        'X_st', 
+        'X_(t,s)', 
         'Y_hat_(t,s)', 
-        #'Y_(t,s)'
+        'Y_(t,s)'
     ]
     
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
     # 'min d_c', 'max d_c' and 'avg_dc'.
     QUERY_VARIANTS_ACT_LRN = [
         'rnd d_c', 
-        #'min d_c', 
-        #'max d_c', 
+        'min d_c', 
+        'max d_c', 
         'avg d_c'
     ]
     
@@ -146,7 +145,7 @@ class HyperParameter:
 
     # Decides how many buildings and how much of the time period to separate for 
     # testing.
-    TEST_SPLIT = 0.5
+    TEST_SPLIT = 0.7
 
     # Decide in which frequency to do train-validation split. 1 equals 
     # one datapoint per bin, 0.5 equals two datapoints per bin.

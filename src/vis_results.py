@@ -1575,7 +1575,8 @@ def plot_results_summary(
                   custom_lines, 
                   ['random sequence', 'original sequence'], 
                   loc="best", 
-                  frameon=False
+                  frameon=False,
+                  fontsize=HYPER_VIS.LEGEND_FONTSIZE
             )
         else:
             ax[plot_item['row'], plot_item['col']].legend(
