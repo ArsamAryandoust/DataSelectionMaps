@@ -502,3 +502,10 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                         # save figures
                         if HYPER_ADDVIS.SAVE_RESULTS:
                             fig.savefig(saving_path, bbox_inches="tight")
+                            
+                            
+def plot_exemplar_predictions(HYPER_ADDVIS):
+
+    """ """
+    
+    
