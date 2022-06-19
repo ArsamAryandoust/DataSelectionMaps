@@ -1611,3 +1611,7 @@ def plot_results_summary(
     if HYPER_VIS.SAVE_RESULTS:
         saving_path = HYPER_VIS.PATH_TO_IMAGES + result_type + '.pdf'
         fig.savefig(saving_path)
+        
+        
+        
+
