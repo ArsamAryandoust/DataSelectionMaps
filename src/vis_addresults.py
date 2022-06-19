@@ -12,6 +12,7 @@ class HyperParameterAdditionalVisualizing:
     
     SAVE_RESULTS = True
     PATH_TO_RESULTS = '../results/'
+    FONTSIZE=20
     
     # define for space-time selection maps
     N_ITER_PLOT = 10
@@ -317,13 +318,7 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                 
                 delta = int(exp_type[5])
                 valup = int(exp_type[12])
-
-                # skip cases where we validate against queried data too
-                if valup == 0:
-                    # increment result index counter
-                    result_index_counter += 1
-                    continue
-                
+    
                 if 'values' in result_type_list:
                     path_to_values = path_to_exp + 'values/'
                     file_type_list = os.listdir(path_to_values)
@@ -343,6 +338,167 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                         if not os.path.exists(path_to_figures):
                             os.mkdir(path_to_figures)
                             
-                        path_to_saving_spacetime = path_to_figures + 'space-time selection/'
-                        if not os.path.exists(path_to_saving_spacetime):
-                            os.mkdir(path_to_saving_spacetime)
+                        query_variables_act_lrn = hyper_df['query_variables_act_lrn'].dropna()
+                        query_variants_act_lrn = hyper_df['query_variants_act_lrn'].dropna()
+                        
+                        # create the column name for PL lossess
+                        col_name_data = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'data'
+                        )
+                        col_name_sensors = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'sensors'
+                        )
+                        col_name_streamtimes = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'streamtimes'
+                        )
+                        col_name_accuracy = (
+                            pred_type 
+                            + ' None ' 
+                            + 'PL ' 
+                            + 'accuracy'
+                        )
+
+                        # get PL results
+                        PL_data = np.append(0, budget_accuracy_df[col_name_data].values)
+                        PL_accuracy = np.append(0, budget_accuracy_df[col_name_accuracy].values)
+                        
+                        
+                        fig, ax = plt.subplots(
+                            len(query_variables_act_lrn), 
+                            len(query_variants_act_lrn), 
+                            figsize=(
+                                3 * len(query_variants_act_lrn), 
+                                3 * len(query_variables_act_lrn)
+                            )
+                        )
+                        
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                            for index_method, AL_variant in enumerate(query_variants_act_lrn):
+                                
+                                # create the column name for iterated validation loss
+                                col_name_data = (
+                                    pred_type 
+                                    + ' ' 
+                                    + AL_variable 
+                                    + ' ' 
+                                    + AL_variant 
+                                    + ' data'
+                                )
+                                col_name_accuracy = (
+                                    pred_type 
+                                    + ' ' 
+                                    + AL_variable 
+                                    + ' ' 
+                                    + AL_variant 
+                                    + ' accuracy'
+                                )
+
+                                # get training losses for mode 1 with validation updates
+                                AL_data = np.append(0, budget_accuracy_df[col_name_data].values)
+                                AL_accuracy = np.append(0, budget_accuracy_df[col_name_accuracy].values)
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    plot_ax = ax[index_method]
+                                else:
+                                    plot_ax = ax[index_var, index_method]
+                                    
+                                    
+                                # plot iterated training losses
+                                plot_ax.plot(
+                                    AL_accuracy,
+                                    color='b'
+                                )
+
+                                for x,y in enumerate(AL_accuracy):
+
+                                    # plot annotations only on every second step
+                                    if (x+1)%2 == 0:
+                                        plot_ax.annotate(
+                                            str(AL_data[x])+'%',
+                                            (x, y+5)
+                                        )
+
+                                # plot PL accuracy.
+                                # Note: Moved plotting down after plotting AL, in order to have legends aligned with height of plots
+                                plot_ax.plot(
+                                    PL_accuracy, 
+                                    color='r',
+                                )
+
+                                plot_ax.set_ylim(
+                                    top=100
+                                )
+
+                                for x,y in enumerate(PL_accuracy):
+                                    # plot annotations only on every second step
+                                    if (x+1)%2 == 0:
+                                        plot_ax.annotate(
+                                            str(PL_data[x])+'%',
+                                            (x, y-5)
+                                        )
+                                        
+                                # set subplot titles
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    # set y-axis labels
+                                    ax[0].set_ylabel(
+                                        '{} \n prediction accuracy'.format(AL_variable), 
+                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                    )
+
+                                    # set x-axis
+                                    ax[index_method].set_xlabel(
+                                        'data selection \n iteration', 
+                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                    )
+                                    
+                                    # set column titles
+                                    if index_var == 0:
+                                        ax[index_method].set_title(AL_variant)
+                                else:
+                                    # set y-axis labels
+                                    ax[index_var, 0].set_ylabel(
+                                        '{} \n prediction accuracy'.format(AL_variable), 
+                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                    )
+
+                                    # set x-axis
+                                    ax[len(query_variables_act_lrn)-1, index_method].set_xlabel(
+                                        'data selection \n iteration', 
+                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                    )
+                                    
+                                    # set column titles
+                                    if index_var == 0:
+                                        ax[0, index_method].set_title(AL_variant)
+                                    
+                        # create saving paths 
+                        saving_path = (
+                            path_to_figures 
+                            + 'budget_vs_accuracy.pdf'
+                        )
+
+                        legend_elements = [Line2D([0], [0], color='b', label='Active learning', markersize=HYPER_ADDVIS.FONTSIZE),
+                                           Line2D([0], [0], color='r', label='Passive learning', markersize=HYPER_ADDVIS.FONTSIZE),
+                                           Line2D([0], [0], color='w', label='% = budget usage', markersize=HYPER_ADDVIS.FONTSIZE)]
+
+                        # set layout tight
+                        fig.tight_layout()
+
+                        fig.legend(
+                            handles=legend_elements,
+                            bbox_to_anchor=(0.9,1.14 - 0.02 *len(query_variables_act_lrn))
+                        )
+
+                        # save figures
+                        if HYPER_ADDVIS.SAVE_RESULTS:
+                            fig.savefig(saving_path, bbox_inches="tight")

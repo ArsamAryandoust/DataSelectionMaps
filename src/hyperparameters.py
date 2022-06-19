@@ -21,7 +21,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'main_experiments'
+    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = True
@@ -50,7 +50,7 @@ class HyperParameter:
         #'X_st', 
         #'X_(t,s)', 
         'Y_hat_(t,s)', 
-        'Y_(t,s)'
+        #'Y_(t,s)'
     ]
     
     # Decide which active learning variants to evaluate. Choose from 'rnd d_c', 
