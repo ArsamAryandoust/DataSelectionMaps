@@ -478,11 +478,11 @@ class HyperParameter:
             self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
             
             if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
-                print('POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]')
-                self.POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
+                print('POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]')
+                self.POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]
             else:
-                print('CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]')
-                self.CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
+                print('CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]')
+                self.CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]
         
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
@@ -490,7 +490,7 @@ class HyperParameter:
                     'POINTS_PER_CLUSTER_ACT_LRN = 0'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
-                self.POINTS_PER_CLUSTER_ACT_LRN = 0
+                self.POINTS_PER_CLUSTER_ACT_LRN = 0.25
             
             
     def set_act_lrn_params(self):
