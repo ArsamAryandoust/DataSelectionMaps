@@ -4,19 +4,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from matplotlib.lines import Line2D
+import tensorflow as tf
 
 class HyperParameterAdditionalVisualizing:
 
     """ Keeps hyper parameters together for visualizing results
     """
     
+    
     SAVE_RESULTS = True
     PATH_TO_RESULTS = '../results/'
     FONTSIZE=20
-    
-    # define for space-time selection maps
     N_ITER_PLOT = 10
     N_MESHES_SURFACE = 10
+    N_DATAPOINTS_EXAMPLE_PRED = 5
+    SUB_TITLE_LIST = [
+        'a.', 'b.', 'c.', 'd.', 'e.', 'f.', 'g.', 'h.',
+        'i.', 'j.', 'k.', 'l.', 'm.', 'n.', 'o.', 'p.',
+        'q.', 'r.', 's.', 't.', 'u.', 'v.', 'w.', 'x.'
+    ]
+    
     
 def plot_space_time_selection(HYPER_ADDVIS):
 
@@ -149,9 +156,9 @@ def plot_space_time_selection(HYPER_ADDVIS):
         if iteration is not None:
             ax.set_title('iteration {}'.format(iteration+1))
     
-                
+    
+    mpl.rcParams.update({'font.size': HYPER_ADDVIS.FONTSIZE})            
     profile_type_list = os.listdir(HYPER_ADDVIS.PATH_TO_RESULTS)
-    counter = 0
     for profile_type in profile_type_list:
         path_to_results = HYPER_ADDVIS.PATH_TO_RESULTS + profile_type + '/'
         pred_type_list = os.listdir(path_to_results)
@@ -302,8 +309,8 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
 
     """ """
     
+    mpl.rcParams.update({'font.size': HYPER_ADDVIS.FONTSIZE-8})
     profile_type_list = os.listdir(HYPER_ADDVIS.PATH_TO_RESULTS)
-    counter = 0
     for profile_type in profile_type_list:
         path_to_results = HYPER_ADDVIS.PATH_TO_RESULTS + profile_type + '/'
         pred_type_list = os.listdir(path_to_results)
@@ -451,14 +458,12 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                                 if len(query_variables_act_lrn) == 1:
                                     # set y-axis labels
                                     ax[0].set_ylabel(
-                                        '{} \n prediction accuracy'.format(AL_variable), 
-                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                        '{} \n prediction accuracy'.format(AL_variable)
                                     )
 
                                     # set x-axis
                                     ax[index_method].set_xlabel(
-                                        'data selection \n iteration', 
-                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                        'data selection \n iteration'
                                     )
                                     
                                     # set column titles
@@ -467,14 +472,12 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                                 else:
                                     # set y-axis labels
                                     ax[index_var, 0].set_ylabel(
-                                        '{} \n prediction accuracy'.format(AL_variable), 
-                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                        '{} \n prediction accuracy'.format(AL_variable)
                                     )
 
                                     # set x-axis
                                     ax[len(query_variables_act_lrn)-1, index_method].set_xlabel(
-                                        'data selection \n iteration', 
-                                        fontsize=HYPER_ADDVIS.FONTSIZE - 8
+                                        'data selection \n iteration'
                                     )
                                     
                                     # set column titles
@@ -487,9 +490,11 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                             + 'budget_vs_accuracy.pdf'
                         )
 
-                        legend_elements = [Line2D([0], [0], color='b', label='Active learning', markersize=HYPER_ADDVIS.FONTSIZE),
-                                           Line2D([0], [0], color='r', label='Passive learning', markersize=HYPER_ADDVIS.FONTSIZE),
-                                           Line2D([0], [0], color='w', label='% = budget usage', markersize=HYPER_ADDVIS.FONTSIZE)]
+                        legend_elements = [
+                            Line2D([0], [0], color='b', label='Active learning'),
+                            Line2D([0], [0], color='r', label='Passive learning'),
+                            Line2D([0], [0], color='w', label='% = budget usage')
+                        ]
 
                         # set layout tight
                         fig.tight_layout()
@@ -504,8 +509,247 @@ def plot_budget_vs_accuracy(HYPER_ADDVIS):
                             fig.savefig(saving_path, bbox_inches="tight")
                             
                             
+                            
 def plot_exemplar_predictions(HYPER_ADDVIS):
 
     """ """
     
-    
+    mpl.rcParams.update({'font.size': HYPER_ADDVIS.FONTSIZE})
+    profile_type_list = os.listdir(HYPER_ADDVIS.PATH_TO_RESULTS)
+    for profile_type in profile_type_list:
+        path_to_results = HYPER_ADDVIS.PATH_TO_RESULTS + profile_type + '/'
+        pred_type_list = os.listdir(path_to_results)
+        
+        for pred_type in pred_type_list:
+            path_to_pred = path_to_results + pred_type + '/'
+            exp_type_list = os.listdir(path_to_pred)
+            
+            for exp_type in exp_type_list:
+                path_to_exp = path_to_pred + exp_type + '/'
+                result_type_list = os.listdir(path_to_exp)
+                
+                path_to_samples = path_to_exp + 'samples/'
+                path_to_models = path_to_exp + 'models/'
+                path_to_values = path_to_exp + 'values/'
+                path_to_figures = path_to_exp + 'figures/'
+                
+                if not os.path.exists(path_to_figures):
+                    os.mkdir(path_to_figures)
+                    
+                path_to_exemplar_pred = path_to_figures + 'exemplar predictions/'
+                if not os.path.exists(path_to_exemplar_pred):
+                    os.mkdir(path_to_exemplar_pred)
+                
+                # get hyper params
+                path_to_hyper = path_to_values + 'hyper.csv'
+                hyper_df = pd.read_csv(path_to_hyper)
+                
+                # import initial model
+                path_to_initial_model = path_to_models + 'initial.h5'
+                initial_model =  tf.keras.models.load_model(
+                    path_to_initial_model, 
+                    compile=False
+                )
+                
+                # import PL model and test samples
+                path_to_PL_model = path_to_models + 'PL.h5'
+                PL_model = tf.keras.models.load_model(
+                    path_to_PL_model, 
+                    compile=False
+                )
+                
+                path_to_file = path_to_samples + 'PL_X_t.npy' 
+                X_t = np.load(path_to_file)
+
+                path_to_file = path_to_samples + 'PL_X_s.npy' 
+                X_s = np.load(path_to_file)
+
+                path_to_file = path_to_samples + 'PL_X_s1.npy' 
+                X_s1 = np.load(path_to_file)
+
+                path_to_file = path_to_samples + 'PL_X_st.npy' 
+                X_st = np.load(path_to_file)
+
+                path_to_file = path_to_samples + 'PL_Y.npy' 
+                Y_pl = np.load(path_to_file)
+                
+                # make predictions
+                initial_predictions = initial_model.predict(
+                    [X_t, X_s1, X_st]
+                )
+                PL_predictions = PL_model.predict(
+                    [X_t, X_s1, X_st]
+                )
+                
+                
+                query_variables_act_lrn = hyper_df['query_variables_act_lrn'].dropna()
+                query_variants_act_lrn = hyper_df['query_variants_act_lrn'].dropna()
+                
+                # iterate over all AL variables
+                for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                    
+                    # iterate over all AL variants
+                    for index_method, AL_variant in enumerate(query_variants_act_lrn):
+                    
+                        # create figure
+                        fig, ax = plt.subplots(
+                            HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED, 
+                            3, 
+                            sharex=True , 
+                            figsize=(16, HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED * 4)
+                        )
+                        
+                        
+                        AL_model_filename = '{} {}.h5'.format(
+                            AL_variable, 
+                            AL_variant
+                        )
+                        AL_sample_name = '{} {} '.format(
+                            AL_variable, 
+                            AL_variant
+                        )
+                        
+                        # provide paths to initial and PL models and samples
+                        path_to_AL_model = path_to_models + AL_model_filename
+                        path_to_AL_data = path_to_samples + AL_sample_name
+                        
+                        # import models and samples for AL
+                        path_to_PL_model = path_to_models + 'PL.h5'
+                        AL_model =  tf.keras.models.load_model(
+                            path_to_AL_model, 
+                            compile=False
+                        )
+                
+                        path_to_file = path_to_AL_data + 'X_t.npy' 
+                        X_t = np.load(path_to_file)
+
+                        path_to_file = path_to_AL_data + 'X_s.npy' 
+                        X_s = np.load(path_to_file)
+
+                        path_to_file = path_to_AL_data + 'X_s1.npy' 
+                        X_s1 = np.load(path_to_file)
+
+                        path_to_file = path_to_AL_data + 'X_st.npy' 
+                        X_st = np.load(path_to_file)
+
+                        path_to_file = path_to_AL_data + 'Y.npy' 
+                        Y_al = np.load(path_to_file)
+                        
+                        # make predictions
+                        AL_predictions = AL_model.predict(
+                            [X_t, X_s1, X_st]
+                        )
+                        
+                        # plot predictions for randomly chosen points
+                        rnd_index_array_initial = np.random.choice(
+                            np.arange(len(Y_pl)),
+                            HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED
+                        )
+                        rnd_index_array_PL = np.random.choice(
+                            np.arange(len(Y_pl)),
+                            HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED
+                        )
+                        rnd_index_array_AL = np.random.choice(
+                            np.arange(len(Y_al)), 
+                            HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED
+                        )
+                        
+                        title_counter = 0
+                
+                        # iterate over each row of figure
+                        for row in range(HYPER_ADDVIS.N_DATAPOINTS_EXAMPLE_PRED):
+                            
+                            plot1 = ax[row, 0].plot(
+                                initial_predictions[
+                                    rnd_index_array_initial[
+                                        row
+                                    ]
+                                ]
+                            )
+                            ax[row, 1].plot(
+                                PL_predictions[
+                                    rnd_index_array_PL[
+                                        row
+                                    ]
+                                ]
+                            )
+                            ax[row, 2].plot(
+                                AL_predictions[
+                                    rnd_index_array_AL[
+                                        row
+                                    ]
+                                ]
+                            )
+                            
+                            plot2 = ax[row, 0].plot(
+                                Y_pl[
+                                    rnd_index_array_initial[
+                                        row
+                                    ]
+                                ]
+                            )
+                            ax[row, 1].plot(
+                                Y_pl[
+                                    rnd_index_array_PL[
+                                        row
+                                    ]
+                                ]
+                            )
+                            ax[row, 2].plot(
+                                Y_al[
+                                    rnd_index_array_AL[
+                                        row
+                                    ]
+                                ]
+                            )
+                            
+                            # set title
+                            for col in range(3):
+                                ax[row, col].set_title(HYPER_ADDVIS.SUB_TITLE_LIST[title_counter])
+                                title_counter +=1
+                        
+                        # add a figure legend
+                        fig.legend(
+                            [plot1, plot2], 
+                            labels=['true load profile', 'predicted load profile'], 
+                            loc='upper center', 
+                            bbox_to_anchor=(0.8, 1)
+                        )
+
+                        colname_list = [
+                            'Initial model \n a.', 
+                            'Passive learning \n b.', 
+                            'Active learning \n c.'
+                        ]
+
+                        # set col names
+                        for axes, colname in zip(ax[0], colname_list):
+                            axes.set_title(colname)
+
+                        # set one y- and x-axis for all sub plots
+                        fig.add_subplot(111, frame_on=False)
+                        plt.tick_params(
+                            labelcolor="none", 
+                            bottom=False, 
+                            left=False
+                        )
+                        plt.xlabel(
+                            'time [15-min]' 
+                        )
+                        plt.ylabel(
+                            'building electric consumption [kW]'
+                        )
+                        
+                        filename = '{} {} {}.pdf'.format(
+                            pred_type, 
+                            AL_variable, 
+                            AL_variant, 
+                        )
+                        
+                        saving_path = (
+                            path_to_exemplar_pred 
+                            + filename
+                        )
+
+                        fig.savefig(saving_path)
+            

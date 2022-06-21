@@ -486,10 +486,10 @@ class HyperParameter:
         
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
-                    'QUERY_VARIABLES_ACT_LRN = ["X_t", "X_s1"]\n'
+                    'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
                     'POINTS_PER_CLUSTER_ACT_LRN = 0'
                 )
-                self.QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
+                self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0.25
             
             
