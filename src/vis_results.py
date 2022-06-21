@@ -23,9 +23,8 @@ class HyperParameterVisualizing:
     LEGEND_FONTSIZE = FONTSIZE - 8
     CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
     POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
-    QUERYBYCOORDINATE_VARIABLES_ACT_LRN = ['X_t', 'X_s1']
-    HEURISTIC_QUERY_VARIABLES_ACT_LRN = ['X_st', 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)']
-    HEURISTIC_QUERY_VARIANTS_ACT_LRN = ['max d_c']
+    POSSIBLE_QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1', 'X_st', 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)']
+    POSSIBLE_QUERY_VARIANTS_ACT_LRN = ['rnd d_c', 'min d_c', 'max d_c', 'avg d_c']
     HEURISTICS_COLOR_LIST = [
         '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
         '#8c564b',  '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
@@ -403,17 +402,22 @@ def plot_train_val_hist(
                             )
                         )
                         
-                        
-                        title_counter = 0
                         for index_var, AL_variable in enumerate(query_variables_act_lrn):
                             
-                            ax[index_var, 0].plot(
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                                
+                            plot_left.plot(
                                 PL_train, 
                                 color='b', 
                                 linestyle='--', 
                                 label=legend_PL_train
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 PL_val, 
                                 color='b', 
                                 linestyle='--', 
@@ -429,8 +433,8 @@ def plot_train_val_hist(
                                 for axes, col in zip(ax[0], cols):
                                     axes.set_title(col)
                             else:
-                                ax[index_var, 0].set_title(AL_variable)
-                                ax[index_var, 1].set_title(AL_variable)
+                                plot_left.set_title(AL_variable)
+                                plot_right.set_title(AL_variable)
                         
                         
                             for index_method, AL_variant in enumerate(query_variants_act_lrn):
@@ -475,41 +479,40 @@ def plot_train_val_hist(
                                 )
 
                                 # plot iterated training losses
-                                ax[index_var, 0].plot(
+                                plot_left.plot(
                                     AL_train, 
                                     label=legend_train
                                 )
-                                ax[index_var, 1].plot(
+                                plot_right.plot(
                                     AL_val, 
                                     label=legend_val
                                 )
 
                             # set legend
-                            ax[index_var, 0].legend(
+                            plot_left.legend(
                                 loc='best', 
                                 frameon=False,
                                 fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
-                            ax[index_var, 1].legend(
+                            plot_right.legend(
                                 loc='best', 
                                 frameon=False,
                                 fontsize=HYPER_VIS.LEGEND_FONTSIZE
                             )
 
                             # set y-axis labels
-                            ax[index_var, 0].set_ylabel(
+                            plot_left.set_ylabel(
                                 'L2 loss [kW²]', 
                             )
 
 
                         # set x-axis
-                        ax[index_var, 0].set_xlabel(
+                        plot_left.set_xlabel(
                             'epoch', 
                         )
-                        ax[index_var, 1].set_xlabel(
+                        plot_right.set_xlabel(
                             'epoch', 
                         )
-                        
                         
                         # print results
                         print(profile_type)
@@ -586,23 +589,50 @@ def plot_subsampling_heuristics(
                             PL_accuracy
                         )
                         
+                        
+                        # create a list of available query variables and query variants
+                        query_variables_act_lrn = set()
+                        query_variants_act_lrn = set()
+                        
+                        df_columns_list = subsampling_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            
+                            for AL_variable in HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN:
+                                if AL_variable in column_train:
+                                    query_variables_act_lrn = query_variables_act_lrn.union({AL_variable})
+                                    break
+                            
+                            for AL_variant in HYPER_VIS.POSSIBLE_QUERY_VARIANTS_ACT_LRN:
+                                if AL_variant in column_train:
+                                    query_variants_act_lrn = query_variants_act_lrn.union({AL_variant})
+                                    break
+                            
                         fig, ax = plt.subplots(
-                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            len(query_variables_act_lrn), 
                             2, 
                             figsize=(
                                 20, 
-                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                                len(query_variables_act_lrn) * HYPER_VIS.WIDTH_FACTOR
                             )
                         )
                         
-                        for index_var in range(len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN)):
-                            ax[index_var, 0].plot(
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                        
+                            plot_left.plot(
                                 PL_train, 
                                 color='b', 
                                 linestyle='--', 
                                 label=legend_PL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 PL_val, 
                                 color='b', 
                                 linestyle='--', 
@@ -631,7 +661,7 @@ def plot_subsampling_heuristics(
                                 AL_accuracy
                             )
                             
-                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                            for index_var, item in enumerate(query_variables_act_lrn):
                                 if item in column_train:
                                     AL_variable = item
                                     break
@@ -641,54 +671,75 @@ def plot_subsampling_heuristics(
                                     plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
                                     break
                             
-                            ax[index_var, 0].plot(
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                            
+                            plot_left.plot(
                                 AL_train, 
                                 color=plt_color,
                                 label=legend_AL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 AL_val, 
                                 color=plt_color,
                                 label=legend_AL
                             )
                             
-                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
                             
                             if index_var == 0:
                                 cols = [
                                     'Training losses \n {}'.format(AL_variable), 
                                     'Validation losses \n {}'.format(AL_variable)
                                 ]
-                                for axes, col in zip(ax[0], cols):
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    top_row = ax
+                                else:
+                                    top_row = ax[0]
+                                
+                                for axes, col in zip(top_row, cols):
                                     axes.set_title(col)
                             else:
                                 ax[index_var, 0].set_title(AL_variable)
                                 ax[index_var, 1].set_title(AL_variable)
                             
-                            # set legend
-                            ax[index_var, 0].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
-                            ax[index_var, 1].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                            
+
                             
                             
                             # set y-axis labels
-                            ax[index_var, 0].set_ylabel(
+                            plot_left.set_ylabel(
                                 'L2 loss [kW²]', 
                             )
 
-
+                            # set legend
+                            plot_left.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
+                            plot_right.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
+                        
                         # set x-axis
-                        ax[index_var, 0].set_xlabel(
+                        plot_left.set_xlabel(
                             'epoch', 
                         )
-                        ax[index_var, 1].set_xlabel(
+                        plot_right.set_xlabel(
                             'epoch', 
                         )
                         
@@ -767,23 +818,49 @@ def plot_pointspercluster_heuristics(
                             PL_accuracy
                         )
                         
+                        # create a list of available query variables and query variants
+                        query_variables_act_lrn = set()
+                        query_variants_act_lrn = set()
+                        
+                        df_columns_list = pointspercluster_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            
+                            for AL_variable in HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN:
+                                if AL_variable in column_train:
+                                    query_variables_act_lrn = query_variables_act_lrn.union({AL_variable})
+                                    break
+                            
+                            for AL_variant in HYPER_VIS.POSSIBLE_QUERY_VARIANTS_ACT_LRN:
+                                if AL_variant in column_train:
+                                    query_variants_act_lrn = query_variants_act_lrn.union({AL_variant})
+                                    break
+                            
                         fig, ax = plt.subplots(
-                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            len(query_variables_act_lrn), 
                             2, 
                             figsize=(
                                 20, 
-                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                                len(query_variables_act_lrn) * HYPER_VIS.WIDTH_FACTOR
                             )
                         )
                         
-                        for index_var in range(len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN)):
-                            ax[index_var, 0].plot(
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                        
+                            plot_left.plot(
                                 PL_train, 
                                 color='b', 
                                 linestyle='--', 
                                 label=legend_PL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 PL_val, 
                                 color='b', 
                                 linestyle='--', 
@@ -812,7 +889,7 @@ def plot_pointspercluster_heuristics(
                                 AL_accuracy
                             )
                             
-                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                            for index_var, item in enumerate(query_variables_act_lrn):
                                 if item in column_train:
                                     AL_variable = item
                                     break
@@ -822,57 +899,78 @@ def plot_pointspercluster_heuristics(
                                     plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
                                     break
                             
-                            ax[index_var, 0].plot(
+                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                            
+                            
+                            plot_left.plot(
                                 AL_train, 
                                 color=plt_color,
                                 label=legend_AL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 AL_val, 
                                 color=plt_color,
                                 label=legend_AL
                             )
                             
-                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
                             
                             if index_var == 0:
                                 cols = [
                                     'Training losses \n {}'.format(AL_variable), 
                                     'Validation losses \n {}'.format(AL_variable)
                                 ]
-                                for axes, col in zip(ax[0], cols):
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    top_row = ax
+                                else:
+                                    top_row = ax[0]
+                                
+                                for axes, col in zip(top_row, cols):
                                     axes.set_title(col)
                             else:
                                 ax[index_var, 0].set_title(AL_variable)
                                 ax[index_var, 1].set_title(AL_variable)
                             
-                            # set legend
-                            ax[index_var, 0].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
-                            ax[index_var, 1].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
                             
                             
                             # set y-axis labels
-                            ax[index_var, 0].set_ylabel(
+                            plot_left.set_ylabel(
                                 'L2 loss [kW²]', 
                             )
-
+                            
+                            # set legend
+                            plot_left.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
+                            plot_right.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
 
                         # set x-axis
-                        ax[index_var, 0].set_xlabel(
+                        plot_left.set_xlabel(
                             'epoch', 
                         )
-                        ax[index_var, 1].set_xlabel(
+                        plot_right.set_xlabel(
                             'epoch', 
                         )
-                        
+
                         # print results
                         print(profile_type)
                         print(exp_type)
@@ -948,29 +1046,54 @@ def plot_querybycoordinate_heuristics(
                             PL_accuracy
                         )
                         
+                        # create a list of available query variables and query variants
+                        query_variables_act_lrn = set()
+                        query_variants_act_lrn = set()
+                        
+                        df_columns_list = querybycoordinate_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            
+                            for AL_variable in HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN:
+                                if AL_variable in column_train:
+                                    query_variables_act_lrn = query_variables_act_lrn.union({AL_variable})
+                                    break
+                            
+                            for AL_variant in HYPER_VIS.POSSIBLE_QUERY_VARIANTS_ACT_LRN:
+                                if AL_variant in column_train:
+                                    query_variants_act_lrn = query_variants_act_lrn.union({AL_variant})
+                                    break
+                            
                         fig, ax = plt.subplots(
-                            len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN), 
+                            len(query_variables_act_lrn), 
                             2, 
                             figsize=(
                                 20, 
-                                len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                                len(query_variables_act_lrn) * HYPER_VIS.WIDTH_FACTOR
                             )
                         )
                         
-                        for index_var in range(len(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN)):
-                            ax[index_var, 0].plot(
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
+                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                        
+                            plot_left.plot(
                                 PL_train, 
                                 color='b', 
                                 linestyle='--', 
                                 label=legend_PL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 PL_val, 
                                 color='b', 
                                 linestyle='--', 
                                 label=legend_PL
-                            )
-                            
+                            )    
                         df_columns_list = querybycoordinate_df.columns
                         for i in range(3, len(df_columns_list)-1, 2):
                             column_train = df_columns_list.values[i]
@@ -993,65 +1116,82 @@ def plot_querybycoordinate_heuristics(
                                 AL_accuracy
                             )
                             
-                            for index_var, item in enumerate(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN):
+                            for index_var, item in enumerate(query_variables_act_lrn):
                                 if item in column_train:
                                     AL_variable = item
                                     break
-                                    
                             
                             for index_heur, item in enumerate(HYPER_VIS.CAND_SUBSAMPLE_TEST_LIST):
                                 if item == AL_subsample_rate:
                                     plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
                                     break
                             
-                            ax[index_var, 0].plot(
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                            
+                            plot_left.plot(
                                 AL_train, 
                                 color=plt_color,
                                 label=legend_AL
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 AL_val, 
                                 color=plt_color,
                                 label=legend_AL
                             )
                             
-                        for index_var, AL_variable in enumerate(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN):
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
                             
                             if index_var == 0:
                                 cols = [
                                     'Training losses \n {}'.format(AL_variable), 
                                     'Validation losses \n {}'.format(AL_variable)
                                 ]
-                                for axes, col in zip(ax[0], cols):
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    top_row = ax
+                                else:
+                                    top_row = ax[0]
+                                
+                                for axes, col in zip(top_row, cols):
                                     axes.set_title(col)
                             else:
                                 ax[index_var, 0].set_title(AL_variable)
                                 ax[index_var, 1].set_title(AL_variable)
                             
-                            # set legend
-                            ax[index_var, 0].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
-                            ax[index_var, 1].legend(
-                                loc='best', 
-                                frameon=False,
-                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
-                            )
-                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
                             
                             # set y-axis labels
-                            ax[index_var, 0].set_ylabel(
+                            plot_left.set_ylabel(
                                 'L2 loss [kW²]', 
                             )
 
-
+                            # set legend
+                            plot_left.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
+                            plot_right.legend(
+                                loc='best', 
+                                frameon=False,
+                                fontsize=HYPER_VIS.LEGEND_FONTSIZE
+                            )
+                        
                         # set x-axis
-                        ax[index_var, 0].set_xlabel(
+                        plot_left.set_xlabel(
                             'epoch', 
                         )
-                        ax[index_var, 1].set_xlabel(
+                        plot_right.set_xlabel(
                             'epoch', 
                         )
                         
@@ -1066,7 +1206,6 @@ def plot_querybycoordinate_heuristics(
                         if HYPER_VIS.SAVE_RESULTS:
                             saving_path = path_to_figures + 'querybycoordinate_importance.pdf'
                             fig.savefig(saving_path)
-                        
                         
                         
 def plot_sequence_importance(
@@ -1108,13 +1247,30 @@ def plot_sequence_importance(
                         if not os.path.exists(path_to_figures):
                             os.mkdir(path_to_figures)
                             
+                        # create a list of available query variables and query variants
+                        query_variables_act_lrn = set()
+                        query_variants_act_lrn = set()
+                        
+                        df_columns_list = seqimportance_df.columns
+                        for i in range(3, len(df_columns_list)-1, 2):
+                            column_train = df_columns_list.values[i]
+                            
+                            for AL_variable in HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN:
+                                if AL_variable in column_train:
+                                    query_variables_act_lrn = query_variables_act_lrn.union({AL_variable})
+                                    break
+                            
+                            for AL_variant in HYPER_VIS.POSSIBLE_QUERY_VARIANTS_ACT_LRN:
+                                if AL_variant in column_train:
+                                    query_variants_act_lrn = query_variants_act_lrn.union({AL_variant})
+                                    break
                             
                         fig, ax = plt.subplots(
-                            len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN), 
+                            len(query_variables_act_lrn), 
                             2, 
                             figsize=(
                                 20, 
-                                len(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN) * HYPER_VIS.WIDTH_FACTOR
+                                len(query_variables_act_lrn) * HYPER_VIS.WIDTH_FACTOR
                             )
                         )
                         
@@ -1131,65 +1287,84 @@ def plot_sequence_importance(
                             AL_train_random = seqimportance_df[column_train_random][3:].dropna().values
                             AL_val_random = seqimportance_df[column_val_random][3:].dropna().values
                             
-                            for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                            for index_var, item in enumerate(query_variables_act_lrn):
                                 if item in column_train:
                                     AL_variable = item
                                     break
                                     
-                            ax[index_var, 0].plot(
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
+                                
+                            plot_left.plot(
                                 AL_train
                             )
-                            ax[index_var, 0].plot(
+                            plot_left.plot(
                                 AL_train_random,
                                 linestyle="--"
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 AL_val
                             )
-                            ax[index_var, 1].plot(
+                            plot_right.plot(
                                 AL_val_random,
                                 linestyle="--"
                             )
                             
-                        for index_var, AL_variable in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                        for index_var, AL_variable in enumerate(query_variables_act_lrn):
 
                             if index_var == 0:
                                 cols = [
                                     'Training losses \n {}'.format(AL_variable), 
                                     'Validation losses \n {}'.format(AL_variable)
                                 ]
-                                for axes, col in zip(ax[0], cols):
+                                
+                                if len(query_variables_act_lrn) == 1:
+                                    top_row = ax
+                                else:
+                                    top_row = ax[0]
+                                
+                                for axes, col in zip(top_row, cols):
                                     axes.set_title(col)
                             else:
                                 ax[index_var, 0].set_title(AL_variable)
                                 ax[index_var, 1].set_title(AL_variable)
+                            
+                            if len(query_variables_act_lrn) == 1:
+                                plot_left = ax[0]
+                                plot_right = ax[1]
+                            else:
+                                plot_left = ax[index_var, 0]
+                                plot_right = ax[index_var, 1]
 
                             # set legend
-                            ax[index_var, 0].legend(
+                            plot_left.legend(
                                 custom_lines, 
                                 ['random sequence', 'original sequence'], 
                                 loc="best", 
                                 frameon=False
                             )
-                            ax[index_var, 1].legend(
+                            plot_right.legend(
                                 custom_lines, 
                                 ['random sequence', 'original sequence'], 
                                 loc="best", 
                                 frameon=False
                             )
-
 
                             # set y-axis labels
-                            ax[index_var, 0].set_ylabel(
+                            plot_left.set_ylabel(
                                 'L2 loss [kW²]', 
                             )
 
 
                         # set x-axis
-                        ax[index_var, 0].set_xlabel(
+                        plot_left.set_xlabel(
                             'epoch', 
                         )
-                        ax[index_var, 1].set_xlabel(
+                        plot_right.set_xlabel(
                             'epoch', 
                         )
                         
@@ -1419,7 +1594,7 @@ def plot_results_summary(
                     AL_accuracy
                 )
 
-                for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                for index_var, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
                         AL_variable = item
                         break
@@ -1466,7 +1641,7 @@ def plot_results_summary(
                     AL_accuracy
                 )
 
-                for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                for index_var, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
                         AL_variable = item
                         break
@@ -1513,7 +1688,7 @@ def plot_results_summary(
                     AL_accuracy
                 )
 
-                for index_var, item in enumerate(HYPER_VIS.QUERYBYCOORDINATE_VARIABLES_ACT_LRN):
+                for index_var, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
                         AL_variable = item
                         break
@@ -1546,7 +1721,7 @@ def plot_results_summary(
                 AL_train_random = results_df[column_train_random][3:].dropna().values
                 AL_val_random = results_df[column_val_random][3:].dropna().values
                 
-                for index_var, item in enumerate(HYPER_VIS.HEURISTIC_QUERY_VARIABLES_ACT_LRN):
+                for index_var, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
                         AL_variable = item
                         break
