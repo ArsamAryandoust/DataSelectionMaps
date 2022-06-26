@@ -24,7 +24,7 @@ class HyperParameter:
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'pointspercluster_importance'
+    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
     
     ### 1. Active Learning algorithm ###
     
@@ -480,17 +480,19 @@ class HyperParameter:
             if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
                 print('POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]')
                 self.POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]
-            else:
+            elif self.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
                 print('CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]')
                 self.CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]
         
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
                     'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
-                    'POINTS_PER_CLUSTER_ACT_LRN = 0'
+                    'POINTS_PER_CLUSTER_ACT_LRN = 0\n'
+                    'CAND_SUBSAMPLE_TEST_LIST = [1]'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
-                self.POINTS_PER_CLUSTER_ACT_LRN = 0.25
+                self.POINTS_PER_CLUSTER_ACT_LRN = 0
+                self.CAND_SUBSAMPLE_TEST_LIST = [1]
             
             
     def set_act_lrn_params(self):

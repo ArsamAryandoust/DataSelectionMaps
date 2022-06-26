@@ -21,7 +21,7 @@ class HyperParameterVisualizing:
     WIDTH_FACTOR = 8
     FONTSIZE = 22
     LEGEND_FONTSIZE = FONTSIZE - 8
-    CAND_SUBSAMPLE_TEST_LIST = [0.3, 0.5, 0.7, 1]
+    CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.3, 0.5, 0.7, 0.75, 1]
     POINTS_PERCLUSTER_TEST_LIST = [0, 0.25, 0.5, 1]
     POSSIBLE_QUERY_VARIABLES_ACT_LRN = ['X_t', 'X_s1', 'X_st', 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)']
     POSSIBLE_QUERY_VARIANTS_ACT_LRN = ['rnd d_c', 'min d_c', 'max d_c', 'avg d_c']
@@ -296,8 +296,8 @@ def show_numerical_results(HYPER_VIS):
                     file_type_list = os.listdir(path_to_values)
                     
                     if 'results.csv' in file_type_list:
-                        path_to_results = path_to_values + 'results.csv'
-                        results_df = pd.read_csv(path_to_results)
+                        path_to_file = path_to_values + 'results.csv'
+                        results_df = pd.read_csv(path_to_file)
                         
                         results_transformed = (
                             results_df[:6].set_index('Unnamed: 0').transpose()
@@ -351,8 +351,8 @@ def plot_train_val_hist(
                     file_type_list = os.listdir(path_to_values)
                     
                     if 'results.csv' in file_type_list:
-                        path_to_results = path_to_values + 'results.csv'
-                        results_df = pd.read_csv(path_to_results)
+                        path_to_file = path_to_values + 'results.csv'
+                        results_df = pd.read_csv(path_to_file)
                         
                         path_to_hyper = path_to_values + 'hyper.csv'
                         hyper_df = pd.read_csv(path_to_hyper)
