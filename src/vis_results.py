@@ -66,7 +66,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None
+                'y_lims': [0, 3]
             },
             {
                 'row': 1,
@@ -88,7 +88,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'train',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 3]
+                'y_lims': None
             },
             {
                 'row': 2,
@@ -99,7 +99,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'main_experiments',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None
+                'y_lims': [0, 3]
             },
             {
                 'row': 3,
@@ -151,7 +151,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 1.4]
+                'y_lims': None
             },
             {
                 'row': 1,
@@ -184,7 +184,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'querybycoordinate_importance',
                 'plot_type': 'val',
                 'AL_variable': 'X_s1',
-                'y_lims': [0.4, 1.9]
+                'y_lims': None
             },
             {
                 'row': 2,
@@ -195,7 +195,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'querybycoordinate_importance',
                 'plot_type': 'val',
                 'AL_variable': 'X_s1',
-                'y_lims': [0, 6]
+                'y_lims': None
             },
             {
                 'row': 3,
@@ -206,7 +206,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 1]
+                'y_lims': None
             },
             {
                 'row': 3,
@@ -217,7 +217,7 @@ class HyperParameterVisualizing:
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': [0, 1]
+                'y_lims': None
             }
         ],
     }

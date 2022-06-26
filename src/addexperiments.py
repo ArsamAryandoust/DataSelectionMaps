@@ -500,29 +500,26 @@ def test_querybycoordinate_importance_AL(
         print('prediction type:                      {}'.format(HYPER.PRED_TYPE_ACT_LRN))
         print('query variable:                       {}'.format(AL_variable))
         print('query variant:                        {}'.format(method))
-        progbar = tf.keras.utils.Progbar(len(HYPER.CAND_SUBSAMPLE_TEST_LIST))
+        progbar = tf.keras.utils.Progbar(1)
             
     heuristic_results_list = []
-    for heuristic_value in HYPER.CAND_SUBSAMPLE_TEST_LIST:
-        HYPER.CAND_SUBSAMPLE_ACT_LRN = heuristic_value
-        
-        results = activelearning.feature_embedding_AL(
-            HYPER, 
-            models, 
-            raw_data, 
-            training_data, 
-            dataset,
-            loss_object, 
-            optimizer, 
-            mean_loss,
-            loss_function,
-            method, 
-            AL_variable=AL_variable
-        )
-        
-        heuristic_results_list.append(results)
-        if not silent:
-            progbar.add(1)
+    results = activelearning.feature_embedding_AL(
+        HYPER, 
+        models, 
+        raw_data, 
+        training_data, 
+        dataset,
+        loss_object, 
+        optimizer, 
+        mean_loss,
+        loss_function,
+        method, 
+        AL_variable=AL_variable
+    )
+    
+    heuristic_results_list.append(results)
+    if not silent:
+        progbar.add(1)
     
     result_dict = {
         'heuristics_querybycoordinate' : heuristic_results_list

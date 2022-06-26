@@ -487,12 +487,12 @@ class HyperParameter:
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
                     'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
-                    'POINTS_PER_CLUSTER_ACT_LRN = 0\n'
-                    'CAND_SUBSAMPLE_TEST_LIST = [1]'
+                    'CAND_SUBSAMPLE_ACT_LRN = 1\n'
+                    'POINTS_PER_CLUSTER_ACT_LRN = 0'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
+                self.CAND_SUBSAMPLE_ACT_LRN = 1
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0
-                self.CAND_SUBSAMPLE_TEST_LIST = [1]
             
             
     def set_act_lrn_params(self):
