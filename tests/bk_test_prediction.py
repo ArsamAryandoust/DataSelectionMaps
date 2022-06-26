@@ -73,12 +73,26 @@ class TestPrediction(unittest.TestCase):
         (
             training_data, 
             validation_data, 
-            testing_data 
+            spatial_test_data, 
+            temporal_test_data, 
+            spatemp_test_data
         ) = data.split_train_val_test(self.HYPER, self.raw_data, dataset)
-        self.testing_data = data.standardize_features(
+        self.spatemp_test_data = data.standardize_features(
             self.HYPER, 
             self.raw_data, 
-            testing_data, 
+            spatemp_test_data, 
+            training_data
+        )
+        self.temporal_test_data = data.standardize_features(
+            self.HYPER, 
+            self.raw_data, 
+            temporal_test_data, 
+            training_data
+        )
+        self.spatial_test_data = data.standardize_features(
+            self.HYPER, 
+            self.raw_data, 
+            spatial_test_data, 
             training_data
         )
         self.validation_data = data.standardize_features(
@@ -93,6 +107,7 @@ class TestPrediction(unittest.TestCase):
             training_data, 
             training_data
         )
+
         (
             self.loss_object, 
             self.optimizer, 
