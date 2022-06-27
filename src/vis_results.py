@@ -1671,7 +1671,7 @@ def plot_results_summary(
                 sensor_usage = results_df[column_train][2]
                 AL_loss = results_df[column_train][4]
                 AL_accuracy = 1 - min(1, AL_loss/RF_loss)
-                AL_subsample_rate = results_df[column_train][6]
+                AL_cluster_rate = results_df[column_train][7]
                 AL_train = results_df[column_train][8:].dropna().values
                 AL_val = results_df[column_val][8:].dropna().values
                 
@@ -1680,9 +1680,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     round(AL_t_iter_avg / PL_t_iter_avg, 1),
-                    AL_subsample_rate,
+                    AL_cluster_rate,
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
