@@ -444,6 +444,8 @@ def feature_embedding_AL(
             # mark beginning of iteration
             print('---' * 3)
 
+
+        # Let GPU cool down for this experiment
         if HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
             time.sleep(HYPER.COOL_DOWN_TIME_S)
         

@@ -134,7 +134,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.001 
     # corresponds to approximately 35 points per profile
-    POINTS_PER_PROFILE = 0.01
+    POINTS_PER_PROFILE = 0.1
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -475,26 +475,36 @@ class HyperParameter:
                 'will set the following hyper paramters before performing ADL:\n'
                 'QUERY_VARIANTS_ACT_LRN = ["max d_c"]'
             )
-            self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
             
             if self.TEST_EXPERIMENT_CHOICE == 'pointspercluster_importance':
-                print('POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]')
+                print(
+                    'POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]\n'
+                    'QUERY_VARIANTS_ACT_LRN = ["max d_c"]'
+                )
                 self.POINTS_PERCLUSTER_TEST_LIST = [0.25, 0.5, 0.75, 1]
+                self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
+                
             elif self.TEST_EXPERIMENT_CHOICE == 'subsample_importance':
-                print('CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]')
+                print(
+                    'CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]\n'
+                    'QUERY_VARIANTS_ACT_LRN = ["max d_c"]'
+                )
                 self.CAND_SUBSAMPLE_TEST_LIST = [0.25, 0.5, 0.75, 1]
+                self.QUERY_VARIANTS_ACT_LRN = ['max d_c']
         
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
                     'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
                     'CAND_SUBSAMPLE_ACT_LRN = 1\n'
                     'POINTS_PER_CLUSTER_ACT_LRN = 0\n'
-                    'COOL_DOWN_TIME_S = 60'
+                    'COOL_DOWN_TIME_S = 60\n'
+                    'QUERY_VARIANTS_ACT_LRN = ["avg d_c"]'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
                 self.CAND_SUBSAMPLE_ACT_LRN = 1
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0
-                self.COOL_DOWN_TIME_S = 60
+                self.COOL_DOWN_TIME_S = 20
+                self.QUERY_VARIANTS_ACT_LRN = ['avg d_c']
             
             
     def set_act_lrn_params(self):
