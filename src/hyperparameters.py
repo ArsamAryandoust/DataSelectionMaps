@@ -29,7 +29,7 @@ class HyperParameter:
     ### 1. Active Learning algorithm ###
     
     # Decide whether to remove queried candidates from candidate data pool.
-    RED_CAND_DATA_ACT_LRN = False
+    RED_CAND_DATA_ACT_LRN = True
     
     # Decide whether to delete queried candidates from validation data.
     UPD_VAL_DATA_ACT_LRN = True
@@ -134,7 +134,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.001 
     # corresponds to approximately 35 points per profile
-    POINTS_PER_PROFILE = 0.001
+    POINTS_PER_PROFILE = 0.01
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -488,11 +488,13 @@ class HyperParameter:
                 print(
                     'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
                     'CAND_SUBSAMPLE_ACT_LRN = 1\n'
-                    'POINTS_PER_CLUSTER_ACT_LRN = 0'
+                    'POINTS_PER_CLUSTER_ACT_LRN = 0\n'
+                    'COOL_DOWN_TIME_S = 60'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
                 self.CAND_SUBSAMPLE_ACT_LRN = 1
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0
+                self.COOL_DOWN_TIME_S = 60
             
             
     def set_act_lrn_params(self):

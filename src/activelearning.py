@@ -1,5 +1,6 @@
 import math
 import timeit
+import time
 import random
 
 import numpy as np
@@ -436,9 +437,6 @@ def feature_embedding_AL(
     streamtime_usage_hist = []
     val_loss_hist = []
     
-    # Set starting time of algorithm
-    t_start_0 = timeit.default_timer()
-
     # start Active Learning iterations
     for iteration in range(HYPER.N_ITER_ACT_LRN):
 
@@ -446,6 +444,9 @@ def feature_embedding_AL(
             # mark beginning of iteration
             print('---' * 3)
 
+        if HYPER.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
+            time.sleep(HYPER.COOL_DOWN_TIME_S)
+        
         # Set the start time
         t_start = timeit.default_timer()
         
@@ -939,10 +940,6 @@ def feature_embedding_AL(
     # mark end of test for currently iterated sorting array
     if not silent:
         print('---' * 20)
-
-    # time in seconds that is eventually used
-    t_total = round(t_end - t_start_0)
-
 
     ### Create test dataset and predict ###
 
