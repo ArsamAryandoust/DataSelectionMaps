@@ -8,7 +8,7 @@
 2. Prediction model
 3. Active learning
 
-An effective way to oppose global warming and mitigate climate change is to electrify our energy sectors and supply their electric power from renewable wind and solar. Spatio-temporal predictions of electric load become increasingly important for planning this transition, while deep learning prediction models provide increasingly accurate predictions for it. The data used for training deep learning models, however, is usually collected at random using a passive learning approach. This naturally results in a large demand for data and associated costs for sensors like smart meters, posing a large barrier for electric utilities in decarbonizing their grids. Here, we test active deep learning where we leverage additional computation for collecting a more informative subset of data. We show that electric utilities can apply active learning to better distribute smart meters and collect their data for more accurate predictions of load with about half the data volume compared to when applying passive learning.
+An effective way to oppose global warming and mitigate climate change is to electrify our energy sectors and supply their electric power from renewable wind and solar. Spatio-temporal predictions of electric load become increasingly important for planning this transition, while deep learning prediction models provide increasingly accurate predictions for it. The data used for training deep learning models, however, is usually collected at random using a passive learning approach. This naturally results in a large demand for data and associated costs for sensors like smart meters, posing a large barrier for electric utilities in decarbonizing their grids. Here, we investigate if electric utilities can instead use active deep learning for collecting a more informative subset of candidate data by leveraging additional computation for better distributing smart meters. We find that even more accurate predictions are feasible with much less data when using active learning compared to when using passive learning.
 
 ---
 
@@ -29,10 +29,15 @@ An effective way to oppose global warming and mitigate climate change is to elec
 * src/activelearning.py: implementation of feature embedding active learning and passive learning
 * src/addexperiments.py: additional experiments like sequence importance and various heuristics
 * src/plotresults.py: functions for plotting results in Jupyter notebook sessions.
+* src/prep_data.py: functions for preparing datasets in Jupyter notebook sessions.
+* src/prp_figures.py: functions for preparing manuscript figures in Jupyter notebook sessions.
+* src/saveresults.py: functions for saving experimental results.
+* src/vis_results.py: functions for visualizing main and heuristic experimental results.
+* src/vis_addresults.py: functions for visualizing additional results like exemplar predictions.
 * src/main_notebook.ipynb: Jupyter notebook session for reproducing method and experiments setepwise
 * src/results_notebook.ipynb: Jupyer notebook sessions for plotting and analysing experimental results
 * tests/test_prediction.py: unit tests for prediction.py
-* tests/test_activelearning.py: unit tests for activelearning.py
+* tests/test_vis_results.py: unit tests for vis_results.py
 ---
 
 ## Docker 
