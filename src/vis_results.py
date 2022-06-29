@@ -136,51 +136,51 @@ class HyperParameterVisualizing:
                 'col': 0,
                 'profile_type': 'profiles_100',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta0_valup1',
+                'exp_type' : 'delta1_valup1',
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None 
+                'y_lims': [0, 2] 
             },
             {
                 'row': 0,
                 'col': 1,
                 'profile_type': 'profiles_100',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta1_valup1',
+                'exp_type' : 'delta0_valup1',
                 'exp_choice' : 'subsample_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None
+                'y_lims': [0, 2]
             },
             {
                 'row': 1,
                 'col': 0,
-                'profile_type': 'profiles_100',
+                'profile_type': 'profiles_400',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta0_valup1',
+                'exp_type' : 'delta1_valup1',
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None
+                'y_lims': [0, 1.2]
             },
             {
                 'row': 1,
                 'col': 1,
-                'profile_type': 'profiles_100',
+                'profile_type': 'profiles_400',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta1_valup1',
+                'exp_type' : 'delta0_valup1',
                 'exp_choice' : 'pointspercluster_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
-                'y_lims': None
+                'y_lims': [0, 1.2]
             },
             {
                 'row': 2,
                 'col': 0,
-                'profile_type': 'profiles_100',
-                'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta0_valup1',
+                'profile_type': 'profiles_400',
+                'pred_type' : 'spatial',
+                'exp_type' : 'delta1_valup1',
                 'exp_choice' : 'querybycoordinate_importance',
                 'plot_type': 'val',
                 'AL_variable': 'X_s1',
@@ -189,9 +189,9 @@ class HyperParameterVisualizing:
             {
                 'row': 2,
                 'col': 1,
-                'profile_type': 'profiles_100',
-                'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta1_valup1',
+                'profile_type': 'profiles_400',
+                'pred_type' : 'spatial',
+                'exp_type' : 'delta0_valup1',
                 'exp_choice' : 'querybycoordinate_importance',
                 'plot_type': 'val',
                 'AL_variable': 'X_s1',
@@ -202,7 +202,7 @@ class HyperParameterVisualizing:
                 'col': 0,
                 'profile_type': 'profiles_100',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta0_valup1',
+                'exp_type' : 'delta1_valup1',
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
@@ -213,7 +213,7 @@ class HyperParameterVisualizing:
                 'col': 1,
                 'profile_type': 'profiles_100',
                 'pred_type' : 'spatio-temporal',
-                'exp_type' : 'delta1_valup1',
+                'exp_type' : 'delta0_valup1',
                 'exp_choice' : 'sequence_importance',
                 'plot_type': 'val',
                 'AL_variable': 'Y_hat_(t,s)',
@@ -502,7 +502,7 @@ def plot_train_val_hist(
 
                             # set y-axis labels
                             plot_left.set_ylabel(
-                                'L2 loss [kW²]', 
+                                'L2 loss', 
                             )
 
 
@@ -583,7 +583,7 @@ def plot_subsampling_heuristics(
                         PL_train = subsampling_df[col_name_train][8:].dropna().values
                         PL_val = subsampling_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                        legend_PL = 'PDL baseline:  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -653,9 +653,9 @@ def plot_subsampling_heuristics(
                             AL_train = subsampling_df[column_train][8:].dropna().values
                             AL_val = subsampling_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                            legend_AL = 'ADL {:.0%} cand:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                                 AL_subsample_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -720,7 +720,7 @@ def plot_subsampling_heuristics(
                             
                             # set y-axis labels
                             plot_left.set_ylabel(
-                                'L2 loss [kW²]', 
+                                'L2 loss', 
                             )
 
                             # set legend
@@ -812,7 +812,7 @@ def plot_pointspercluster_heuristics(
                         PL_train = pointspercluster_df[col_name_train][8:].dropna().values
                         PL_val = pointspercluster_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                        legend_PL = 'PDL baseline:  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -881,9 +881,9 @@ def plot_pointspercluster_heuristics(
                             AL_train = pointspercluster_df[column_train][8:].dropna().values
                             AL_val = pointspercluster_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                            legend_AL = 'ADL {:.0%} cluster:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                                 AL_cluster_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -948,7 +948,7 @@ def plot_pointspercluster_heuristics(
                             
                             # set y-axis labels
                             plot_left.set_ylabel(
-                                'L2 loss [kW²]', 
+                                'L2 loss', 
                             )
                             
                             # set legend
@@ -1040,7 +1040,7 @@ def plot_querybycoordinate_heuristics(
                         PL_train = querybycoordinate_df[col_name_train][8:].dropna().values
                         PL_val = querybycoordinate_df[col_name_val][8:].dropna().values
                         
-                        legend_PL = 'PDL: baseline  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                        legend_PL = 'PDL baseline:  1x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                             budget_usage, 
                             sensor_usage,
                             PL_accuracy
@@ -1108,9 +1108,9 @@ def plot_querybycoordinate_heuristics(
                             AL_train = querybycoordinate_df[column_train][8:].dropna().values
                             AL_val = querybycoordinate_df[column_val][8:].dropna().values
                             
-                            legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors {:.0%} accuracy'.format(
-                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                            legend_AL = 'ADL {:.0%} cand:  {}x comp  {:.0%} data  {:.0%} sensors {:.0%} accuracy'.format(
                                 AL_subsample_rate,
+                                round(AL_t_iter_avg / PL_t_iter_avg, 1),
                                 budget_usage, 
                                 sensor_usage,
                                 AL_accuracy
@@ -1172,7 +1172,7 @@ def plot_querybycoordinate_heuristics(
                             
                             # set y-axis labels
                             plot_left.set_ylabel(
-                                'L2 loss [kW²]', 
+                                'L2 loss', 
                             )
 
                             # set legend
@@ -1356,7 +1356,7 @@ def plot_sequence_importance(
 
                             # set y-axis labels
                             plot_left.set_ylabel(
-                                'L2 loss [kW²]', 
+                                'L2 loss', 
                             )
 
 
@@ -1586,9 +1586,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL:  {}x comp  {:.0%} cand  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                legend_AL = 'ADL {:.0%} cand:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     AL_subsample_rate,
+                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
@@ -1633,9 +1633,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                legend_AL = 'ADL {:.0%} cluster:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     AL_cluster_rate,
+                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
@@ -1680,9 +1680,9 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL:  {}x comp  {:.0%} cluster  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                legend_AL = 'ADL {:.0%} cluster:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
                     AL_cluster_rate,
+                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
                     budget_usage, 
                     sensor_usage,
                     AL_accuracy
@@ -1749,13 +1749,13 @@ def plot_results_summary(
             ax[plot_item['row'], plot_item['col']].legend(
                   custom_lines, 
                   ['random sequence', 'original sequence'], 
-                  loc="best", 
+                  loc="upper right", 
                   frameon=False,
                   fontsize=HYPER_VIS.LEGEND_FONTSIZE
             )
         else:
             ax[plot_item['row'], plot_item['col']].legend(
-                loc='best', 
+                loc='upper right', 
                 frameon=False,
                 fontsize=HYPER_VIS.LEGEND_FONTSIZE
             )
@@ -1767,7 +1767,7 @@ def plot_results_summary(
     # set figure y-axis label
     for row in range(meta_dict['n_rows']):
         ax[row, 0].set_ylabel(
-            'L2 loss [kW²]', 
+            'L2 loss', 
         )
     
     # set figure x-axis label

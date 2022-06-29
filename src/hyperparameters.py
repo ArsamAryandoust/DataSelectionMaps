@@ -38,7 +38,7 @@ class HyperParameter:
     # candidates (True) or whether to train on the queried batch
     # only (False) in each iteration of our AL algorithm 
     EXTEND_TRAIN_DATA_ACT_LRN = False
-
+    
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
     PRED_TYPE_ACT_LRN = 'spatio-temporal'
@@ -134,7 +134,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.001 
     # corresponds to approximately 35 points per profile
-    POINTS_PER_PROFILE = 0.1
+    POINTS_PER_PROFILE = 0.02
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -503,7 +503,7 @@ class HyperParameter:
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
                 self.CAND_SUBSAMPLE_ACT_LRN = 1
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0
-                self.COOL_DOWN_TIME_S = 20
+                self.COOL_DOWN_TIME_S = 5
                 self.QUERY_VARIANTS_ACT_LRN = ['avg d_c']
             
             
