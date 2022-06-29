@@ -1,0 +1,10 @@
+,private_data_access,test_experiment_choice,save_results,extend_train_data_act_lrn,red_cand_data_act_lrn,upd_val_data_act_lrn,pred_type_act_lrn,query_variables_act_lrn,query_variants_act_lrn,n_iter_act_lrn,data_budget_act_lrn,points_per_cluster_act_lrn,cand_subsample_act_lrn,epochs_act_lrn,patience_act_lrn,distance_metric_act_lrn,cluster_method_act_lrn,saved_samples_act_lrn,problem_type,regression_loss_name,regression_classes,labels,profile_years,profile_set,profiles_per_year,points_per_profile,prediction_window,train_split,test_split,split_intervals,epochs,patience,batch_size,encoder_layers,encoding_nodes_x_t,encoding_nodes_x_s,encoding_nodes_x_st,encoding_nodes_x_joint,encoding_activation,network_layers,nodes_per_layer_dense,filters_per_layer_cnn,states_per_layer_lstm,layer_type_x_st,dense_activation,cnn_activation,lstm_activation,initialization_method,initialization_method_lstm,batch_normalization,regularizer,timestamp_data,time_encoding,spatial_features,histo_bins,grey_scale,down_scale_building_images,meteo_types,history_window_meteo,normalization,standardization
+0,TRUE,main_experiments,TRUE,FALSE,TRUE,TRUE,temporal,X_st,rnd d_c,10,0.5,1,1,30,10,Laplacian,KMeans,1000,regression,mean_squared_error,200,original,2014,profiles_100,1,0.02,96,0.5,0.7,0.05,30,10,16,1,100,100,100,100,relu,1,1000,16,200,CNN,relu,relu,tanh,glorot_normal,orthogonal,FALSE,l1_l2,15min,ORD,histogram,100,FALSE,0,air_density,24,TRUE,TRUE
+1,,,,,,,,"X_(t,s)",min d_c,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,hour,,,,,,cloud_cover,,,
+2,,,,,,,,"Y_hat_(t,s)",max d_c,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,day,,,,,,precipitation,,,
+3,,,,,,,,"Y_(t,s)",avg d_c,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,month,,,,,,radiation_surface,,,
+4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,radiation_toa,,,
+5,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,snow_mass,,,
+6,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,snowfall,,,
+7,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,temperature,,,
+8,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,wind_speed,,,
