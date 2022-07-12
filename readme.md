@@ -44,12 +44,12 @@ An effective way to oppose global warming and mitigate climate change is to elec
 
 Download this repository to your home directory, change your current working directory to this repository, and build main docker container by running:
 
-`
-cd
-git clone https://github.com/ArsamAryandoust/DataSelectionMaps
-cd DataSelectionMaps
-docker build -t main Docker
-`
+
+`cd`
+`git clone https://github.com/ArsamAryandoust/DataSelectionMaps`
+`cd DataSelectionMaps`
+`docker build -t main Docker`
+
 
 For CPU computation, run:
 
