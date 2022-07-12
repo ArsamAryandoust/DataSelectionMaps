@@ -46,8 +46,11 @@ Download this repository to your home directory, change your current working dir
 
 
 `cd`
+
 `git clone https://github.com/ArsamAryandoust/DataSelectionMaps`
+
 `cd DataSelectionMaps`
+
 `docker build -t main Docker`
 
 
