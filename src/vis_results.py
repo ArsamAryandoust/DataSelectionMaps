@@ -1680,28 +1680,31 @@ def plot_results_summary(
                 elif plot_item['plot_type'] == 'val':
                     AL_plot = AL_val
                 
-                legend_AL = 'ADL {:.0%} cluster:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
-                    AL_cluster_rate,
-                    round(AL_t_iter_avg / PL_t_iter_avg, 1),
-                    budget_usage, 
-                    sensor_usage,
-                    AL_accuracy
-                )
 
                 for index_var, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIABLES_ACT_LRN):
                     if item in column_train:
                         AL_variable = item
                         break
 
-                for index_heur, item in enumerate(HYPER_VIS.CAND_SUBSAMPLE_TEST_LIST):
-                    if item == AL_subsample_rate:
-                        plt_color = HYPER_VIS.HEURISTICS_COLOR_LIST[index_heur]
-                        break
-                
-                if AL_variable == plot_item['AL_variable']:
+                if AL_variable != plot_item['AL_variable']:
+                    continue
+                    
+                else:
+                    for index_method, item in enumerate(HYPER_VIS.POSSIBLE_QUERY_VARIANTS_ACT_LRN):
+                        if item in column_train:
+                            AL_variant = item
+                            break
+                    
+                    legend_AL = 'ADL {}:  {}x comp  {:.0%} data  {:.0%} sensors  {:.0%} accuracy'.format(
+                        AL_variant,
+                        round(AL_t_iter_avg / PL_t_iter_avg, 1),
+                        budget_usage, 
+                        sensor_usage,
+                        AL_accuracy
+                    )
+                    
                     ax[plot_item['row'], plot_item['col']].plot(
                         AL_plot, 
-                        color=plt_color, 
                         label=legend_AL
                     )
                     

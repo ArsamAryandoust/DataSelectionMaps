@@ -18,7 +18,7 @@ import addexperiments
 import saveresults
 
 # Set a randomization seed for better reproducability of results
-seed = 3
+seed = 33
 random.seed(seed)
 np.random.seed(seed)
 tf.random.set_seed(seed)

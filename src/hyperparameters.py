@@ -19,12 +19,12 @@ class HyperParameter:
     PRIVATE_DATA_ACCESS = True
     
     # Decide whether to save results, hyper paramters, models and sample data.
-    SAVE_RESULTS = True
+    SAVE_RESULTS = False
     
     # Decide whether and which test to run. Choose from 'main_experiments',
     # 'sequence_importance', 'subsample_importance', 'pointspercluster_importance',
     # 'querybycoordinate_importance'.
-    TEST_EXPERIMENT_CHOICE = 'querybycoordinate_importance'
+    TEST_EXPERIMENT_CHOICE = 'main_experiments'
     
     ### 1. Active Learning algorithm ###
     
@@ -41,7 +41,7 @@ class HyperParameter:
     
     # Decide which prediction types to evaluate. Choose from 'spatial',
     # 'temporal' and 'spatio-temporal'
-    PRED_TYPE_ACT_LRN = 'spatio-temporal'
+    PRED_TYPE_ACT_LRN = 'spatial'
     
     # Choose AL variables you want to test. Choose from 'X_t', 'X_s1', 'X_st', 
     # 'X_(t,s)', 'Y_hat_(t,s)', 'Y_(t,s)'
@@ -134,7 +134,7 @@ class HyperParameter:
     # Decide how many data points per building-year profile you 
     # want to consider. Choose a share between 0 and 1. A value of 0.001 
     # corresponds to approximately 35 points per profile
-    POINTS_PER_PROFILE = 0.02
+    POINTS_PER_PROFILE = 0.03
     
     # Decide how many time steps to predict consumption into the future.
     # Resolution is 15 min. A values of 96 corresponds to 24h.
@@ -495,16 +495,16 @@ class HyperParameter:
             if self.TEST_EXPERIMENT_CHOICE == 'querybycoordinate_importance':
                 print(
                     'QUERY_VARIABLES_ACT_LRN = ["X_s1"]\n'
+                    'QUERY_VARIANTS_ACT_LRN = ["max d_c", "avg d_c"]\n'
                     'CAND_SUBSAMPLE_ACT_LRN = 1\n'
                     'POINTS_PER_CLUSTER_ACT_LRN = 0\n'
-                    'COOL_DOWN_TIME_S = 60\n'
-                    'QUERY_VARIANTS_ACT_LRN = ["avg d_c"]'
+                    'COOL_DOWN_TIME_S = 5'
                 )
                 self.QUERY_VARIABLES_ACT_LRN = ['X_s1']
+                self.QUERY_VARIANTS_ACT_LRN = ['max d_c', 'avg d_c']
                 self.CAND_SUBSAMPLE_ACT_LRN = 1
                 self.POINTS_PER_CLUSTER_ACT_LRN = 0
                 self.COOL_DOWN_TIME_S = 5
-                self.QUERY_VARIANTS_ACT_LRN = ['avg d_c']
             
             
     def set_act_lrn_params(self):
