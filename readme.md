@@ -1,4 +1,4 @@
-# Enhanced spatio-temporal electric load forecasts with less data using active deep learning
+# Enhanced spatio-temporal electric load forecasts using less data with active deep learning
 ---
 
 
