@@ -370,8 +370,12 @@ def create_model_input_output_plots(
         _ = ax.plot(Y_pl[rnd_point, :], label='true')
         _ = ax.plot(Y_pl[rnd_point, :] * random_array, label='predicted')
 
-        ax.legend(loc="upper right", fontsize=20)
-        plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
+        ax.legend(loc="upper right", fontsize=16)
+        #plt.setp(plt.gcf().get_axes(), xticks=[], yticks=[])
+        ax.tick_params(axis='both', which='major', labelsize=14)
+        plt.xlabel("time [15 min]", fontsize=16)
+        plt.ylabel("consumption [kW/kWh]", fontsize=16)
+        
         
         if save_results:
             saving_path = path_to_prediction_model_figure_folder + 'pred_output_' + parameter + '_' + pred_type + '.pdf'
