@@ -16,7 +16,7 @@ class HyperParameter:
     ### General parameters ###
     
     # Keep a value of False if you have access to public data only.
-    PRIVATE_DATA_ACCESS = True
+    PRIVATE_DATA_ACCESS = False
     
     # Decide whether to save results, hyper paramters, models and sample data.
     SAVE_RESULTS = False
