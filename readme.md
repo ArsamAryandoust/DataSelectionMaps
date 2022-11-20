@@ -14,7 +14,7 @@ An effective way to mitigate climate change is to electrify most of our energy d
 
 ## Citation
 
-Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric load forecasts using less data with active deep learning. Nature Machine Intelligence (2022). https://doi.org/10.1038/s42256-022-00552-x
+Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric load forecasts using less data with active deep learning. <em>Nature Machine Intelligence</em> 4, 977-991 (2022). https://doi.org/10.1038/s42256-022-00552-x
 
 ---
 
