@@ -46,10 +46,9 @@ Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric load
 * tests/test_vis_results.py: unit tests for vis_results.py
 ---
 
-## Docker 
+## Getting started 
 
-Download this repository to your home directory, change your current working directory to this repository, and build main docker container by running:
-
+Download this repository to your home directory and change your current working directory to this repository:
 
 `cd`
 
@@ -57,21 +56,24 @@ Download this repository to your home directory, change your current working dir
 
 `cd DataSelectionMaps`
 
+
+## Docker 
+
+Build the Docker containers for running the main experiments:
+
 `docker build -t main Docker`
 
-
-For CPU computation, run:
+To run all experiments on CPU cores only, run:
 
 `docker run -v ~/DataSelectionMaps:/DataSelectionMaps main`
 
-For GPU support, make sure you have the nvidia-container-toolkit installed, then run:
+To run all experiments on your available GPUs, make sure you have the nvidia-container-toolkit installed, then run:
 
 `docker run --gpus all -v ~/DataSelectionMaps:/DataSelectionMaps main`
 
 **Note:** If you download this repository to a location other than your home directory, make sure it is at a sub-directory of your home directory and replace all ~/DataSelectionMaps with ~/path/to/subdirectory/DataSelectionMaps in the commands, i.e.
 
 `docker run -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps main`
-
 
 `docker run --gpus all -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps main`
 
@@ -97,7 +99,6 @@ Next, open localhost:3333 in your browser and type in the token from your termin
 
 `docker run -it -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps -p 3333:1111 main_notebook`
 
-
 `docker run -it --gpus all -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps -p 3333:1111 main_notebook`
 
 ---
@@ -119,7 +120,6 @@ For GPU support, make sure you have the nvidia-container-toolkit installed, then
 **Note:** If you download this repository to a location other than your home directory, make sure it is at a sub-directory of your home directory and replace all ~/DataSelectionMaps with ~/path/to/subdirectory/DataSelectionMaps in the commands, i.e.
 
 `docker run -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps tests`
-
 
 `docker run --gpus all -v ~/path/to/subdirectory/DataSelectionMaps:/DataSelectionMaps tests`
 
