@@ -2,19 +2,16 @@
 
 An effective way to mitigate climate change is to electrify most of our energy demand and supply the necessary electricity from renewable wind and solar power plants. Spatio-temporal predictions of electric load become increasingly important for planning this transition, while deep learning prediction models provide increasingly accurate predictions for it. The data that is used for training deep learning models, however, is usually collected at random using a passive learning approach. This naturally results in a large demand for data and associated costs for sensors like smart meters, posing a large barrier for electric utilities in decarbonizing their grids. Here, we investigate if electric utilities can use active learning for collecting a more informative subset of data by leveraging additional computation for better distributing smart meters. We predict ground truth electric load profiles for single buildings using only remotely sensed data from aerial imagery of these building and meteorological conditions in the area of these buildings at different times. We find that active learning can enable 26-81% more accurate predictions using 29-46% less data at the price of 4-11 times more computation compared to passive learning.
 
----
 ## Citation
 
 Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric load forecasts using less data with active deep learning. <em>Nature Machine Intelligence</em> 4, 977-991 (2022). https://doi.org/10.1038/s42256-022-00552-x
 
----
 ## Content overview 
 
 1. Data processing
 2. Prediction model
 3. Active learning
 
----
 ## File overview
 
 * src: folder containing the source code for jupyter notebooks and python scripts
@@ -42,17 +39,15 @@ Aryandoust, A., Patt, A. & Pfenninger, S. Enhanced spatio-temporal electric load
 * tests/test_prediction.py: unit tests for prediction.py
 * tests/test_vis_results.py: unit tests for vis_results.py
 
----
 ## Getting started 
 
 Download this repository to your home directory and change your current working directory to this repository:
 
-`cd`
-
-`git clone https://github.com/ArsamAryandoust/DataSelectionMaps`
-
-`cd DataSelectionMaps`
-
+```
+cd
+git clone https://github.com/ArsamAryandoust/DataSelectionMaps
+cd DataSelectionMaps
+```
 
 ## Docker 
 
